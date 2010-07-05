@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The attributes in this XML file provide configuration information -->
+<!-- for the LDAPSyncAdapter. -->
+
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="com.android.contacts"
+    android:accountType="de.danielweisser.android.ldapsync"
+    android:supportsUploading="false"
+/>

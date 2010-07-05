@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="label">LDAPAdapter</string>
+	<string name="app_name">LDAP Sync</string>
+
+	<!-- AuthenticatorActivity -->
+	<skip />
+	<!-- Label above username EditText -->
+	<string name="login_activity_username_label">Username</string>
+	<!-- Label above password EditText -->
+	<string name="login_activity_password_label">Password</string>
+	<!-- Button to sign in after entering username and password -->
+	<string name="login_activity_ok_button">Sign in</string>
+
+	<!-- Message shown in dialog if the username or password is invalid. -->
+	<string name="login_activity_loginfail_text_both">The username or password isn\'t valid. A LDAP
+		account is required. Please try again. </string>
+	<!-- Message shown in dialog if the password is invalid -->
+	<string name="login_activity_loginfail_text_pwonly">You entered the wrong password or your account has
+		changed. Please re-enter your password.</string>
+	<!-- Message shown in dialog to prompt the user for their password -->
+	<string name="login_activity_loginfail_text_pwmissing">Type the password for this account.</string>
+	<!--
+		Message shown if the provided account doesn't support the current
+		activity.
+	-->
+	<string name="login_activity_newaccount_text">Sign in to your LDAP account.</string>
+	<!--
+		Message shown in progress dialog while app connects to the server
+	-->
+	<string name="ui_activity_authenticating">Authenticating\u2026</string>
+
+	<!-- Title string for Login activity-->
+	<string name="ui_activity_title">Sign-in</string>
+</resources>
