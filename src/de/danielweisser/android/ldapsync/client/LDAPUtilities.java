@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.accounts.Account;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
@@ -13,6 +13,7 @@ import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
+import com.unboundid.ldap.sdk.RootDSE;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.SearchScope;
@@ -23,17 +24,7 @@ import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity
  * Provides utility methods for communicating with the server.
  */
 public class LDAPUtilities {
-	private static final String LDAP_FILTER = "(|(objectClass=contact)(objectClass=user))";
-	private static final String LDAP_BASE_DN = "OU=Organisation,DC=exxeta-de,DC=local";
-	private static final String LDAP_PASSWORD = "ads4711";
-	private static final String LDAP_USER = "exxeta-de\\ads";
-	private static final int LDAP_PORT = 389;
-	private static final String LDAP_SERVER = "192.168.0.10";
-	
 	private static final String TAG = "LDAPUtilities";
-	public static final String PARAM_USERNAME = "username";
-	public static final String PARAM_PASSWORD = "password";
-	public static final String PARAM_UPDATED = "timestamp";
 
 	/**
 	 * Executes the network requests on a separate thread.
@@ -65,21 +56,18 @@ public class LDAPUtilities {
 	 * @param password
 	 *            The user's password
 	 * @param handler
-	 *            The hander instance from the calling UI thread.
+	 *            The handler instance from the calling UI thread.
 	 * @param context
 	 *            The context of the calling Activity.
 	 * @return boolean The boolean result indicating whether the user was
 	 *         successfully authenticated.
 	 */
-	public static boolean authenticate(String username, String password, Handler handler, final Context context) {
+	public static boolean authenticate(String host, int port, String username, String password, Handler handler,
+			final Context context) {
+		LDAPConnection connection = new LDAPConnection();
 		try {
-			// android.os.Debug.waitForDebugger();
-			// Log.i(TAG, "Trying to connect to LDAP server.");
-			// sendResult(true, handler, context);
-			// return true;
-			LDAPConnection connection = new LDAPConnection();
-			connection.connect(LDAP_SERVER, LDAP_PORT);
-			BindResult bindResult = connection.bind(LDAP_USER, LDAP_PASSWORD);
+			connection.connect(host, port);
+			BindResult bindResult = connection.bind(username, password);
 
 			ResultCode resultCode = bindResult.getResultCode();
 			Log.i(TAG, "Bind result: " + resultCode);
@@ -88,22 +76,26 @@ public class LDAPUtilities {
 				if (Log.isLoggable(TAG, Log.VERBOSE)) {
 					Log.v(TAG, "Successful authentication");
 				}
-				sendResult(true, handler, context);
+				RootDSE s = connection.getRootDSE();
+				String[] baseDNs = s.getNamingContextDNs();
+
+				sendResult(baseDNs, true, handler, context);
 				return true;
 			} else {
 				if (Log.isLoggable(TAG, Log.VERBOSE)) {
 					Log.v(TAG, "Error authenticating");
 				}
-				sendResult(false, handler, context);
+				sendResult(null, false, handler, context);
 				return false;
 			}
 		} catch (LDAPException e) {
 			if (Log.isLoggable(TAG, Log.VERBOSE)) {
 				Log.v(TAG, "LDAPException when getting authtoken", e);
 			}
-			sendResult(false, handler, context);
+			sendResult(null, false, handler, context);
 			return false;
 		} finally {
+			connection.close();
 			if (Log.isLoggable(TAG, Log.VERBOSE)) {
 				Log.v(TAG, "getAuthtoken completing");
 			}
@@ -121,13 +113,14 @@ public class LDAPUtilities {
 	 * @param context
 	 *            The caller Activity's context.
 	 */
-	private static void sendResult(final Boolean result, final Handler handler, final Context context) {
+	private static void sendResult(final String[] baseDNs, final Boolean result, final Handler handler,
+			final Context context) {
 		if (handler == null || context == null) {
 			return;
 		}
 		handler.post(new Runnable() {
 			public void run() {
-				((LDAPAuthenticatorActivity) context).onAuthenticationResult(result);
+				((LDAPAuthenticatorActivity) context).onAuthenticationResult(baseDNs, result);
 			}
 		});
 	}
@@ -137,45 +130,48 @@ public class LDAPUtilities {
 	 * 
 	 * @param username
 	 *            The user's username
+	 * @param mPort
 	 * @param password
 	 *            The user's password to be authenticated
+	 * @param mPassword
 	 * @param handler
 	 *            The main UI thread's handler instance.
 	 * @param context
 	 *            The caller Activity's context
 	 * @return Thread The thread on which the network mOperations are executed.
 	 */
-	public static Thread attemptAuth(final String username, final String password, final Handler handler,
-			final Context context) {
+	public static Thread attemptAuth(final String host, final int port, final String username, final String password,
+			final Handler handler, final Context context) {
 		final Runnable runnable = new Runnable() {
 			public void run() {
-				authenticate(username, password, handler, context);
+				authenticate(host, port, username, password, handler, context);
 			}
 		};
 		// run on background thread.
 		return LDAPUtilities.performOnBackgroundThread(runnable);
 	}
 
-	public static List<User> fetchContacts(Account account, String authtoken, Date mLastUpdated) {
-		android.os.Debug.waitForDebugger();
+	public static List<User> fetchContacts(String host, int port, String username, String authtoken, String baseDN,
+			String searchFilter, Bundle mappingBundle, Date mLastUpdated) {
 		final ArrayList<User> friendList = new ArrayList<User>();
 		LDAPConnection connection = new LDAPConnection();
 		try {
-			connection.connect(LDAP_SERVER, LDAP_PORT);
-			connection.bind(LDAP_USER, LDAP_PASSWORD);
-			SearchResult searchResult = connection.search(LDAP_BASE_DN, SearchScope.SUB,
-					LDAP_FILTER);
-			Log.w(TAG, searchResult.getEntryCount() + " entries returned.");
+			connection.connect(host, port);
+			connection.bind(username, authtoken);
+			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter);
+			Log.i(TAG, searchResult.getEntryCount() + " entries returned.");
 			for (SearchResultEntry e : searchResult.getSearchEntries()) {
-				friendList.add(User.valueOf(e));
+				User u = User.valueOf(e, mappingBundle);
+				if (u != null) {
+					friendList.add(u);
+				}
 			}
 		} catch (LDAPException e) {
 			Log.v(TAG, "LDAPException on fetching contacts", e);
+		} finally {
+			connection.close();
 		}
 
-		// User u1 = new User("AA Vorname", "AA Nachname", "+49 (162) 2581943",
-		// "office D", "vorname@gmx.de", null);
-		// friendList.add(u1);
 		return friendList;
 	}
 }

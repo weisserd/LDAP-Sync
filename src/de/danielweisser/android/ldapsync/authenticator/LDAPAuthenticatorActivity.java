@@ -14,12 +14,17 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
+import android.widget.AdapterView.OnItemSelectedListener;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
+import de.danielweisser.android.ldapsync.client.User;
 
 /**
  * Activity which displays login screen to the user.
@@ -27,9 +32,14 @@ import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
 	public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
-	public static final String PARAM_PASSWORD = "password";
 	public static final String PARAM_USERNAME = "username";
+	public static final String PARAM_PASSWORD = "password";
+	public static final String PARAM_HOST = "host";
+	public static final String PARAM_PORT = "port";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
+	public static final String PARAM_SEARCHFILTER = "searchFilter";
+	public static final String PARAM_BASEDN = "baseDN";
+	public static final String PARAM_MAPPING = "map_";
 
 	private static final String TAG = "LDAPAuthActivity";
 
@@ -37,7 +47,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	protected boolean mRequestNewAccount = true;
 
 	/**
-	 * If set we are just checking that the user knows their credentials; this
+	 * If set we are just checking that the user knows their credentials, this
 	 * doesn't cause the user's password to be changed on the device.
 	 */
 	private Boolean mConfirmCredentials = false;
@@ -53,9 +63,115 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private TextView mMessage;
 	private String mPassword;
 	private EditText mPasswordEdit;
-
 	private String mUsername;
 	private EditText mUsernameEdit;
+	private String mHost;
+	private EditText mHostEdit;
+	private String mSearchFilter;
+	private EditText mSearchFilterEdit;
+	private String mBaseDN;
+	private Spinner mBaseDNSpinner;
+	private int mPort;
+	private EditText mPortEdit;
+	
+	private String mFirstName;
+	private EditText mFirstNameEdit;
+	private String mLastName;
+	private EditText mLastNameEdit;
+	private String mCellPhone;
+	private EditText mCellPhoneEdit;
+	private String mOfficePhone;
+	private EditText mOfficePhoneEdit;
+	private String mEmail;
+	private EditText mEmailEdit;
+	private String mImage;
+	private EditText mImageEdit;
+
+	@Override
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		android.os.Debug.waitForDebugger();
+		mAccountManager = AccountManager.get(this);
+	
+		// Get data from Intent
+		final Intent intent = getIntent();
+		mUsername = intent.getStringExtra(PARAM_USERNAME);
+		mPassword = intent.getStringExtra(PARAM_PASSWORD);
+		mHost = intent.getStringExtra(PARAM_HOST);
+		mPort = intent.getIntExtra(PARAM_PORT, 389);
+		mRequestNewAccount = (mUsername == null);
+		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
+	
+		// TODO Remove test data
+		if (mUsername == null) {
+//			mUsername = "uid=admin,ou=system";
+//			mPassword = "secret";
+//			mAuthtokenType = "secret";
+//			mHost = "192.168.0.70";
+//			mPort = 10389;
+			mUsername = "exxeta-de\\ads";
+			mPassword = "ads4711";
+			mAuthtokenType = "ads4711";
+			mHost = "192.168.0.10";
+			mPort = 389;
+		}
+	
+		if (mRequestNewAccount) {
+			mSearchFilter = "(objectClass=user)";
+			mFirstName = "givenName";
+			mLastName = "sn";
+			mOfficePhone = "telephonenumber";
+			mCellPhone = "mobile";
+			mEmail = "mail";
+			mImage = "thumbnailphoto";
+//			mImage = "jpegPhoto";
+		}
+	
+		setContentView(R.layout.login_activity);
+	
+		// Find controls
+		mMessage = (TextView) findViewById(R.id.message);
+		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
+		mPasswordEdit = (EditText) findViewById(R.id.password_edit);
+		mHostEdit = (EditText) findViewById(R.id.host_edit);
+		mPortEdit = (EditText) findViewById(R.id.port_edit);
+		mSearchFilterEdit = (EditText) findViewById(R.id.searchfilter_edit);
+		mBaseDNSpinner = (Spinner) findViewById(R.id.basedn_spinner);
+		mBaseDNSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				mBaseDN = parent.getItemAtPosition(position).toString();
+			}
+	
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// Do nothing.
+			}
+		});
+	
+		// Set values from the intent
+		mUsernameEdit.setText(mUsername);
+		mPasswordEdit.setText(mAuthtokenType);
+		mHostEdit.setText(mHost);
+		mPortEdit.setText(Integer.toString(mPort));
+		mSearchFilterEdit.setText(mSearchFilter);
+		mMessage.setText(getMessage());
+		
+		// Set values for LDAP mapping
+		mFirstNameEdit = (EditText) findViewById(R.id.firstname_edit);
+		mFirstNameEdit.setText(mFirstName);
+		mLastNameEdit = (EditText) findViewById(R.id.lastname_edit);
+		mLastNameEdit.setText(mLastName);
+		mOfficePhoneEdit = (EditText) findViewById(R.id.officephone_edit);
+		mOfficePhoneEdit.setText(mOfficePhone);
+		mCellPhoneEdit= (EditText) findViewById(R.id.cellphone_edit);
+		mCellPhoneEdit.setText(mCellPhone);
+		mEmailEdit = (EditText) findViewById(R.id.mail_edit);
+		mEmailEdit.setText(mEmail);
+		mImageEdit = (EditText) findViewById(R.id.image_edit);
+		mImageEdit.setText(mImage);
+	}
 
 	/**
 	 * Called when response is received from the server for confirm credentials
@@ -77,7 +193,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * 
 	 * Called when response is received from the server for authentication
 	 * request. See onAuthenticationResult(). Sets the
 	 * AccountAuthenticatorResult which is sent back to the caller. Also sets
@@ -91,21 +206,30 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		final Account account = new Account(mUsername, Constants.ACCOUNT_TYPE);
 
 		if (mRequestNewAccount) {
-			mAccountManager.addAccountExplicitly(account, mPassword, null);
+			Bundle userData = new Bundle();
+			userData.putString(PARAM_PORT, mPort + "");
+			userData.putString(PARAM_HOST, mHost);
+			userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
+			userData.putString(PARAM_BASEDN, mBaseDN);
+			// Mappings for LDAP data
+			userData.putString(PARAM_MAPPING + User.FIRSTNAME, mFirstName);
+			userData.putString(PARAM_MAPPING + User.LASTNAME, mLastName);
+			userData.putString(PARAM_MAPPING + User.TELEPHONE, mOfficePhone);
+			userData.putString(PARAM_MAPPING + User.MOBILE, mCellPhone);
+			userData.putString(PARAM_MAPPING + User.MAIL, mEmail);
+			userData.putString(PARAM_MAPPING + User.PHOTO, mImage);
+			mAccountManager.addAccountExplicitly(account, mPassword, userData);
+
 			// Set contacts sync for this account.
-			ContentResolver.setSyncAutomatically(account,
-					ContactsContract.AUTHORITY, true);
+			ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
 		} else {
 			mAccountManager.setPassword(account, mPassword);
 		}
 		final Intent intent = new Intent();
 		mAuthtoken = mPassword;
 		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mUsername);
-		intent
-				.putExtra(AccountManager.KEY_ACCOUNT_TYPE,
-						Constants.ACCOUNT_TYPE);
-		if (mAuthtokenType != null
-				&& mAuthtokenType.equals(Constants.AUTHTOKEN_TYPE)) {
+		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+		if (mAuthtokenType != null && mAuthtokenType.equals(Constants.AUTHTOKEN_TYPE)) {
 			intent.putExtra(AccountManager.KEY_AUTHTOKEN, mAuthtoken);
 		}
 		setAccountAuthenticatorResult(intent.getExtras());
@@ -121,104 +245,78 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		if (TextUtils.isEmpty(mUsername)) {
 			return getText(R.string.login_activity_newaccount_text);
 		}
-		if (TextUtils.isEmpty(mPassword)) {
-			return getText(R.string.login_activity_loginfail_text_pwmissing);
-		}
 		return null;
 	}
 
 	/**
-	 * Handles onClick event on the Submit button. Sends username/password to
-	 * the server for authentication.
+	 * Handles onClick event on the Next button. Sends username/password to the
+	 * server for authentication.
 	 * 
 	 * @param view
-	 *            The Submit button for which this method is invoked
+	 *            The Next button for which this method is invoked
 	 */
-	public void handleLogin(View view) {
-		Log.e(TAG, "handleLogin");
+	public void getLDAPServerDetails(View view) {
+		Log.i(TAG, "handleLogin");
 		if (mRequestNewAccount) {
 			mUsername = mUsernameEdit.getText().toString();
 		}
 		mPassword = mPasswordEdit.getText().toString();
+		mHost = mHostEdit.getText().toString();
+		mPort = Integer.parseInt(mPortEdit.getText().toString());
+
 		if (TextUtils.isEmpty(mUsername) || TextUtils.isEmpty(mPassword)) {
 			mMessage.setText(getMessage());
 		} else {
 			showProgress();
 			// Start authenticating...
-			mAuthThread = LDAPUtilities.attemptAuth(mUsername, mPassword,
-					mHandler, LDAPAuthenticatorActivity.this);
+			mAuthThread = LDAPUtilities.attemptAuth(mHost, mPort, mUsername, mPassword, mHandler,
+					LDAPAuthenticatorActivity.this);
 		}
 	}
 
 	/**
-	 * Hides the progress UI for a lengthy operation.
+	 * Call back for the authentication process. When the authentication attempt
+	 * is finished this method is called.
 	 */
-	protected void hideProgress() {
-		dismissDialog(0);
-	}
-
-	/**
-	 * Called when the authentication process completes.
-	 */
-	public void onAuthenticationResult(boolean result) {
+	public void onAuthenticationResult(String[] baseDNs, boolean result) {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
 		hideProgress();
 		if (result) {
-			if (!mConfirmCredentials) {
-				finishLogin();
-			} else {
-				finishConfirmCredentials(true);
-			}
+			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
+					android.R.layout.simple_spinner_item, baseDNs);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			mBaseDNSpinner.setAdapter(adapter);
+			ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
+			vf.showNext();
 		} else {
 			Log.e(TAG, "onAuthenticationResult: failed to authenticate");
-			if (mRequestNewAccount) {
-				// "Please enter a valid username/password.
-				mMessage
-						.setText(getText(R.string.login_activity_loginfail_text_both));
-			} else {
-				// "Please enter a valid password." (Used when the
-				// account is already in the database but the password
-				// doesn't work.)
-				mMessage
-						.setText(getText(R.string.login_activity_loginfail_text_pwonly));
-			}
+			mMessage.setText(getText(R.string.login_activity_loginfail));
 		}
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Handles onClick event on the Done button. Saves the account with the
+	 * acount manager.
+	 * 
+	 * @param view
+	 *            The Done button for which this method is invoked
 	 */
-	@Override
-	public void onCreate(Bundle bundle) {
-		Log.i(TAG, "onCreate(" + bundle + ")");
-		super.onCreate(bundle);
-		mAccountManager = AccountManager.get(this);
+	public void saveAccount(View view) {
+		mSearchFilter = mSearchFilterEdit.getText().toString();
+		mFirstName = mFirstNameEdit.getText().toString();
+		mLastName = mLastNameEdit.getText().toString();
+		mOfficePhone = mOfficePhoneEdit.getText().toString();
+		mCellPhone = mCellPhoneEdit.getText().toString();
+		mEmail = mEmailEdit.getText().toString();
+		mImage = mImageEdit.getText().toString();
 
-		Log.i(TAG, "loading data from Intent");
-		final Intent intent = getIntent();
-		mUsername = intent.getStringExtra(PARAM_USERNAME);
-		mAuthtokenType = intent.getStringExtra(PARAM_AUTHTOKEN_TYPE);
-		mRequestNewAccount = (mUsername == null);
-		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS,
-				false);
-
-		Log.i(TAG, "    request new: " + mRequestNewAccount);
-		requestWindowFeature(Window.FEATURE_LEFT_ICON);
-		setContentView(R.layout.login_activity);
-		getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
-				android.R.drawable.ic_dialog_alert);
-
-		mMessage = (TextView) findViewById(R.id.message);
-		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
-		mPasswordEdit = (EditText) findViewById(R.id.password_edit);
-
-		mUsernameEdit.setText(mUsername);
-		mMessage.setText(getMessage());
+		if (!mConfirmCredentials) {
+			finishLogin();
+		} else {
+			finishConfirmCredentials(true);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		final ProgressDialog dialog = new ProgressDialog(this);
@@ -242,5 +340,12 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	protected void showProgress() {
 		showDialog(0);
+	}
+
+	/**
+	 * Hides the progress UI for a lengthy operation.
+	 */
+	protected void hideProgress() {
+		dismissDialog(0);
 	}
 }

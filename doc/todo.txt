@@ -1,0 +1,16 @@
+TODOs
+
+* Git
+* Release Mgmt
+* Icon
+
+
+==
+
+* Tests
+
+
+Ideas
+* Combine username@host:port for account name
+* Limit returned attributes for memory!
+* Think about edit variables

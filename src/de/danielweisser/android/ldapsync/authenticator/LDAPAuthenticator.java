@@ -18,7 +18,7 @@ import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	/** Authentication Service context */
 	private final Context mContext;
-	
+
 	private static final String TAG = "LDAPAuthenticator";
 
 	public LDAPAuthenticator(Context context) {
@@ -30,16 +30,12 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bundle addAccount(AccountAuthenticatorResponse response,
-			String accountType, String authTokenType,
+	public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
 			String[] requiredFeatures, Bundle options) {
 		Log.i(TAG, "addAccount()");
-		final Intent intent = new Intent(mContext,
-				LDAPAuthenticatorActivity.class);
-		intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
-	            authTokenType);
-	        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-	            response);
+		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
+		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 		final Bundle bundle = new Bundle();
 		bundle.putParcelable(AccountManager.KEY_INTENT, intent);
 		return bundle;
@@ -49,34 +45,32 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bundle confirmCredentials(AccountAuthenticatorResponse response,
-			Account account, Bundle options) {
+	public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) {
 		if (options != null && options.containsKey(AccountManager.KEY_PASSWORD)) {
-            final String password =
-                options.getString(AccountManager.KEY_PASSWORD);
-            final boolean verified =
-                onlineConfirmPassword(account.name, password);
-            final Bundle result = new Bundle();
-            result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, verified);
-            return result;
-        }
-        // Launch AuthenticatorActivity to confirm credentials
-        final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, true);
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-            response);
-        final Bundle bundle = new Bundle();
-        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
-        return bundle;
+			final String password = options.getString(AccountManager.KEY_PASSWORD);
+			final AccountManager am = AccountManager.get(mContext);
+			final String host = am.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
+			final int port = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
+			final boolean verified = onlineConfirmPassword(host, port, account.name, password);
+			final Bundle result = new Bundle();
+			result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, verified);
+			return result;
+		}
+		// Launch AuthenticatorActivity to confirm credentials
+		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, true);
+		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+		final Bundle bundle = new Bundle();
+		bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+		return bundle;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bundle editProperties(AccountAuthenticatorResponse response,
-			String accountType) {
+	public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -84,39 +78,36 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bundle getAuthToken(AccountAuthenticatorResponse response,
-			Account account, String authTokenType, Bundle loginOptions) {
+	public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
+			Bundle loginOptions) {
 		if (!authTokenType.equals(Constants.AUTHTOKEN_TYPE)) {
-            final Bundle result = new Bundle();
-            result.putString(AccountManager.KEY_ERROR_MESSAGE,
-                "invalid authTokenType");
-            return result;
-        }
-        final AccountManager am = AccountManager.get(mContext);
-        final String password = am.getPassword(account);
-        if (password != null) {
-            final boolean verified =
-                onlineConfirmPassword(account.name, password);
-            if (verified) {
-                final Bundle result = new Bundle();
-                result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-                result.putString(AccountManager.KEY_ACCOUNT_TYPE,
-                    Constants.ACCOUNT_TYPE);
-                result.putString(AccountManager.KEY_AUTHTOKEN, password);
-                return result;
-            }
-        }
-        // the password was missing or incorrect, return an Intent to an
-        // Activity that will prompt the user for the password.
-        final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
-            authTokenType);
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-            response);
-        final Bundle bundle = new Bundle();
-        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
-        return bundle;
+			final Bundle result = new Bundle();
+			result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType");
+			return result;
+		}
+		final AccountManager am = AccountManager.get(mContext);
+		final String password = am.getPassword(account);
+		final String host = am.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
+		final int port = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
+		if (password != null) {
+			final boolean verified = onlineConfirmPassword(host, port, account.name, password);
+			if (verified) {
+				final Bundle result = new Bundle();
+				result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+				result.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+				result.putString(AccountManager.KEY_AUTHTOKEN, password);
+				return result;
+			}
+		}
+		// the password was missing or incorrect, return an Intent to an
+		// Activity that will prompt the user for the password.
+		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
+		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+		final Bundle bundle = new Bundle();
+		bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+		return bundle;
 	}
 
 	/**
@@ -133,34 +124,31 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bundle hasFeatures(AccountAuthenticatorResponse response,
-			Account account, String[] features) {
+	public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) {
 		final Bundle result = new Bundle();
-        result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
-        return result;
+		result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
+		return result;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bundle updateCredentials(AccountAuthenticatorResponse response,
-			Account account, String authTokenType, Bundle loginOptions) {
+	public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType,
+			Bundle loginOptions) {
 		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
-            authTokenType);
-        intent.putExtra(LDAPAuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, false);
-        final Bundle bundle = new Bundle();
-        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
-        return bundle;
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
+		intent.putExtra(LDAPAuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, false);
+		final Bundle bundle = new Bundle();
+		bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+		return bundle;
 	}
-	
-	 /**
-     * Validates user's password on the server
-     */
-    private boolean onlineConfirmPassword(String username, String password) {
-        return LDAPUtilities.authenticate(username, password,
-            null/* Handler */, null/* Context */);
-    }
+
+	/**
+	 * Validates user's password on the server
+	 */
+	private boolean onlineConfirmPassword(String host, int port, String username, String password) {
+		return LDAPUtilities.authenticate(host, port, username, password, null/* Handler */, null/* Context */);
+	}
 }

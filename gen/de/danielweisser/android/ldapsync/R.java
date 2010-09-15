@@ -14,12 +14,23 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
-        public static final int message=0x7f060000;
-        public static final int message_bottom=0x7f060004;
-        public static final int ok_button=0x7f060005;
-        public static final int password_edit=0x7f060003;
-        public static final int username_edit=0x7f060001;
-        public static final int username_fixed=0x7f060002;
+        public static final int basedn_spinner=0x7f060008;
+        public static final int cellphone_edit=0x7f06000d;
+        public static final int done_button=0x7f060010;
+        public static final int firstname_edit=0x7f06000a;
+        public static final int host_edit=0x7f060002;
+        public static final int image_edit=0x7f06000f;
+        public static final int lastname_edit=0x7f06000b;
+        public static final int mail_edit=0x7f06000e;
+        public static final int message=0x7f060001;
+        public static final int message_bottom=0x7f060006;
+        public static final int next_button=0x7f060007;
+        public static final int officephone_edit=0x7f06000c;
+        public static final int password_edit=0x7f060005;
+        public static final int port_edit=0x7f060003;
+        public static final int searchfilter_edit=0x7f060009;
+        public static final int server=0x7f060000;
+        public static final int username_edit=0x7f060004;
     }
     public static final class layout {
         public static final int login_activity=0x7f030000;
@@ -27,38 +38,33 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f050001;
         public static final int label=0x7f050000;
+        public static final int login_activity_basedn_label=0x7f050006;
+        public static final int login_activity_cellphone_label=0x7f05000c;
+        public static final int login_activity_done_button=0x7f050010;
+        public static final int login_activity_firstname_label=0x7f050009;
+        public static final int login_activity_host_label=0x7f050002;
+        public static final int login_activity_image_label=0x7f05000e;
+        public static final int login_activity_lastname_label=0x7f05000a;
+        public static final int login_activity_ldap_mappings_label=0x7f050008;
         /**  Message shown in dialog if the username or password is invalid. 
          */
-        public static final int login_activity_loginfail_text_both=0x7f050005;
-        /**  Message shown in dialog to prompt the user for their password 
-         */
-        public static final int login_activity_loginfail_text_pwmissing=0x7f050007;
-        /**  Message shown in dialog if the password is invalid 
-         */
-        public static final int login_activity_loginfail_text_pwonly=0x7f050006;
-        /** 
-		Message shown if the provided account doesn't support the current
-		activity.
-	
-         */
-        public static final int login_activity_newaccount_text=0x7f050008;
-        /**  Button to sign in after entering username and password 
-         */
-        public static final int login_activity_ok_button=0x7f050004;
-        /**  Label above password EditText 
-         */
-        public static final int login_activity_password_label=0x7f050003;
-        /**  Label above username EditText 
-         */
-        public static final int login_activity_username_label=0x7f050002;
+        public static final int login_activity_loginfail=0x7f050011;
+        public static final int login_activity_mail_label=0x7f05000d;
+        public static final int login_activity_newaccount_text=0x7f050012;
+        public static final int login_activity_next_button=0x7f05000f;
+        public static final int login_activity_officephone_label=0x7f05000b;
+        public static final int login_activity_password_label=0x7f050005;
+        public static final int login_activity_port_label=0x7f050003;
+        public static final int login_activity_searchfilter_label=0x7f050007;
+        public static final int login_activity_username_label=0x7f050004;
         /** 
 		Message shown in progress dialog while app connects to the server
 	
          */
-        public static final int ui_activity_authenticating=0x7f050009;
+        public static final int ui_activity_authenticating=0x7f050013;
         /**  Title string for Login activity
          */
-        public static final int ui_activity_title=0x7f05000a;
+        public static final int ui_activity_title=0x7f050014;
     }
     public static final class xml {
         public static final int authenticator=0x7f040000;

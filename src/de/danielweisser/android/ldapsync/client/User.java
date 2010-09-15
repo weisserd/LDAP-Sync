@@ -4,14 +4,22 @@ import java.io.ByteArrayOutputStream;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.unboundid.ldap.sdk.ReadOnlyEntry;
 
 /**
- * Represents a sample LDAPSyncAdapter user
+ * Represents a LDAPSyncAdapter user
  */
 public class User {
+	public static final String FIRSTNAME = "FIRSTNAME";
+	public static final String LASTNAME = "LASTNAME";
+	public static final String TELEPHONE = "TELEPHONE";
+	public static final String MOBILE = "MOBILE";
+	public static final String MAIL = "MAIL";
+	public static final String PHOTO = "PHOTO";
+
 	private final String mFirstName;
 	private final String mLastName;
 	private final String mCellPhone;
@@ -57,19 +65,27 @@ public class User {
 	 * 
 	 * @param user
 	 *            The LDAPObject containing user data
+	 * @param mB
 	 * @return user The new instance of LDAP user created from the LDAP data.
 	 */
-	public static User valueOf(ReadOnlyEntry user) {
+	public static User valueOf(ReadOnlyEntry user, Bundle mB) {
 		try {
-			final String firstName = user.hasAttribute("givenname") ? user.getAttributeValue("givenname") : null;
-			final String lastName = user.hasAttribute("sn") ? user.getAttributeValue("sn") : null;
-			final String officePhone = user.hasAttribute("telephonenumber") ? user.getAttributeValue("telephonenumber")
+			final String firstName = user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB
+					.getString(FIRSTNAME)) : null;
+			final String lastName = user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB
+					.getString(LASTNAME)) : null;
+			if (firstName == null || lastName == null) {
+				return null;
+			}
+			final String officePhone = user.hasAttribute(mB.getString(TELEPHONE)) ? user.getAttributeValue(mB
+					.getString(TELEPHONE)) : null;
+			final String cellPhone = user.hasAttribute(mB.getString(MOBILE)) ? user.getAttributeValue(mB
+					.getString(MOBILE)) : null;
+			final String email = user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValue(mB.getString(MAIL))
 					: null;
-			final String cellPhone = user.hasAttribute("mobile") ? user.getAttributeValue("mobile") : null;
-			final String email = user.hasAttribute("mail") ? user.getAttributeValue("mail") : null;
 			byte[] image = null;
-			if (user.hasAttribute("thumbnailphoto")) {
-				byte[] array = user.getAttributeValueBytes("thumbnailphoto");
+			if (user.hasAttribute(mB.getString(PHOTO))) {
+				byte[] array = user.getAttributeValueBytes(mB.getString(PHOTO));
 
 				Bitmap myBitmap = BitmapFactory.decodeByteArray(array, 0, array.length);
 				if (myBitmap != null) {
@@ -84,5 +100,4 @@ public class User {
 		}
 		return null;
 	}
-
 }

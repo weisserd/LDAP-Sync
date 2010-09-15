@@ -1,0 +1,16 @@
+LDAP mapping
+http://www-archive.mozilla.org/projects/thunderbird/specs/ldap.html
+
+
+EXXETA:
+192.168.0.10:389
+exxeta-de\ads
+ads4711
+search: (objectClass=user)
+
+givenName
+sn
+telephonenumber
+mobile
+mail
+thumbnailphoto
