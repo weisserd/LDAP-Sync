@@ -2,7 +2,7 @@ LDAP mapping
 http://www-archive.mozilla.org/projects/thunderbird/specs/ldap.html
 
 
-EXXETA:
+EXXETA (ActiveDirectory):
 192.168.0.10:389
 exxeta-de\ads
 ads4711
@@ -14,3 +14,16 @@ telephonenumber
 mobile
 mail
 thumbnailphoto
+
+Localhost (Apache Directory):
+192.168.0.70:10389
+uid=admin,ou=system
+secret
+search: (objectClass=person)
+
+givenName
+sn
+telephonenumber
+mobile
+mail
+jpegphoto
