@@ -90,7 +90,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		android.os.Debug.waitForDebugger();
+//		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 	
 		// Get data from Intent
@@ -102,29 +102,14 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mRequestNewAccount = (mUsername == null);
 		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
 	
-		// TODO Remove test data
-		if (mUsername == null) {
-//			mUsername = "uid=admin,ou=system";
-//			mPassword = "secret";
-//			mAuthtokenType = "secret";
-//			mHost = "192.168.0.70";
-//			mPort = 10389;
-			mUsername = "exxeta-de\\ads";
-			mPassword = "ads4711";
-			mAuthtokenType = "ads4711";
-			mHost = "192.168.0.10";
-			mPort = 389;
-		}
-	
 		if (mRequestNewAccount) {
-			mSearchFilter = "(objectClass=user)";
+			mSearchFilter = "(objectClass=person)";
 			mFirstName = "givenName";
 			mLastName = "sn";
 			mOfficePhone = "telephonenumber";
 			mCellPhone = "mobile";
 			mEmail = "mail";
-			mImage = "thumbnailphoto";
-//			mImage = "jpegPhoto";
+			mImage = "jpegphoto";
 		}
 	
 		setContentView(R.layout.login_activity);
