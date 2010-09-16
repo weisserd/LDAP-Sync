@@ -87,7 +87,7 @@
 							android:layout_height="wrap_content" android:scrollHorizontally="true"
 							android:capitalize="none" android:autoText="false"
 							android:minWidth="300dip" android:id="@+id/searchfilter_edit"
-							android:inputType="number" />
+							android:inputType="text" />
 						<TextView android:textAppearance="?android:attr/textAppearanceMedium"
 							android:textStyle="bold" android:layout_width="wrap_content"
 							android:layout_height="wrap_content" android:text="@string/login_activity_ldap_mappings_label" />
