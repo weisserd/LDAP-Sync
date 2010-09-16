@@ -155,10 +155,17 @@ public class LDAPUtilities {
 			String searchFilter, Bundle mappingBundle, Date mLastUpdated) {
 		final ArrayList<User> friendList = new ArrayList<User>();
 		LDAPConnection connection = new LDAPConnection();
+
+		ArrayList<String> ldapAttributes = new ArrayList<String>();
+		String[] ldapArray = new String[mappingBundle.size()];
+		for (String key : mappingBundle.keySet()) {
+			ldapAttributes.add(mappingBundle.getString(key));
+		}
+		ldapArray = ldapAttributes.toArray(ldapArray);
 		try {
 			connection.connect(host, port);
 			connection.bind(username, authtoken);
-			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter);
+			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter, ldapArray);
 			Log.i(TAG, searchResult.getEntryCount() + " entries returned.");
 			for (SearchResultEntry e : searchResult.getSearchEntries()) {
 				User u = User.valueOf(e, mappingBundle);

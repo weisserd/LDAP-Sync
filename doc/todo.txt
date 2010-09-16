@@ -9,8 +9,15 @@ Ideas
 * Market
 * Real sync (no del + write)
 * Combine username@host:port for account name
-* Limit returned attributes for memory consumption!
 * Think about edit variables (Remove?)
 * SSL support
 * Layout of input fields! (Grouping, Menubar)
 * Include only relevant LDAP parts of the library => smaller size!
+
+Changelog
+
+0.9
+* Performance Improvements (Only relevant LDAP attributes are queried)
+
+0.8
+* Initial release
