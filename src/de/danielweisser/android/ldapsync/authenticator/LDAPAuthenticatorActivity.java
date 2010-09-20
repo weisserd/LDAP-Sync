@@ -14,13 +14,11 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-import android.widget.AdapterView.OnItemSelectedListener;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
@@ -70,7 +68,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private String mSearchFilter;
 	private EditText mSearchFilterEdit;
 	private String mBaseDN;
-	private Spinner mBaseDNSpinner;
+	private AutoCompleteTextView mBaseDNSpinner;
 	private int mPort;
 	private EditText mPortEdit;
 	
@@ -90,7 +88,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-//		android.os.Debug.waitForDebugger();
+		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 	
 		// Get data from Intent
@@ -121,19 +119,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mHostEdit = (EditText) findViewById(R.id.host_edit);
 		mPortEdit = (EditText) findViewById(R.id.port_edit);
 		mSearchFilterEdit = (EditText) findViewById(R.id.searchfilter_edit);
-		mBaseDNSpinner = (Spinner) findViewById(R.id.basedn_spinner);
-		mBaseDNSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-	
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				mBaseDN = parent.getItemAtPosition(position).toString();
-			}
-	
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				// Do nothing.
-			}
-		});
+		mBaseDNSpinner = (AutoCompleteTextView) findViewById(R.id.basedn_spinner);
 	
 		// Set values from the intent
 		mUsernameEdit.setText(mUsername);
@@ -288,6 +274,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	public void saveAccount(View view) {
 		mSearchFilter = mSearchFilterEdit.getText().toString();
+		mBaseDN = mBaseDNSpinner.getText().toString();
 		mFirstName = mFirstNameEdit.getText().toString();
 		mLastName = mLastNameEdit.getText().toString();
 		mOfficePhone = mOfficePhoneEdit.getText().toString();
