@@ -77,9 +77,11 @@
 						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
 							android:textStyle="bold" android:layout_width="wrap_content"
 							android:layout_height="wrap_content" android:text="@string/login_activity_basedn_label" />
-						<Spinner android:id="@+id/basedn_spinner"
+						<AutoCompleteTextView android:singleLine="true"
 							android:layout_width="fill_parent" android:layout_height="wrap_content"
-							android:prompt="@string/login_activity_basedn_label" />
+							android:scrollHorizontally="true" android:capitalize="none"
+							android:autoText="false" android:minWidth="300dip" android:id="@+id/basedn_spinner"
+							android:inputType="text" />
 						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
 							android:textStyle="bold" android:layout_width="wrap_content"
 							android:layout_height="wrap_content" android:text="@string/login_activity_searchfilter_label" />
@@ -90,7 +92,8 @@
 							android:inputType="text" />
 						<TextView android:textAppearance="?android:attr/textAppearanceMedium"
 							android:textStyle="bold" android:layout_width="wrap_content"
-							android:layout_height="wrap_content" android:text="@string/login_activity_ldap_mappings_label" />
+							android:layout_height="wrap_content"
+							android:text="@string/login_activity_ldap_mappings_label" />
 						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
 							android:textStyle="bold" android:layout_width="wrap_content"
 							android:layout_height="wrap_content" android:text="@string/login_activity_firstname_label" />
