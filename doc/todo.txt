@@ -13,11 +13,15 @@ Ideas
 * SSL support
 * Layout of input fields! (Grouping, Menubar)
 * Include only relevant LDAP parts of the library => smaller size!
+* Better error handling
+* Auto detection of attribute names
 
 Changelog
 
-0.9
+0.9 (not released yet)
 * Performance Improvements (Only relevant LDAP attributes are queried)
+* Editable Search Base (BaseDN), supported by AutoCompletion
+* Upated the LDAP library
 
 0.8
 * Initial release
