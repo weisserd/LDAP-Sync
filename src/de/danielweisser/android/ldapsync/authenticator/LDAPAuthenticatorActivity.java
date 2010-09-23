@@ -88,7 +88,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		android.os.Debug.waitForDebugger();
+//		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 	
 		// Get data from Intent
