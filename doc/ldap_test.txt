@@ -7,6 +7,7 @@ EXXETA (ActiveDirectory):
 exxeta-de\ads
 ads4711
 search: (objectClass=user)
+basedn: basedn: OU=Organisation,DC=exxeta-de,DC=local
 
 givenName
 sn
