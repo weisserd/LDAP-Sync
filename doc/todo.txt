@@ -3,10 +3,9 @@ TODOs
 ==
 
 * Tests
-
+* Market
 
 Ideas
-* Market
 * Real sync (no del + write)
 * Combine username@host:port for account name
 * Think about edit variables (Remove?)
@@ -18,7 +17,10 @@ Ideas
 
 Changelog
 
-0.9 (not released yet)
+1.0 (not released yet)
+* 
+
+0.9
 * Performance Improvements (Only relevant LDAP attributes are queried)
 * Editable Search Base (BaseDN), supported by AutoCompletion
 * Upated the LDAP library
