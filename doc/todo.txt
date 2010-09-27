@@ -6,13 +6,9 @@ TODOs
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
 
 Ideas
-* Anonymous access to LDAP server
-* Handle multiple mail addresses
-* Add location
 * Real sync (no del + write)
 * SSL support
 * Better error handling
-* Combine username@host:port for account name
 * Include only relevant LDAP parts of the library => smaller size!
 * Auto detection of attribute names based on server type (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor)
 
@@ -21,6 +17,9 @@ Changelog
 
 1.0 (not released yet)
 * Smaller UI improvements for the configuration dialog
+* Allow anonymous access to LDAP server
+* Use the server name for the account description
+* Support multiple e-mail addresses
 
 0.9
 * Performance Improvements (Only relevant LDAP attributes are queried)

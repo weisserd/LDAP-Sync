@@ -24,7 +24,7 @@ public class User {
 	private final String mLastName;
 	private final String mCellPhone;
 	private final String mOfficePhone;
-	private final String mEmail;
+	private final String[] mEmails;
 	private final byte[] mImage;
 
 	public String getFirstName() {
@@ -43,20 +43,20 @@ public class User {
 		return mOfficePhone;
 	}
 
-	public String getEmail() {
-		return mEmail;
+	public String[] getEmails() {
+		return mEmails;
 	}
 
 	public byte[] getImage() {
 		return mImage;
 	}
 
-	public User(String firstName, String lastName, String cellPhone, String officePhone, String email, byte[] image) {
+	public User(String firstName, String lastName, String cellPhone, String officePhone, String[] emails, byte[] image) {
 		mFirstName = firstName;
 		mLastName = lastName;
 		mCellPhone = cellPhone;
 		mOfficePhone = officePhone;
-		mEmail = email;
+		mEmails = emails;
 		mImage = image;
 	}
 
@@ -81,7 +81,7 @@ public class User {
 					.getString(TELEPHONE)) : null;
 			final String cellPhone = user.hasAttribute(mB.getString(MOBILE)) ? user.getAttributeValue(mB
 					.getString(MOBILE)) : null;
-			final String email = user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValue(mB.getString(MAIL))
+			final String[] emails = user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValues(mB.getString(MAIL))
 					: null;
 			byte[] image = null;
 			if (user.hasAttribute(mB.getString(PHOTO))) {
@@ -94,7 +94,7 @@ public class User {
 					image = baos.toByteArray();
 				}
 			}
-			return new User(firstName, lastName, cellPhone, officePhone, email, image);
+			return new User(firstName, lastName, cellPhone, officePhone, emails, image);
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}

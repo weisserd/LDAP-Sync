@@ -117,15 +117,15 @@ public class ContactManager {
 				rawContactInsertIndex).withValues(cv).build());
 
 		// E-Mail
-		if (!TextUtils.isEmpty(user.getEmail())) {
-//			String prefix = mail.substring(0, mail.indexOf("@"));
-			
-			cv.clear();
-			cv.put(Email.DATA, user.getEmail());
-			cv.put(Email.TYPE, Email.TYPE_WORK);
-			cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
-			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID,
-					rawContactInsertIndex).withValues(cv).build());
+		if (user.getEmails() != null) {
+			for (String mail : user.getEmails()) {
+				cv.clear();
+				cv.put(Email.DATA, mail);
+				cv.put(Email.TYPE, Email.TYPE_WORK);
+				cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
+				ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID,
+						rawContactInsertIndex).withValues(cv).build());
+			}
 		}
 
 		// Cellphone
