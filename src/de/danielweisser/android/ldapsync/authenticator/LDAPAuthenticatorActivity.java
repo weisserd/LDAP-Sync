@@ -11,13 +11,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
@@ -58,7 +56,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private String mAuthtoken;
 	private String mAuthtokenType;
 
-	private TextView mMessage;
 	private String mPassword;
 	private EditText mPasswordEdit;
 	private String mUsername;
@@ -71,7 +68,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private AutoCompleteTextView mBaseDNSpinner;
 	private int mPort;
 	private EditText mPortEdit;
-	
+
 	private String mFirstName;
 	private EditText mFirstNameEdit;
 	private String mLastName;
@@ -88,9 +85,10 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-//		android.os.Debug.waitForDebugger();
+		// TODO Remove debuggable
+		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
-	
+
 		// Get data from Intent
 		final Intent intent = getIntent();
 		mUsername = intent.getStringExtra(PARAM_USERNAME);
@@ -99,36 +97,36 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mPort = intent.getIntExtra(PARAM_PORT, 389);
 		mRequestNewAccount = (mUsername == null);
 		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
-	
+
 		if (mRequestNewAccount) {
 			mSearchFilter = "(objectClass=person)";
+			// mSearchFilter = "(objectClass=user)";
 			mFirstName = "givenName";
 			mLastName = "sn";
 			mOfficePhone = "telephonenumber";
 			mCellPhone = "mobile";
 			mEmail = "mail";
 			mImage = "jpegphoto";
+			// mImage = "thumbnailphoto";
 		}
-	
+
 		setContentView(R.layout.login_activity);
-	
+
 		// Find controls
-		mMessage = (TextView) findViewById(R.id.message);
 		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
 		mPasswordEdit = (EditText) findViewById(R.id.password_edit);
 		mHostEdit = (EditText) findViewById(R.id.host_edit);
 		mPortEdit = (EditText) findViewById(R.id.port_edit);
 		mSearchFilterEdit = (EditText) findViewById(R.id.searchfilter_edit);
 		mBaseDNSpinner = (AutoCompleteTextView) findViewById(R.id.basedn_spinner);
-	
+
 		// Set values from the intent
 		mUsernameEdit.setText(mUsername);
 		mPasswordEdit.setText(mAuthtokenType);
 		mHostEdit.setText(mHost);
 		mPortEdit.setText(Integer.toString(mPort));
 		mSearchFilterEdit.setText(mSearchFilter);
-		mMessage.setText(getMessage());
-		
+
 		// Set values for LDAP mapping
 		mFirstNameEdit = (EditText) findViewById(R.id.firstname_edit);
 		mFirstNameEdit.setText(mFirstName);
@@ -136,7 +134,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mLastNameEdit.setText(mLastName);
 		mOfficePhoneEdit = (EditText) findViewById(R.id.officephone_edit);
 		mOfficePhoneEdit.setText(mOfficePhone);
-		mCellPhoneEdit= (EditText) findViewById(R.id.cellphone_edit);
+		mCellPhoneEdit = (EditText) findViewById(R.id.cellphone_edit);
 		mCellPhoneEdit.setText(mCellPhone);
 		mEmailEdit = (EditText) findViewById(R.id.mail_edit);
 		mEmailEdit.setText(mEmail);
@@ -209,17 +207,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Returns the message to be displayed at the top of the login dialog box.
-	 */
-	private CharSequence getMessage() {
-		getString(R.string.label);
-		if (TextUtils.isEmpty(mUsername)) {
-			return getText(R.string.login_activity_newaccount_text);
-		}
-		return null;
-	}
-
-	/**
 	 * Handles onClick event on the Next button. Sends username/password to the
 	 * server for authentication.
 	 * 
@@ -235,14 +222,10 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mHost = mHostEdit.getText().toString();
 		mPort = Integer.parseInt(mPortEdit.getText().toString());
 
-		if (TextUtils.isEmpty(mUsername) || TextUtils.isEmpty(mPassword)) {
-			mMessage.setText(getMessage());
-		} else {
-			showProgress();
-			// Start authenticating...
-			mAuthThread = LDAPUtilities.attemptAuth(mHost, mPort, mUsername, mPassword, mHandler,
-					LDAPAuthenticatorActivity.this);
-		}
+		showProgress();
+		// Start authenticating...
+		mAuthThread = LDAPUtilities.attemptAuth(mHost, mPort, mUsername, mPassword, mHandler,
+				LDAPAuthenticatorActivity.this);
 	}
 
 	/**
@@ -261,7 +244,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			vf.showNext();
 		} else {
 			Log.e(TAG, "onAuthenticationResult: failed to authenticate");
-			mMessage.setText(getText(R.string.login_activity_loginfail));
 		}
 	}
 
