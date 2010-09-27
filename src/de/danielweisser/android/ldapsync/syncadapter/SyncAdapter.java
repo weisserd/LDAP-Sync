@@ -50,6 +50,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			authtoken = mAccountManager
 					.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true /* notifyAuthFailure */);
 			final String host = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
+			final String username = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_USERNAME);
 			final int port = Integer.parseInt(mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
 			final String searchFilter = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_SEARCHFILTER);
 			final String baseDN = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_BASEDN);
@@ -62,7 +63,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			mappingBundle.putString(User.MOBILE, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.MOBILE));
 			mappingBundle.putString(User.MAIL, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.MAIL));
 			mappingBundle.putString(User.PHOTO, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.PHOTO));
-			users = LDAPUtilities.fetchContacts(host, port, account.name, authtoken, baseDN, searchFilter, mappingBundle, mLastUpdated);
+			users = LDAPUtilities.fetchContacts(host, port, username, authtoken, baseDN, searchFilter, mappingBundle, mLastUpdated);
 			// update the last synced date.
 			mLastUpdated = new Date();
 			// update platform contacts.

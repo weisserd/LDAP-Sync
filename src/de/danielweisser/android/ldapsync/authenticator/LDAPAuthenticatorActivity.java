@@ -152,7 +152,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	protected void finishConfirmCredentials(boolean result) {
 		Log.i(TAG, "finishConfirmCredentials()");
-		final Account account = new Account(mUsername, Constants.ACCOUNT_TYPE);
+		final Account account = new Account(mHost, Constants.ACCOUNT_TYPE);
 		mAccountManager.setPassword(account, mPassword);
 		final Intent intent = new Intent();
 		intent.putExtra(AccountManager.KEY_BOOLEAN_RESULT, result);
@@ -172,7 +172,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	protected void finishLogin() {
 		Log.i(TAG, "finishLogin()");
-		final Account account = new Account(mUsername, Constants.ACCOUNT_TYPE);
+		final Account account = new Account(mHost, Constants.ACCOUNT_TYPE);
 
 		if (mRequestNewAccount) {
 			Bundle userData = new Bundle();
