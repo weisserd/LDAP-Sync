@@ -21,6 +21,7 @@ import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 import de.danielweisser.android.ldapsync.client.User;
+import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
  * Activity which displays login screen to the user.
@@ -191,6 +192,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
 			// Set contacts sync for this account.
 			ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
+			ContactManager.makeGroupVisible(account.name, getContentResolver());
 		} else {
 			mAccountManager.setPassword(account, mPassword);
 		}

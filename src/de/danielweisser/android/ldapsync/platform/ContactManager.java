@@ -44,7 +44,11 @@ public class ContactManager {
 	public static synchronized void syncContacts(Context context, String account, List<User> users) {
 		final ContentResolver resolver = context.getContentResolver();
 
-		makeGroupVisible(account, resolver);
+		/*
+		 * 1. Check contacts that must be deleted => Delete 2. Check contacts
+		 * that are new => Create 3. Check contacts that must be updated =>
+		 * Update
+		 */
 		Log.d(TAG, "Delete old contacts");
 		deleteContacts(resolver, account);
 
@@ -97,6 +101,7 @@ public class ContactManager {
 		ContentValues cv = new ContentValues();
 		cv.put(RawContacts.ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 		cv.put(RawContacts.ACCOUNT_NAME, accountName);
+		cv.put(RawContacts.SYNC1, user.getDN());
 		ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI).withValues(cv).build());
 
 		// Add display name
@@ -123,8 +128,8 @@ public class ContactManager {
 				cv.put(Email.DATA, mail);
 				cv.put(Email.TYPE, Email.TYPE_WORK);
 				cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
-				ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID,
-						rawContactInsertIndex).withValues(cv).build());
+				ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(
+						Data.RAW_CONTACT_ID, rawContactInsertIndex).withValues(cv).build());
 			}
 		}
 
@@ -167,7 +172,7 @@ public class ContactManager {
 		}
 	}
 
-	private static void makeGroupVisible(String accountName, ContentResolver resolver) {
+	public static void makeGroupVisible(String accountName, ContentResolver resolver) {
 		try {
 			ContentProviderClient client = resolver.acquireContentProviderClient(ContactsContract.AUTHORITY_URI);
 			ContentValues cv = new ContentValues();
