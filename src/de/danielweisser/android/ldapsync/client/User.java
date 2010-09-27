@@ -20,12 +20,17 @@ public class User {
 	public static final String MAIL = "MAIL";
 	public static final String PHOTO = "PHOTO";
 
+	private final String mDN;
 	private final String mFirstName;
 	private final String mLastName;
 	private final String mCellPhone;
 	private final String mOfficePhone;
 	private final String[] mEmails;
 	private final byte[] mImage;
+
+	public String getDN() {
+		return mDN;
+	}
 
 	public String getFirstName() {
 		return mFirstName;
@@ -51,7 +56,8 @@ public class User {
 		return mImage;
 	}
 
-	public User(String firstName, String lastName, String cellPhone, String officePhone, String[] emails, byte[] image) {
+	public User(String dn, String firstName, String lastName, String cellPhone, String officePhone, String[] emails, byte[] image) {
+		mDN = dn;
 		mFirstName = firstName;
 		mLastName = lastName;
 		mCellPhone = cellPhone;
@@ -70,6 +76,7 @@ public class User {
 	 */
 	public static User valueOf(ReadOnlyEntry user, Bundle mB) {
 		try {
+			final String dn = user.getDN();
 			final String firstName = user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB
 					.getString(FIRSTNAME)) : null;
 			final String lastName = user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB
@@ -94,7 +101,7 @@ public class User {
 					image = baos.toByteArray();
 				}
 			}
-			return new User(firstName, lastName, cellPhone, officePhone, emails, image);
+			return new User(dn, firstName, lastName, cellPhone, officePhone, emails, image);
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}
