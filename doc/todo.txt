@@ -2,16 +2,20 @@ TODOs
 
 ==
 
+Apart from app
 * Tests
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
 
 Ideas
+* Fix for the sync provider on the Motorola Droid X (Thanks to Andrew LaPierre) => Linking of profiles!
 * Real sync (no del + write)
 * SSL support
 * Better error handling
 * Include only relevant LDAP parts of the library => smaller size!
 * Auto detection of attribute names based on server type (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor)
 
+Documentation
+* http://www.screaming-penguin.com/node/7742
 
 Changelog
 
