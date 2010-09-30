@@ -2,7 +2,6 @@ package de.danielweisser.android.ldapsync.platform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -46,8 +45,7 @@ public class ContactManager {
 	public static synchronized void syncContacts(Context context, String accountName, List<User> contacts) {
 		final ContentResolver resolver = context.getContentResolver();
 
-		// Check in a first step which contacts must be deleted, updated and
-		// created
+		// Get all phone contacts for the LDAP account
 		HashMap<String, Integer> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
 		logMap(contactsOnPhone);
 
@@ -68,9 +66,12 @@ public class ContactManager {
 		logMap(contactsOnPhone);
 		for (Entry<String, Integer> contact : contactsOnPhone.entrySet()) {
 			Log.d(TAG, "Delete contact: " + contact.getKey() + " (" + contact.getValue() + ")");
-			// TODO Delete contact
-			// deleteContacts(resolver, account);
+			deleteContact(resolver, contact.getValue());
 		}
+	}
+
+	private static void deleteContact(ContentResolver resolver, Integer rawContactId) {
+		resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
 	}
 
 	private static void logMap(HashMap<String, Integer> contactsOnPhone) {
@@ -95,37 +96,6 @@ public class ContactManager {
 			contactsOnPhone.put(c.getString(c.getColumnIndex(RawContacts.SYNC1)), c.getInt(c.getColumnIndex(Data.CONTACT_ID)));
 		}
 		return contactsOnPhone;
-	}
-
-	private static void deleteContacts(ContentResolver resolver, String accountName) {
-		String[] projection = new String[] { Data.CONTACT_ID, RawContacts.ACCOUNT_NAME };
-		final String selection = RawContacts.ACCOUNT_NAME + "=?";
-
-		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { accountName }, null);
-		HashSet<String> contactIds = new HashSet<String>();
-		try {
-			while (c.moveToNext()) {
-				contactIds.add(c.getString(c.getColumnIndex(Data.CONTACT_ID)));
-			}
-			Log.d(TAG, "Ids: " + contactIds);
-		} finally {
-			c.close();
-		}
-
-		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-		for (String rawContactId : contactIds) {
-			Log.v(TAG, "Deleting contact: " + rawContactId);
-			ops.add(ContentProviderOperation.newDelete(RawContacts.CONTENT_URI).withSelection(RawContacts._ID + "=?", new String[] { rawContactId }).build());
-			ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data.RAW_CONTACT_ID + "=?", new String[] { rawContactId }).build());
-		}
-
-		try {
-			resolver.applyBatch(ContactsContract.AUTHORITY, ops);
-		} catch (RemoteException e) {
-			Log.e(TAG, e.getMessage(), e);
-		} catch (OperationApplicationException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
 	}
 
 	private static void addContact(Context context, String accountName, User user, ContentResolver resolver) {
