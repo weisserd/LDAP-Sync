@@ -87,7 +87,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		// TODO Remove debuggable
-		android.os.Debug.waitForDebugger();
+//		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 
 		// Get data from Intent
@@ -177,6 +177,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
 		if (mRequestNewAccount) {
 			Bundle userData = new Bundle();
+			userData.putString(PARAM_USERNAME, mUsername);
 			userData.putString(PARAM_PORT, mPort + "");
 			userData.putString(PARAM_HOST, mHost);
 			userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
