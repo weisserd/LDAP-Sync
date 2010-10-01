@@ -22,7 +22,7 @@ import de.danielweisser.android.ldapsync.client.User;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
- * SyncAdapter implementation for syncing LDAP contacts to the platform
+ * SyncAdapter implementation for synchronizing LDAP contacts to the platform
  * ContactOperations provider.
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
