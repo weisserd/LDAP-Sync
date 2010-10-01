@@ -47,14 +47,13 @@ public class ContactManager {
 
 		// Get all phone contacts for the LDAP account
 		HashMap<String, Integer> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
-		logMap(contactsOnPhone);
 
 		// Update and create new contacts
 		for (final User user : contacts) {
 			if (contactsOnPhone.containsKey(user.getDN())) {
 				Integer contactId = contactsOnPhone.get(user.getDN());
 				Log.d(TAG, "Update contact: " + user.getFirstName() + " " + user.getLastName() + " (" + contactId + ")");
-				// TODO Update
+				updateContact(resolver, contactId, user);
 				contactsOnPhone.remove(user.getDN());
 			} else {
 				Log.d(TAG, "Add contact: " + user.getFirstName() + " " + user.getLastName());
@@ -63,11 +62,14 @@ public class ContactManager {
 		}
 
 		// Delete contacts
-		logMap(contactsOnPhone);
 		for (Entry<String, Integer> contact : contactsOnPhone.entrySet()) {
 			Log.d(TAG, "Delete contact: " + contact.getKey() + " (" + contact.getValue() + ")");
 			deleteContact(resolver, contact.getValue());
 		}
+	}
+
+	private static void updateContact(ContentResolver resolver, Integer contactId, User user) {
+		// TODO Update
 	}
 
 	private static void deleteContact(ContentResolver resolver, Integer rawContactId) {
