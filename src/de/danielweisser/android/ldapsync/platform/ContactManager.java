@@ -1,6 +1,7 @@
 package de.danielweisser.android.ldapsync.platform;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -20,6 +21,7 @@ import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract.Settings;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +30,11 @@ import de.danielweisser.android.ldapsync.client.User;
 
 /**
  * Class for managing contacts sync related operations
+ * 
+ * TODO Check memory issues:
+ * https://android-client.forge.funambol.org/servlets/tracking/remcurreport/true/template/ViewIssue.vm/id/SC141/nbrresults/18
+ * https://android-client.forge.funambol.org/servlets/tracking/remcurreport/true/template/ViewIssue.vm/id/SC150/nbrresults/18
+ * https://android-client.forge.funambol.org/servlets/tracking/remcurreport/true/template/ViewIssue.vm/id/SC156/nbrresults/18
  */
 public class ContactManager {
 	private static final String TAG = "ContactManager";
@@ -49,38 +56,178 @@ public class ContactManager {
 		HashMap<String, Integer> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
 
 		// Update and create new contacts
-		for (final User user : contacts) {
-			if (contactsOnPhone.containsKey(user.getDN())) {
-				Integer contactId = contactsOnPhone.get(user.getDN());
-				Log.d(TAG, "Update contact: " + user.getFirstName() + " " + user.getLastName() + " (" + contactId + ")");
-				updateContact(resolver, contactId, user);
-				contactsOnPhone.remove(user.getDN());
+		for (final User contact : contacts) {
+			if (contactsOnPhone.containsKey(contact.getDN())) {
+				Integer contactId = contactsOnPhone.get(contact.getDN());
+				Log.d(TAG, "Update contact: " + contact.getDN());
+				updateContact(resolver, contactId, contact);
+				contactsOnPhone.remove(contact.getDN());
 			} else {
-				Log.d(TAG, "Add contact: " + user.getFirstName() + " " + user.getLastName());
-				addContact(context, accountName, user, resolver);
+				Log.d(TAG, "Add contact: " + contact.getFirstName() + " " + contact.getLastName());
+				addContact(resolver, accountName, contact);
 			}
 		}
 
 		// Delete contacts
 		for (Entry<String, Integer> contact : contactsOnPhone.entrySet()) {
-			Log.d(TAG, "Delete contact: " + contact.getKey() + " (" + contact.getValue() + ")");
+			Log.d(TAG, "Delete contact: " + contact.getKey());
 			deleteContact(resolver, contact.getValue());
 		}
 	}
 
-	private static void updateContact(ContentResolver resolver, Integer contactId, User user) {
-		// TODO Update
+	private static void updateContact(ContentResolver resolver, Integer contactId, User contact) {
+		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+		checkAndUpdateName(resolver, contactId, contact, ops);
+		updateWorkMobileNumber(resolver, contactId, contact, ops);
+		updateWorkNumber(resolver, contactId, contact, ops);
+//		updatePicture(resolver, contactId, contact, ops);
+		updateWorkEmails(resolver, contactId, contact, ops);
+
+		try {
+			resolver.applyBatch(ContactsContract.AUTHORITY, ops);
+		} catch (RemoteException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} catch (OperationApplicationException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+	}
+
+	private static void updateWorkEmails(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+		// Get all e-mail addresses for the contact
+		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Email.TYPE + "=?";
+		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Email.DATA };
+		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection,
+				new String[] { contactId + "", Email.CONTENT_ITEM_TYPE, Email.TYPE_WORK + "" }, null);
+		HashMap<String, Integer> mailsForContact = new HashMap<String, Integer>();
+
+		while (c.moveToNext()) {
+			mailsForContact.put(c.getString(c.getColumnIndex(Email.DATA)), c.getInt(c.getColumnIndex(Data._ID)));
+		}
+
+		// Insert mail addresses
+		if (contact.getEmails() != null) {
+			for (final String mail : contact.getEmails()) {
+				if (mailsForContact.containsKey(mail)) {
+					mailsForContact.remove(mail);
+				} else {
+					Log.d(TAG, "Add mail: " + mail);
+					ContentValues cv = new ContentValues();
+					cv.put(Email.DATA, mail);
+					cv.put(Email.TYPE, Email.TYPE_WORK);
+					cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
+					ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
+				}
+			}
+		}
+
+		// Delete mail addresses
+		for (Entry<String, Integer> mail : mailsForContact.entrySet()) {
+			Log.d(TAG, "Delete mail: " + mail.getKey());
+			ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { mail.getValue() + "" }).build());
+		}
+	}
+
+	private static void updatePicture(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=?";
+		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Photo.PHOTO };
+		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", Photo.CONTENT_ITEM_TYPE }, null);
+
+		if (c.moveToFirst()) {
+			String id = c.getString(c.getColumnIndex(Data._ID));
+			if (contact.getImage() == null) {
+				Log.d(TAG, "Delete photo");
+				ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).build());
+			} else if (!Arrays.equals(c.getBlob(c.getColumnIndex(Photo.PHOTO)), contact.getImage())) {
+				// Update
+				Log.d(TAG, "Update photo");
+				ops.add(ContentProviderOperation.newUpdate(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).withValue(Photo.PHOTO,
+						contact.getImage()).build());
+			}
+		} else if (contact.getImage() != null) {
+			// Add
+			Log.d(TAG, "Add photo");
+			ContentValues cv = new ContentValues();
+			cv.put(Photo.PHOTO, contact.getImage());
+			cv.put(Photo.MIMETYPE, Photo.CONTENT_ITEM_TYPE);
+			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
+		}
+	}
+
+	private static void updateWorkMobileNumber(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Phone.TYPE + "=?";
+		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Phone.NUMBER };
+		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", Phone.CONTENT_ITEM_TYPE,
+				Phone.TYPE_WORK_MOBILE + "" }, null);
+
+		if (c.moveToFirst()) {
+			String id = c.getString(c.getColumnIndex(Data._ID));
+			if (TextUtils.isEmpty(contact.getCellPhone())) {
+				Log.d(TAG, "Delete work mobile");
+				ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).build());
+			} else if (!contact.getCellPhone().equals(c.getString(c.getColumnIndex(Phone.NUMBER)))) {
+				// Update
+				Log.d(TAG, "Update work mobile");
+				ops.add(ContentProviderOperation.newUpdate(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).withValue(Phone.NUMBER,
+						contact.getCellPhone()).build());
+			}
+		} else if (!TextUtils.isEmpty(contact.getCellPhone())) {
+			// Add
+			Log.d(TAG, "Add work mobile");
+			ContentValues cv = new ContentValues();
+			cv.put(Phone.NUMBER, contact.getCellPhone());
+			cv.put(Phone.TYPE, Phone.TYPE_WORK_MOBILE);
+			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
+			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
+		}
+	}
+
+	private static void updateWorkNumber(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Phone.TYPE + "=?";
+		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Phone.NUMBER };
+		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection,
+				new String[] { contactId + "", Phone.CONTENT_ITEM_TYPE, Phone.TYPE_WORK + "" }, null);
+
+		if (c.moveToFirst()) {
+			String id = c.getString(c.getColumnIndex(Data._ID));
+			if (TextUtils.isEmpty(contact.getOfficePhone())) {
+				Log.d(TAG, "Delete work");
+				ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).build());
+			} else if (!contact.getOfficePhone().equals(c.getString(c.getColumnIndex(Phone.NUMBER)))) {
+				// Update
+				Log.d(TAG, "Update work");
+				ops.add(ContentProviderOperation.newUpdate(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).withValue(Phone.NUMBER,
+						contact.getOfficePhone()).build());
+			}
+		} else if (!TextUtils.isEmpty(contact.getOfficePhone())) {
+			// Add
+			Log.d(TAG, "Add work");
+			ContentValues cv = new ContentValues();
+			cv.put(Phone.NUMBER, contact.getOfficePhone());
+			cv.put(Phone.TYPE, Phone.TYPE_WORK);
+			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
+			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
+		}
+	}
+
+	private static void checkAndUpdateName(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=?";
+		final String[] projection = new String[] { Data._ID, Data.DATA2, Data.DATA3 };
+		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", StructuredName.CONTENT_ITEM_TYPE }, null);
+
+		if (c.moveToFirst()) {
+			if (!(contact.getFirstName().equals(c.getString(c.getColumnIndex(StructuredName.DATA2))) && contact.getLastName().equals(
+					c.getString(c.getColumnIndex(StructuredName.DATA3))))) {
+				String id = c.getString(c.getColumnIndex(Data._ID));
+				// Update name
+				ops.add(ContentProviderOperation.newUpdate(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { id }).withValue(
+						StructuredName.DATA2, contact.getFirstName()).withValue(StructuredName.DATA3, contact.getLastName()).build());
+			}
+		}
 	}
 
 	private static void deleteContact(ContentResolver resolver, Integer rawContactId) {
 		resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
-	}
-
-	private static void logMap(HashMap<String, Integer> contactsOnPhone) {
-		Log.d(TAG, "Contacts in Map: " + contactsOnPhone.size());
-		for (Entry<String, Integer> entry : contactsOnPhone.entrySet()) {
-			Log.d(TAG, "  ID: " + entry.getValue() + ", DN: " + entry.getKey());
-		}
 	}
 
 	/**
@@ -100,7 +247,7 @@ public class ContactManager {
 		return contactsOnPhone;
 	}
 
-	private static void addContact(Context context, String accountName, User user, ContentResolver resolver) {
+	private static void addContact(ContentResolver resolver, String accountName, User contact) {
 		// Put the data in the contacts provider
 		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 		int rawContactInsertIndex = ops.size();
@@ -108,19 +255,19 @@ public class ContactManager {
 		ContentValues cv = new ContentValues();
 		cv.put(RawContacts.ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 		cv.put(RawContacts.ACCOUNT_NAME, accountName);
-		cv.put(RawContacts.SYNC1, user.getDN());
+		cv.put(RawContacts.SYNC1, contact.getDN());
 		ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI).withValues(cv).build());
 
 		// Store name of the account
 		cv.clear();
-		cv.put(StructuredName.GIVEN_NAME, user.getFirstName());
-		cv.put(StructuredName.FAMILY_NAME, user.getLastName());
+		cv.put(StructuredName.GIVEN_NAME, contact.getFirstName());
+		cv.put(StructuredName.FAMILY_NAME, contact.getLastName());
 		cv.put(StructuredName.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE);
 		ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex).withValues(cv).build());
 
 		// E-Mail
-		if (user.getEmails() != null) {
-			for (String mail : user.getEmails()) {
+		if (contact.getEmails() != null) {
+			for (String mail : contact.getEmails()) {
 				cv.clear();
 				cv.put(Email.DATA, mail);
 				cv.put(Email.TYPE, Email.TYPE_WORK);
@@ -131,9 +278,9 @@ public class ContactManager {
 		}
 
 		// Cellphone
-		if (!TextUtils.isEmpty(user.getCellPhone())) {
+		if (!TextUtils.isEmpty(contact.getCellPhone())) {
 			cv.clear();
-			cv.put(Phone.NUMBER, user.getCellPhone());
+			cv.put(Phone.NUMBER, contact.getCellPhone());
 			cv.put(Phone.TYPE, Phone.TYPE_WORK_MOBILE);
 			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
 			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex).withValues(cv)
@@ -141,9 +288,9 @@ public class ContactManager {
 		}
 
 		// Office phone
-		if (!TextUtils.isEmpty(user.getOfficePhone())) {
+		if (!TextUtils.isEmpty(contact.getOfficePhone())) {
 			cv.clear();
-			cv.put(Phone.NUMBER, user.getOfficePhone());
+			cv.put(Phone.NUMBER, contact.getOfficePhone());
 			cv.put(Phone.TYPE, Phone.TYPE_WORK);
 			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
 			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex).withValues(cv)
@@ -151,9 +298,9 @@ public class ContactManager {
 		}
 
 		// Image
-		if (user.getImage() != null) {
+		if (contact.getImage() != null) {
 			cv.clear();
-			cv.put(ContactsContract.CommonDataKinds.Photo.PHOTO, user.getImage());
+			cv.put(ContactsContract.CommonDataKinds.Photo.PHOTO, contact.getImage());
 			cv.put(ContactsContract.CommonDataKinds.Photo.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE);
 			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex).withValues(cv)
 					.build());
