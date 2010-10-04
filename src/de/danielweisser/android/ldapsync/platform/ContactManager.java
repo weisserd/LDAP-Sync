@@ -30,11 +30,6 @@ import de.danielweisser.android.ldapsync.client.User;
 
 /**
  * Class for managing contacts sync related operations
- * 
- * TODO Check memory issues:
- * https://android-client.forge.funambol.org/servlets/tracking/remcurreport/true/template/ViewIssue.vm/id/SC141/nbrresults/18
- * https://android-client.forge.funambol.org/servlets/tracking/remcurreport/true/template/ViewIssue.vm/id/SC150/nbrresults/18
- * https://android-client.forge.funambol.org/servlets/tracking/remcurreport/true/template/ViewIssue.vm/id/SC156/nbrresults/18
  */
 public class ContactManager {
 	private static final String TAG = "ContactManager";
@@ -81,7 +76,7 @@ public class ContactManager {
 		checkAndUpdateName(resolver, contactId, contact, ops);
 		updateWorkMobileNumber(resolver, contactId, contact, ops);
 		updateWorkNumber(resolver, contactId, contact, ops);
-//		updatePicture(resolver, contactId, contact, ops);
+		updatePicture(resolver, contactId, contact, ops);
 		updateWorkEmails(resolver, contactId, contact, ops);
 
 		try {
@@ -104,6 +99,7 @@ public class ContactManager {
 		while (c.moveToNext()) {
 			mailsForContact.put(c.getString(c.getColumnIndex(Email.DATA)), c.getInt(c.getColumnIndex(Data._ID)));
 		}
+		c.close();
 
 		// Insert mail addresses
 		if (contact.getEmails() != null) {
@@ -152,6 +148,7 @@ public class ContactManager {
 			cv.put(Photo.MIMETYPE, Photo.CONTENT_ITEM_TYPE);
 			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
 		}
+		c.close();
 	}
 
 	private static void updateWorkMobileNumber(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
@@ -180,6 +177,7 @@ public class ContactManager {
 			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
 			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
 		}
+		c.close();
 	}
 
 	private static void updateWorkNumber(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
@@ -208,6 +206,7 @@ public class ContactManager {
 			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
 			ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
 		}
+		c.close();
 	}
 
 	private static void checkAndUpdateName(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
@@ -224,6 +223,7 @@ public class ContactManager {
 						StructuredName.DATA2, contact.getFirstName()).withValue(StructuredName.DATA3, contact.getLastName()).build());
 			}
 		}
+		c.close();
 	}
 
 	private static void deleteContact(ContentResolver resolver, Integer rawContactId) {
@@ -244,6 +244,7 @@ public class ContactManager {
 		while (c.moveToNext()) {
 			contactsOnPhone.put(c.getString(c.getColumnIndex(RawContacts.SYNC1)), c.getInt(c.getColumnIndex(Data.CONTACT_ID)));
 		}
+		c.close();
 		return contactsOnPhone;
 	}
 
