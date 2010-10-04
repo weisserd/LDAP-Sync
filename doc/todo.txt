@@ -7,10 +7,11 @@ Apart from app
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
 
 Ideas
-* Fix for the sync provider on the Motorola Droid X (Thanks to Andrew LaPierre) => Linking of profiles!
-* Real sync (no del + write)
 * SSL support
 * Better error handling
+* Check memory consumption for updates!
+* Additional fields (location)
+* I18n (German)
 * Include only relevant LDAP parts of the library => smaller size!
 * Auto detection of attribute names based on server type (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor)
 
@@ -19,7 +20,10 @@ Documentation
 
 Changelog
 
-1.0 (not released yet)
+1.0
+* Performance improvements
+* Real synchronization (No delete all contacts and re-add them any more)
+* Fix for the sync provider on the Motorola Droid X (Thanks to Andrew) => Linking of profiles works now
 * Smaller UI improvements for the configuration dialog
 * Allow anonymous access to LDAP server
 * Use the server name for the account description
