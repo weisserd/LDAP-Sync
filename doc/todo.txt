@@ -9,7 +9,6 @@ Apart from app
 Ideas
 * SSL support
 * Better error handling
-* Check memory consumption for updates!
 * Additional fields (location)
 * I18n (German)
 * Include only relevant LDAP parts of the library => smaller size!
@@ -19,6 +18,9 @@ Documentation
 * http://www.screaming-penguin.com/node/7742
 
 Changelog
+1.0.1
+* Fixed a possible memory leak
+* Correct update (sync) of pictures
 
 1.0
 * Performance improvements
