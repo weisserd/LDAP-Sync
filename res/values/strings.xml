@@ -7,6 +7,8 @@
 	<skip />
 	<string name="login_activity_host_label">Host</string>
 	<string name="login_activity_port_label">Port</string>
+	<string name="login_activity_encryption_label">Encryption</string>
+	<string name="login_activity_encryption_prompt">Choose your encryption method</string>
 	<string name="login_activity_username_label">Bind DN (Leave empty for anonymous)</string>
 	<string name="login_activity_password_label">Bind Password (Leave empty for anonymous)</string>
 	<string name="login_activity_basedn_label">BaseDN</string>

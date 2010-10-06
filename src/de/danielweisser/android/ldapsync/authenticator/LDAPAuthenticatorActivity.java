@@ -16,11 +16,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.ViewFlipper;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
-import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 import de.danielweisser.android.ldapsync.client.Contact;
+import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
@@ -82,6 +83,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mEmailEdit;
 	private String mImage;
 	private EditText mImageEdit;
+	private String mEncryption;
+	private Spinner mEncryptionSpinner;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -112,6 +115,12 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		}
 
 		setContentView(R.layout.login_activity);
+		
+		mEncryptionSpinner = (Spinner) findViewById(R.id.encryption_spinner);
+	    ArrayAdapter adapter = ArrayAdapter.createFromResource(
+	            this, R.array.encryption_methods, android.R.layout.simple_spinner_item);
+	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    mEncryptionSpinner.setAdapter(adapter);
 
 		// Find controls
 		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
