@@ -20,7 +20,7 @@ import android.widget.ViewFlipper;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
-import de.danielweisser.android.ldapsync.client.User;
+import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
@@ -183,12 +183,12 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
 			userData.putString(PARAM_BASEDN, mBaseDN);
 			// Mappings for LDAP data
-			userData.putString(PARAM_MAPPING + User.FIRSTNAME, mFirstName);
-			userData.putString(PARAM_MAPPING + User.LASTNAME, mLastName);
-			userData.putString(PARAM_MAPPING + User.TELEPHONE, mOfficePhone);
-			userData.putString(PARAM_MAPPING + User.MOBILE, mCellPhone);
-			userData.putString(PARAM_MAPPING + User.MAIL, mEmail);
-			userData.putString(PARAM_MAPPING + User.PHOTO, mImage);
+			userData.putString(PARAM_MAPPING + Contact.FIRSTNAME, mFirstName);
+			userData.putString(PARAM_MAPPING + Contact.LASTNAME, mLastName);
+			userData.putString(PARAM_MAPPING + Contact.TELEPHONE, mOfficePhone);
+			userData.putString(PARAM_MAPPING + Contact.MOBILE, mCellPhone);
+			userData.putString(PARAM_MAPPING + Contact.MAIL, mEmail);
+			userData.putString(PARAM_MAPPING + Contact.PHOTO, mImage);
 			mAccountManager.addAccountExplicitly(account, mPassword, userData);
 
 			// Set contacts sync for this account.

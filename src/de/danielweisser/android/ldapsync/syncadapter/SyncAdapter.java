@@ -18,7 +18,7 @@ import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
-import de.danielweisser.android.ldapsync.client.User;
+import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
@@ -43,7 +43,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
 			SyncResult syncResult) {
 		Log.d(TAG, "Start the sync.");
-		List<User> users = new ArrayList<User>();
+		List<Contact> users = new ArrayList<Contact>();
 		String authtoken = null;
 		try {
 			// use the account manager to request the credentials
@@ -57,12 +57,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			
 			// LDAP name mappings
 			final Bundle mappingBundle = new Bundle();
-			mappingBundle.putString(User.FIRSTNAME, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.FIRSTNAME));
-			mappingBundle.putString(User.LASTNAME, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.LASTNAME));
-			mappingBundle.putString(User.TELEPHONE, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.TELEPHONE));
-			mappingBundle.putString(User.MOBILE, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.MOBILE));
-			mappingBundle.putString(User.MAIL, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.MAIL));
-			mappingBundle.putString(User.PHOTO, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + User.PHOTO));
+			mappingBundle.putString(Contact.FIRSTNAME, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.FIRSTNAME));
+			mappingBundle.putString(Contact.LASTNAME, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.LASTNAME));
+			mappingBundle.putString(Contact.TELEPHONE, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.TELEPHONE));
+			mappingBundle.putString(Contact.MOBILE, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.MOBILE));
+			mappingBundle.putString(Contact.MAIL, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.MAIL));
+			mappingBundle.putString(Contact.PHOTO, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.PHOTO));
 			users = LDAPUtilities.fetchContacts(host, port, username, authtoken, baseDN, searchFilter, mappingBundle, mLastUpdated);
 			// update the last synced date.
 			mLastUpdated = new Date();

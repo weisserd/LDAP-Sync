@@ -26,7 +26,7 @@ import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.text.TextUtils;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
-import de.danielweisser.android.ldapsync.client.User;
+import de.danielweisser.android.ldapsync.client.Contact;
 
 /**
  * Class for managing contacts sync related operations
@@ -44,14 +44,14 @@ public class ContactManager {
 	 * @param contacts
 	 *            The list of retrieved LDAP contacts
 	 */
-	public static synchronized void syncContacts(Context context, String accountName, List<User> contacts) {
+	public static synchronized void syncContacts(Context context, String accountName, List<Contact> contacts) {
 		final ContentResolver resolver = context.getContentResolver();
 
 		// Get all phone contacts for the LDAP account
 		HashMap<String, Integer> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
 
 		// Update and create new contacts
-		for (final User contact : contacts) {
+		for (final Contact contact : contacts) {
 			if (contactsOnPhone.containsKey(contact.getDN())) {
 				Integer contactId = contactsOnPhone.get(contact.getDN());
 				Log.d(TAG, "Update contact: " + contact.getDN());
@@ -70,7 +70,7 @@ public class ContactManager {
 		}
 	}
 
-	private static void updateContact(ContentResolver resolver, Integer contactId, User contact) {
+	private static void updateContact(ContentResolver resolver, Integer contactId, Contact contact) {
 		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
 		checkAndUpdateName(resolver, contactId, contact, ops);
@@ -88,7 +88,7 @@ public class ContactManager {
 		}
 	}
 
-	private static void updateWorkEmails(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+	private static void updateWorkEmails(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
 		// Get all e-mail addresses for the contact
 		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Email.TYPE + "=?";
 		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Email.DATA };
@@ -124,7 +124,7 @@ public class ContactManager {
 		}
 	}
 
-	private static void updatePicture(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+	private static void updatePicture(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
 		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=?";
 		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Photo.PHOTO };
 		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", Photo.CONTENT_ITEM_TYPE }, null);
@@ -151,7 +151,7 @@ public class ContactManager {
 		c.close();
 	}
 
-	private static void updateWorkMobileNumber(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+	private static void updateWorkMobileNumber(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
 		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Phone.TYPE + "=?";
 		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Phone.NUMBER };
 		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", Phone.CONTENT_ITEM_TYPE,
@@ -180,7 +180,7 @@ public class ContactManager {
 		c.close();
 	}
 
-	private static void updateWorkNumber(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+	private static void updateWorkNumber(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
 		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Phone.TYPE + "=?";
 		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Phone.NUMBER };
 		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection,
@@ -209,7 +209,7 @@ public class ContactManager {
 		c.close();
 	}
 
-	private static void checkAndUpdateName(ContentResolver resolver, Integer contactId, User contact, ArrayList<ContentProviderOperation> ops) {
+	private static void checkAndUpdateName(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
 		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=?";
 		final String[] projection = new String[] { Data._ID, Data.DATA2, Data.DATA3 };
 		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", StructuredName.CONTENT_ITEM_TYPE }, null);
@@ -248,7 +248,7 @@ public class ContactManager {
 		return contactsOnPhone;
 	}
 
-	private static void addContact(ContentResolver resolver, String accountName, User contact) {
+	private static void addContact(ContentResolver resolver, String accountName, Contact contact) {
 		// Put the data in the contacts provider
 		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 		int rawContactInsertIndex = ops.size();

@@ -151,9 +151,9 @@ public class LDAPUtilities {
 		return LDAPUtilities.performOnBackgroundThread(runnable);
 	}
 
-	public static List<User> fetchContacts(String host, int port, String username, String authtoken, String baseDN,
+	public static List<Contact> fetchContacts(String host, int port, String username, String authtoken, String baseDN,
 			String searchFilter, Bundle mappingBundle, Date mLastUpdated) {
-		final ArrayList<User> friendList = new ArrayList<User>();
+		final ArrayList<Contact> friendList = new ArrayList<Contact>();
 		LDAPConnection connection = new LDAPConnection();
 
 		ArrayList<String> ldapAttributes = new ArrayList<String>();
@@ -168,7 +168,7 @@ public class LDAPUtilities {
 			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter, ldapArray);
 			Log.i(TAG, searchResult.getEntryCount() + " entries returned.");
 			for (SearchResultEntry e : searchResult.getSearchEntries()) {
-				User u = User.valueOf(e, mappingBundle);
+				Contact u = Contact.valueOf(e, mappingBundle);
 				if (u != null) {
 					friendList.add(u);
 				}

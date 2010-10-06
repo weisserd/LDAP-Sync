@@ -10,9 +10,9 @@ import android.util.Log;
 import com.unboundid.ldap.sdk.ReadOnlyEntry;
 
 /**
- * Represents a LDAPSyncAdapter user
+ * Represents a LDAPSyncAdapter contact
  */
-public class User {
+public class Contact {
 	public static final String FIRSTNAME = "FIRSTNAME";
 	public static final String LASTNAME = "LASTNAME";
 	public static final String TELEPHONE = "TELEPHONE";
@@ -56,7 +56,7 @@ public class User {
 		return mImage;
 	}
 
-	public User(String dn, String firstName, String lastName, String cellPhone, String officePhone, String[] emails, byte[] image) {
+	public Contact(String dn, String firstName, String lastName, String cellPhone, String officePhone, String[] emails, byte[] image) {
 		mDN = dn;
 		mFirstName = firstName;
 		mLastName = lastName;
@@ -74,7 +74,7 @@ public class User {
 	 * @param mB
 	 * @return user The new instance of LDAP user created from the LDAP data.
 	 */
-	public static User valueOf(ReadOnlyEntry user, Bundle mB) {
+	public static Contact valueOf(ReadOnlyEntry user, Bundle mB) {
 		try {
 			final String dn = user.getDN();
 			final String firstName = user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB
@@ -101,7 +101,7 @@ public class User {
 					image = baos.toByteArray();
 				}
 			}
-			return new User(dn, firstName, lastName, cellPhone, officePhone, emails, image);
+			return new Contact(dn, firstName, lastName, cellPhone, officePhone, emails, image);
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}
