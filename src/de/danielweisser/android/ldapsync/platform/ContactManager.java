@@ -45,6 +45,8 @@ public class ContactManager {
 	 *            The list of retrieved LDAP contacts
 	 */
 	public static synchronized void syncContacts(Context context, String accountName, List<Contact> contacts) {
+
+		// TODO Check when LDAP connection fails!!!!
 		final ContentResolver resolver = context.getContentResolver();
 
 		// Get all phone contacts for the LDAP account

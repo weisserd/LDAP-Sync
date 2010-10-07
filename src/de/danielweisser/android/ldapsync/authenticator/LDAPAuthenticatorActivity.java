@@ -34,6 +34,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public static final String PARAM_PASSWORD = "password";
 	public static final String PARAM_HOST = "host";
 	public static final String PARAM_PORT = "port";
+	public static final String PARAM_ENCRYPTION = "encryption";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 	public static final String PARAM_SEARCHFILTER = "searchFilter";
 	public static final String PARAM_BASEDN = "baseDN";
@@ -64,6 +65,11 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mUsernameEdit;
 	private String mHost;
 	private EditText mHostEdit;
+	/**
+	 * 0 - no encryption, 1 - SSL, 2 - StartTLS
+	 */
+	private int mEncryption;
+	private Spinner mEncryptionSpinner;
 	private String mSearchFilter;
 	private EditText mSearchFilterEdit;
 	private String mBaseDN;
@@ -83,8 +89,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mEmailEdit;
 	private String mImage;
 	private EditText mImageEdit;
-	private String mEncryption;
-	private Spinner mEncryptionSpinner;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -99,6 +103,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mPassword = intent.getStringExtra(PARAM_PASSWORD);
 		mHost = intent.getStringExtra(PARAM_HOST);
 		mPort = intent.getIntExtra(PARAM_PORT, 389);
+		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
 		mRequestNewAccount = (mUsername == null);
 		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
 
@@ -121,6 +126,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	            this, R.array.encryption_methods, android.R.layout.simple_spinner_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    mEncryptionSpinner.setAdapter(adapter);
+	    // TODO Set encryption value
 
 		// Find controls
 		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
@@ -189,6 +195,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			userData.putString(PARAM_USERNAME, mUsername);
 			userData.putString(PARAM_PORT, mPort + "");
 			userData.putString(PARAM_HOST, mHost);
+			userData.putString(PARAM_ENCRYPTION, mEncryption + "");
 			userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
 			userData.putString(PARAM_BASEDN, mBaseDN);
 			// Mappings for LDAP data
@@ -208,7 +215,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		}
 		final Intent intent = new Intent();
 		mAuthtoken = mPassword;
-		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mUsername);
+		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mUsername); // TODO Check if this is username!
 		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 		if (mAuthtokenType != null && mAuthtokenType.equals(Constants.AUTHTOKEN_TYPE)) {
 			intent.putExtra(AccountManager.KEY_AUTHTOKEN, mAuthtoken);
@@ -233,6 +240,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mPassword = mPasswordEdit.getText().toString();
 		mHost = mHostEdit.getText().toString();
 		mPort = Integer.parseInt(mPortEdit.getText().toString());
+		// TODO Get encryption value!
 
 		showProgress();
 		// Start authenticating...
@@ -275,6 +283,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mCellPhone = mCellPhoneEdit.getText().toString();
 		mEmail = mEmailEdit.getText().toString();
 		mImage = mImageEdit.getText().toString();
+		// TODO Get encryption value
 
 		if (!mConfirmCredentials) {
 			finishLogin();
