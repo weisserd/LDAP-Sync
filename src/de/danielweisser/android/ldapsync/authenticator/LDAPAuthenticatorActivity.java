@@ -13,11 +13,13 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
+import android.widget.AdapterView.OnItemSelectedListener;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.Contact;
@@ -46,8 +48,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	protected boolean mRequestNewAccount = true;
 
 	/**
-	 * If set we are just checking that the user knows their credentials, this
-	 * doesn't cause the user's password to be changed on the device.
+	 * If set we are just checking that the user knows their credentials, this doesn't cause the user's password to be changed on the device.
 	 */
 	private Boolean mConfirmCredentials = false;
 
@@ -65,9 +66,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mUsernameEdit;
 	private String mHost;
 	private EditText mHostEdit;
-	/**
-	 * 0 - no encryption, 1 - SSL, 2 - StartTLS
-	 */
 	private int mEncryption;
 	private Spinner mEncryptionSpinner;
 	private String mSearchFilter;
@@ -94,39 +92,30 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		// TODO Remove debuggable
-//		android.os.Debug.waitForDebugger();
+		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 
-		// Get data from Intent
-		final Intent intent = getIntent();
-		mUsername = intent.getStringExtra(PARAM_USERNAME);
-		mPassword = intent.getStringExtra(PARAM_PASSWORD);
-		mHost = intent.getStringExtra(PARAM_HOST);
-		mPort = intent.getIntExtra(PARAM_PORT, 389);
-		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
-		mRequestNewAccount = (mUsername == null);
-		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
-
-		if (mRequestNewAccount) {
-			mSearchFilter = "(objectClass=person)";
-			// mSearchFilter = "(objectClass=user)";
-			mFirstName = "givenName";
-			mLastName = "sn";
-			mOfficePhone = "telephonenumber";
-			mCellPhone = "mobile";
-			mEmail = "mail";
-			mImage = "jpegphoto";
-			// mImage = "thumbnailphoto";
-		}
+		getDataFromIntent();
+		setLDAPMappings();
 
 		setContentView(R.layout.login_activity);
-		
+
 		mEncryptionSpinner = (Spinner) findViewById(R.id.encryption_spinner);
-	    ArrayAdapter adapter = ArrayAdapter.createFromResource(
-	            this, R.array.encryption_methods, android.R.layout.simple_spinner_item);
-	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    mEncryptionSpinner.setAdapter(adapter);
-	    // TODO Set encryption value
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.encryption_methods, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mEncryptionSpinner.setAdapter(adapter);
+		mEncryptionSpinner.setSelection(mEncryption);
+		mEncryptionSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				mEncryption = position;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// Do nothing.
+			}
+		});
 
 		// Find controls
 		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
@@ -159,9 +148,39 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Called when response is received from the server for confirm credentials
-	 * request. See onAuthenticationResult(). Sets the
-	 * AccountAuthenticatorResult which is sent back to the caller.
+	 * Sets the default LDAP mapping attributes
+	 */
+	private void setLDAPMappings() {
+		if (mRequestNewAccount) {
+			mSearchFilter = "(objectClass=person)";
+			// mSearchFilter = "(objectClass=user)";
+			mFirstName = "givenName";
+			mLastName = "sn";
+			mOfficePhone = "telephonenumber";
+			mCellPhone = "mobile";
+			mEmail = "mail";
+			mImage = "jpegphoto";
+			// mImage = "thumbnailphoto";
+		}
+	}
+
+	/**
+	 * Obtains data from an intent that was provided for the activity. If no intent was provided some default values are set.
+	 */
+	private void getDataFromIntent() {
+		final Intent intent = getIntent();
+		mUsername = intent.getStringExtra(PARAM_USERNAME);
+		mPassword = intent.getStringExtra(PARAM_PASSWORD);
+		mHost = intent.getStringExtra(PARAM_HOST);
+		mPort = intent.getIntExtra(PARAM_PORT, 389);
+		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
+		mRequestNewAccount = (mUsername == null);
+		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
+	}
+
+	/**
+	 * Called when response is received from the server for confirm credentials request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which
+	 * is sent back to the caller.
 	 * 
 	 * @param the
 	 *            confirmCredentials result.
@@ -178,10 +197,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Called when response is received from the server for authentication
-	 * request. See onAuthenticationResult(). Sets the
-	 * AccountAuthenticatorResult which is sent back to the caller. Also sets
-	 * the authToken in AccountManager for this account.
+	 * Called when response is received from the server for authentication request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which is
+	 * sent back to the caller. Also sets the authToken in AccountManager for this account.
 	 * 
 	 * @param the
 	 *            confirmCredentials result.
@@ -226,8 +243,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Handles onClick event on the Next button. Sends username/password to the
-	 * server for authentication.
+	 * Handles onClick event on the Next button. Sends username/password to the server for authentication.
 	 * 
 	 * @param view
 	 *            The Next button for which this method is invoked
@@ -240,24 +256,20 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mPassword = mPasswordEdit.getText().toString();
 		mHost = mHostEdit.getText().toString();
 		mPort = Integer.parseInt(mPortEdit.getText().toString());
-		// TODO Get encryption value!
 
 		showProgress();
 		// Start authenticating...
-		mAuthThread = LDAPUtilities.attemptAuth(mHost, mPort, mUsername, mPassword, mHandler,
-				LDAPAuthenticatorActivity.this);
+		mAuthThread = LDAPUtilities.attemptAuth(mHost, mPort, mUsername, mPassword, mHandler, LDAPAuthenticatorActivity.this);
 	}
 
 	/**
-	 * Call back for the authentication process. When the authentication attempt
-	 * is finished this method is called.
+	 * Call back for the authentication process. When the authentication attempt is finished this method is called.
 	 */
 	public void onAuthenticationResult(String[] baseDNs, boolean result) {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
 		hideProgress();
 		if (result) {
-			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
-					android.R.layout.simple_spinner_item, baseDNs);
+			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			mBaseDNSpinner.setAdapter(adapter);
 			ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
@@ -268,8 +280,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Handles onClick event on the Done button. Saves the account with the
-	 * acount manager.
+	 * Handles onClick event on the Done button. Saves the account with the acount manager.
 	 * 
 	 * @param view
 	 *            The Done button for which this method is invoked
@@ -283,7 +294,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mCellPhone = mCellPhoneEdit.getText().toString();
 		mEmail = mEmailEdit.getText().toString();
 		mImage = mImageEdit.getText().toString();
-		// TODO Get encryption value
 
 		if (!mConfirmCredentials) {
 			finishLogin();
