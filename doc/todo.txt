@@ -10,22 +10,21 @@ Apart from app
 * Check with OpenLDAP server
 
 Ideas
-* SSL support => AddServer.java
-* Better error handling => Notification system
-* Additional fields (location) => http://www.zytrax.com/books/ldap/ape/
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
-* I18n (German, French)
-* Include only relevant LDAP parts of the library => smaller size!
+* Additional fields (location) => http://www.zytrax.com/books/ldap/ape/
 * View facets (private contacts, ...) ==> Display options!
-* Set syncing interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
+* Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
 * Multiple accounts on one server!
 * Change server settings after save! => Settings
-* Check number of contacts
+* I18n (German) => Externalize all strings
+* Include only relevant LDAP parts of the library => smaller size!
 
 
 Changelog
 1.1
 * SSL/StartTLS support
+* Improved error handling during the sync process with the usage of the Android notification system 
+* Better error descriptions for the account creation process
 
 1.0.1
 * Fixed a possible memory leak
