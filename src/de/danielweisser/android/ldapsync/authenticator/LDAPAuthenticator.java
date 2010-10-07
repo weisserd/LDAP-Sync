@@ -150,6 +150,6 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	 * Validates user's password on the server
 	 */
 	private boolean onlineConfirmPassword(String host, int port, String username, String password) {
-		return LDAPUtilities.authenticate(host, port, username, password, null/* Handler */, null/* Context */);
+		return LDAPUtilities.authenticate(host, port, 0, username, password, null, null);
 	}
 }
