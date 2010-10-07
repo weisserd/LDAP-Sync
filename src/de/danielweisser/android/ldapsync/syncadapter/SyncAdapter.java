@@ -14,6 +14,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
@@ -53,7 +54,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final String host = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
 			final String username = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_USERNAME);
 			final int port = Integer.parseInt(mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
-			final int encryption = Integer.parseInt(mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_ENCRYPTION));
+			final String sEnc = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_ENCRYPTION);
+			int encryption = 0;
+			if (!TextUtils.isEmpty(sEnc)) {
+				encryption = Integer.parseInt(sEnc);
+			}
 			LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, encryption, username, authtoken);
 			
 			final String searchFilter = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_SEARCHFILTER);
