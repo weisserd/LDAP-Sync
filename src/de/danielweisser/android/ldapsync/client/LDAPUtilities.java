@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -16,7 +20,9 @@ import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.SearchScope;
 
+import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
+import de.danielweisser.android.ldapsync.syncadapter.SyncService;
 
 /**
  * Provides utility methods for communicating with the server.
@@ -78,9 +84,12 @@ public class LDAPUtilities {
 	 *            A bundle of all LDAP attributes that are queried
 	 * @param mLastUpdated
 	 *            Date of the last update
+	 * @param context
+	 *            The caller Activity's context
 	 * @return List of all LDAP contacts
 	 */
-	public static List<Contact> fetchContacts(LDAPServerInstance ldapServer, String baseDN, String searchFilter, Bundle mappingBundle, Date mLastUpdated) {
+	public static List<Contact> fetchContacts(final LDAPServerInstance ldapServer, final String baseDN, final String searchFilter, final Bundle mappingBundle,
+			final Date mLastUpdated, final Context context) {
 		final ArrayList<Contact> friendList = new ArrayList<Contact>();
 		LDAPConnection connection = null;
 		try {
@@ -95,7 +104,16 @@ public class LDAPUtilities {
 			}
 		} catch (LDAPException e) {
 			Log.v(TAG, "LDAPException on fetching contacts", e);
-			
+			NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+			int icon = R.drawable.icon;
+			CharSequence tickerText = "Error on LDAP Sync";
+			long when = System.currentTimeMillis();
+			Notification notification = new Notification(icon, tickerText, when);
+			Intent notificationIntent = new Intent(context, SyncService.class);
+			PendingIntent contentIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+			notification.setLatestEventInfo(context, tickerText, e.getMessage(), contentIntent);
+			notification.flags = Notification.FLAG_AUTO_CANCEL;
+			mNotificationManager.notify(0, notification);
 			return null;
 		} finally {
 			if (connection != null) {
