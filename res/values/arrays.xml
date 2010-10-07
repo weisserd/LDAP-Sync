@@ -3,6 +3,6 @@
 	<string-array name="encryption_methods">
         <item>No encryption</item>
         <item>SSL</item>
-        <item>TLS</item>
+        <item>StartTLS</item>
     </string-array>
 </resources>
