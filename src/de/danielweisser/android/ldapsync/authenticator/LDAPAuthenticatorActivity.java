@@ -3,6 +3,7 @@ package de.danielweisser.android.ldapsync.authenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -32,6 +33,8 @@ import de.danielweisser.android.ldapsync.platform.ContactManager;
  */
 public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
+	private static final int ERROR_DIALOG = 1;
+	private static final int PROGRESS_DIALOG = 0;
 	public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
 	public static final String PARAM_USERNAME = "username";
 	public static final String PARAM_PASSWORD = "password";
@@ -93,7 +96,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		// TODO Remove debuggable
-		android.os.Debug.waitForDebugger();
+//		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 
 		getDataFromIntent();
@@ -259,7 +262,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mPort = Integer.parseInt(mPortEdit.getText().toString());
 		LDAPServerInstance ldapServer = new LDAPServerInstance(mHost, mPort, mEncryption, mUsername, mPassword);
 
-		showProgress();
+		showDialog(PROGRESS_DIALOG);
 		// Start authenticating...
 		mAuthThread = LDAPUtilities.attemptAuth(ldapServer, mHandler, LDAPAuthenticatorActivity.this);
 	}
@@ -267,9 +270,9 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	/**
 	 * Call back for the authentication process. When the authentication attempt is finished this method is called.
 	 */
-	public void onAuthenticationResult(String[] baseDNs, boolean result) {
+	public void onAuthenticationResult(String[] baseDNs, boolean result, String message) {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
-		hideProgress();
+		dismissDialog(PROGRESS_DIALOG);
 		if (result) {
 			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -277,6 +280,9 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
 			vf.showNext();
 		} else {
+			Bundle b = new Bundle(1);
+			b.putString("message", message);
+			showDialog(ERROR_DIALOG, b);
 			Log.e(TAG, "onAuthenticationResult: failed to authenticate");
 		}
 	}
@@ -305,34 +311,40 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	@Override
-	protected Dialog onCreateDialog(int id) {
-		final ProgressDialog dialog = new ProgressDialog(this);
-		dialog.setMessage(getText(R.string.ui_activity_authenticating));
-		dialog.setIndeterminate(true);
-		dialog.setCancelable(true);
-		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-				Log.i(TAG, "dialog cancel has been invoked");
-				if (mAuthThread != null) {
-					mAuthThread.interrupt();
-					finish();
+	protected Dialog onCreateDialog(int id, Bundle b) {
+		if (id == PROGRESS_DIALOG) {
+			final ProgressDialog dialog = new ProgressDialog(this);
+			dialog.setMessage(getText(R.string.ui_activity_authenticating));
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(true);
+			dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				public void onCancel(DialogInterface dialog) {
+					Log.i(TAG, "dialog cancel has been invoked");
+					if (mAuthThread != null) {
+						mAuthThread.interrupt();
+						finish();
+					}
 				}
-			}
-		});
-		return dialog;
+			});
+			return dialog;
+		} else if (id == ERROR_DIALOG) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Connection error").setMessage("Could not connect to the server:\n" + b.getString("message")).setCancelable(false);
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alert = builder.create();
+			return alert;
+		}
+		return null;
 	}
 
-	/**
-	 * Shows the progress UI for a lengthy operation.
-	 */
-	protected void showProgress() {
-		showDialog(0);
-	}
-
-	/**
-	 * Hides the progress UI for a lengthy operation.
-	 */
-	protected void hideProgress() {
-		dismissDialog(0);
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog, Bundle b) {
+		if (id == ERROR_DIALOG) {
+			((AlertDialog) dialog).setMessage("Could not connect to the server:\n" + b.getString("message"));
+		}
 	}
 }

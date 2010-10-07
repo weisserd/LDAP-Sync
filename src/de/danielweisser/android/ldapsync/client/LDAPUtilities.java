@@ -53,20 +53,24 @@ public class LDAPUtilities {
 	/**
 	 * Sends the authentication response from server back to the caller main UI thread through its handler.
 	 * 
+	 * @param baseDNs
+	 *            An array containing the baseDNs of the LDAP server
 	 * @param result
 	 *            The boolean holding authentication result
 	 * @param handler
 	 *            The main UI thread's handler instance.
 	 * @param context
 	 *            The caller Activity's context.
+	 * @param message
+	 *            A message if applicable
 	 */
-	private static void sendResult(final String[] baseDNs, final Boolean result, final Handler handler, final Context context) {
+	private static void sendResult(final String[] baseDNs, final Boolean result, final Handler handler, final Context context, final String message) {
 		if (handler == null || context == null) {
 			return;
 		}
 		handler.post(new Runnable() {
 			public void run() {
-				((LDAPAuthenticatorActivity) context).onAuthenticationResult(baseDNs, result);
+				((LDAPAuthenticatorActivity) context).onAuthenticationResult(baseDNs, result, message);
 			}
 		});
 	}
@@ -175,17 +179,18 @@ public class LDAPUtilities {
 				RootDSE s = connection.getRootDSE();
 				String[] baseDNs = s.getNamingContextDNs();
 
-				sendResult(baseDNs, true, handler, context);
+				sendResult(baseDNs, true, handler, context, null);
 				return true;
 			}
 		} catch (LDAPException e) {
 			Log.e(TAG, "Error authenticating", e);
+			sendResult(null, false, handler, context, e.getMessage());
+			return false;
 		} finally {
 			if (connection != null) {
 				connection.close();
 			}
 		}
-		sendResult(null, false, handler, context);
 		return false;
 	}
 }
