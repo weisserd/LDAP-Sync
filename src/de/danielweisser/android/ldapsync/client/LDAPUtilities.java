@@ -95,6 +95,7 @@ public class LDAPUtilities {
 			}
 		} catch (LDAPException e) {
 			Log.v(TAG, "LDAPException on fetching contacts", e);
+			
 			return null;
 		} finally {
 			if (connection != null) {

@@ -12,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
@@ -43,10 +44,10 @@ public class ContactManager {
 	 *            The account name
 	 * @param contacts
 	 *            The list of retrieved LDAP contacts
+	 * @param syncResult
+	 *            SyncResults for tracking the sync
 	 */
-	public static synchronized void syncContacts(Context context, String accountName, List<Contact> contacts) {
-
-		// TODO Check when LDAP connection fails!!!!
+	public static synchronized void syncContacts(Context context, String accountName, List<Contact> contacts, SyncResult syncResult) {
 		final ContentResolver resolver = context.getContentResolver();
 
 		// Get all phone contacts for the LDAP account
@@ -58,10 +59,12 @@ public class ContactManager {
 				Integer contactId = contactsOnPhone.get(contact.getDN());
 				Log.d(TAG, "Update contact: " + contact.getDN());
 				updateContact(resolver, contactId, contact);
+				syncResult.stats.numUpdates++;
 				contactsOnPhone.remove(contact.getDN());
 			} else {
 				Log.d(TAG, "Add contact: " + contact.getFirstName() + " " + contact.getLastName());
 				addContact(resolver, accountName, contact);
+				syncResult.stats.numInserts++;
 			}
 		}
 
@@ -69,6 +72,7 @@ public class ContactManager {
 		for (Entry<String, Integer> contact : contactsOnPhone.entrySet()) {
 			Log.d(TAG, "Delete contact: " + contact.getKey());
 			deleteContact(resolver, contact.getValue());
+			syncResult.stats.numDeletes++;
 		}
 	}
 

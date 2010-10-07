@@ -76,7 +76,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			mLastUpdated = new Date();
 			// update platform contacts.
 			Log.d(TAG, "Calling contactManager's sync contacts");
-			ContactManager.syncContacts(mContext, account.name, users);
+			ContactManager.syncContacts(mContext, account.name, users, syncResult);
 		} catch (final AuthenticatorException e) {
 			syncResult.stats.numParseExceptions++;
 			Log.e(TAG, "AuthenticatorException", e);
