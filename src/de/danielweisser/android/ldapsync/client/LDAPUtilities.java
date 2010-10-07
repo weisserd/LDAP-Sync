@@ -115,7 +115,7 @@ public class LDAPUtilities {
 			Notification notification = new Notification(icon, tickerText, when);
 			Intent notificationIntent = new Intent(context, SyncService.class);
 			PendingIntent contentIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-			notification.setLatestEventInfo(context, tickerText, e.getMessage(), contentIntent);
+			notification.setLatestEventInfo(context, tickerText, e.getMessage().replace("\\n", " "), contentIntent);
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
 			mNotificationManager.notify(0, notification);
 			return null;
