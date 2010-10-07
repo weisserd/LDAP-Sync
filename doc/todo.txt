@@ -3,21 +3,30 @@ TODOs
 ==
 
 Apart from app
+* Promo badge
 * Tests
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
+* Document code!
+* Check with OpenLDAP server
 
 Ideas
-* SSL support
-* Better error handling
-* Additional fields (location)
-* I18n (German)
+* SSL support => AddServer.java
+* Better error handling => Notification system
+* Additional fields (location) => http://www.zytrax.com/books/ldap/ape/
+* Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
+* I18n (German, French)
 * Include only relevant LDAP parts of the library => smaller size!
-* Auto detection of attribute names based on server type (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor)
+* View facets (private contacts, ...) ==> Display options!
+* Set syncing interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
+* Multiple accounts on one server!
+* Change server settings after save! => Settings
+* Check number of contacts
 
-Documentation
-* http://www.screaming-penguin.com/node/7742
 
 Changelog
+1.1
+* SSL/StartTLS support
+
 1.0.1
 * Fixed a possible memory leak
 * Correct update (sync) of pictures
