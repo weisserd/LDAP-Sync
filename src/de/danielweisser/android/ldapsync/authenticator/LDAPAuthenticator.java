@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
+import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 
 /**
@@ -50,8 +51,12 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 			final String password = options.getString(AccountManager.KEY_PASSWORD);
 			final AccountManager am = AccountManager.get(mContext);
 			final String host = am.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
+			final String username = am.getUserData(account, LDAPAuthenticatorActivity.PARAM_USERNAME);
 			final int port = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
-			final boolean verified = onlineConfirmPassword(host, port, account.name, password);
+			final int encryption = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_ENCRYPTION));
+			LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, encryption, username, password);
+			
+			final boolean verified = onlineConfirmPassword(ldapServer);
 			final Bundle result = new Bundle();
 			result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, verified);
 			return result;
@@ -90,8 +95,10 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		final String host = am.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
 		final String username = am.getUserData(account, LDAPAuthenticatorActivity.PARAM_USERNAME);
 		final int port = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
+		final int encryption = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_ENCRYPTION));
+		LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, encryption, username, password);
 		if (password != null) {
-			final boolean verified = onlineConfirmPassword(host, port, username, password);
+			final boolean verified = onlineConfirmPassword(ldapServer);
 			if (verified) {
 				final Bundle result = new Bundle();
 				result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
@@ -149,7 +156,7 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	/**
 	 * Validates user's password on the server
 	 */
-	private boolean onlineConfirmPassword(String host, int port, String username, String password) {
-		return LDAPUtilities.authenticate(host, port, 0, username, password, null, null);
+	private boolean onlineConfirmPassword(LDAPServerInstance ldapServer) {
+		return LDAPUtilities.authenticate(ldapServer, null, null);
 	}
 }

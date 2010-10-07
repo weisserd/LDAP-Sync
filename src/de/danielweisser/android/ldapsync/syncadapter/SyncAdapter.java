@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
+import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
@@ -52,6 +53,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final String host = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
 			final String username = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_USERNAME);
 			final int port = Integer.parseInt(mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
+			final int encryption = Integer.parseInt(mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_ENCRYPTION));
+			LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, encryption, username, authtoken);
+			
 			final String searchFilter = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_SEARCHFILTER);
 			final String baseDN = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_BASEDN);
 			
@@ -63,7 +67,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			mappingBundle.putString(Contact.MOBILE, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.MOBILE));
 			mappingBundle.putString(Contact.MAIL, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.MAIL));
 			mappingBundle.putString(Contact.PHOTO, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.PHOTO));
-			users = LDAPUtilities.fetchContacts(host, port, username, authtoken, baseDN, searchFilter, mappingBundle, mLastUpdated);
+			users = LDAPUtilities.fetchContacts(ldapServer, baseDN, searchFilter, mappingBundle, mLastUpdated);
+			if (users == null) {
+				syncResult.stats.numIoExceptions++;
+				return;
+			}
 			// update the last synced date.
 			mLastUpdated = new Date();
 			// update platform contacts.

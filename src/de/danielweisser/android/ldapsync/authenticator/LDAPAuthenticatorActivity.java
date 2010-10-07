@@ -23,6 +23,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.Contact;
+import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
@@ -232,7 +233,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		}
 		final Intent intent = new Intent();
 		mAuthtoken = mPassword;
-		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mUsername); // TODO Check if this is username!
+		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, account.name);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 		if (mAuthtokenType != null && mAuthtokenType.equals(Constants.AUTHTOKEN_TYPE)) {
 			intent.putExtra(AccountManager.KEY_AUTHTOKEN, mAuthtoken);
@@ -256,10 +257,11 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mPassword = mPasswordEdit.getText().toString();
 		mHost = mHostEdit.getText().toString();
 		mPort = Integer.parseInt(mPortEdit.getText().toString());
+		LDAPServerInstance ldapServer = new LDAPServerInstance(mHost, mPort, mEncryption, mUsername, mPassword);
 
 		showProgress();
 		// Start authenticating...
-		mAuthThread = LDAPUtilities.attemptAuth(mHost, mPort, mUsername, mPassword, mHandler, LDAPAuthenticatorActivity.this);
+		mAuthThread = LDAPUtilities.attemptAuth(ldapServer, mHandler, LDAPAuthenticatorActivity.this);
 	}
 
 	/**

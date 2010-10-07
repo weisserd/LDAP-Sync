@@ -4,37 +4,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.net.SocketFactory;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import com.unboundid.ldap.sdk.BindResult;
-import com.unboundid.ldap.sdk.ExtendedResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import com.unboundid.ldap.sdk.LDAPException;
-import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.RootDSE;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.SearchScope;
-import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
-import com.unboundid.util.ssl.SSLUtil;
-import com.unboundid.util.ssl.TrustAllTrustManager;
 
 import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
 
 /**
  * Provides utility methods for communicating with the server.
- * 
- * TODO Enable secure connect 
- * 
- * TODO Cleanup code! => getConnection! => ServerInstance.getConnection
- * 
- * TODO Encapsulate LDAP ServerInstance
  */
 public class LDAPUtilities {
 	private static final String TAG = "LDAPUtilities";
@@ -60,90 +45,6 @@ public class LDAPUtilities {
 	}
 
 	/**
-	 * Connects to the LDAP server, authenticates the provided username and password.
-	 * 
-	 * @param host
-	 *            The hostname of the LDAP server
-	 * @param port
-	 *            The port number of the LDAP server
-	 * @param encryption
-	 *            The encryption method (0 - no encryption, 1 - SSL, 2 - StartTLS)
-	 * @param username
-	 *            The user's username
-	 * @param password
-	 *            The user's password
-	 * @param handler
-	 *            The handler instance from the calling UI thread.
-	 * @param context
-	 *            The context of the calling Activity.
-	 * 
-	 * @return boolean The boolean result indicating whether the user was successfully authenticated.
-	 */
-	public static boolean authenticate(String host, int port, int encryption, String username, String password, Handler handler, final Context context) {
-		SocketFactory socketFactory = null;
-		if (encryption == 1) {
-			final SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
-			try {
-				socketFactory = sslUtil.createSSLSocketFactory();
-			} catch (Exception e) {
-				Log.v(TAG, "Exception on secure connect", e);
-			}
-		}
-		LDAPConnection connection = null;
-		final LDAPConnectionOptions options = new LDAPConnectionOptions();
-		options.setAutoReconnect(true);
-		options.setConnectTimeoutMillis(30000);
-		options.setFollowReferrals(false);
-		options.setMaxMessageSize(1024 * 1024);
-
-		try {
-			connection = new LDAPConnection(socketFactory, options, host, port);
-			
-			if (encryption == 2) {
-				final SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
-				try {
-					final ExtendedResult r = connection.processExtendedOperation(new StartTLSExtendedRequest(sslUtil.createSSLContext()));
-					if (r.getResultCode() != ResultCode.SUCCESS) {
-						throw new LDAPException(r);
-					}
-				} catch (LDAPException le) {
-					Log.e(TAG, "getConnection", le);
-					connection.close();
-				} catch (Exception e) {
-					Log.e(TAG, "getConnection", e);
-					connection.close();
-				}
-			}
-
-			BindResult bindResult = connection.bind(username, password);
-
-			ResultCode resultCode = bindResult.getResultCode();
-			Log.i(TAG, "Bind result: " + resultCode);
-
-			if (resultCode.isConnectionUsable()) {
-				Log.v(TAG, "Successful authentication");
-				RootDSE s = connection.getRootDSE();
-				String[] baseDNs = s.getNamingContextDNs();
-
-				sendResult(baseDNs, true, handler, context);
-				return true;
-			} else {
-				Log.v(TAG, "Error authenticating");
-				sendResult(null, false, handler, context);
-				return false;
-			}
-		} catch (LDAPException e) {
-			Log.v(TAG, "LDAPException when getting authtoken", e);
-			sendResult(null, false, handler, context);
-			return false;
-		} finally {
-			if (connection != null) {
-				connection.close();
-			}
-		}
-	}
-
-	/**
 	 * Sends the authentication response from server back to the caller main UI thread through its handler.
 	 * 
 	 * @param result
@@ -165,39 +66,25 @@ public class LDAPUtilities {
 	}
 
 	/**
-	 * Attempts to authenticate the user credentials on the server.
+	 * Obtains a list of all contacts from the LDAP Server.
 	 * 
-	 * @param username
-	 *            The user's username
-	 * @param mPort
-	 * @param password
-	 *            The user's password to be authenticated
-	 * @param mPassword
-	 * @param handler
-	 *            The main UI thread's handler instance.
-	 * @param context
-	 *            The caller Activity's context
-	 * @return Thread The thread on which the network mOperations are executed.
+	 * @param ldapServer
+	 *            The LDAP server data
+	 * @param baseDN
+	 *            The baseDN that will be used for the search
+	 * @param searchFilter
+	 *            The search filter
+	 * @param mappingBundle
+	 *            A bundle of all LDAP attributes that are queried
+	 * @param mLastUpdated
+	 *            Date of the last update
+	 * @return List of all LDAP contacts
 	 */
-	public static Thread attemptAuth(final String host, final int port, final String username, final String password, final Handler handler,
-			final Context context) {
-		final Runnable runnable = new Runnable() {
-			public void run() {
-				authenticate(host, port, 0, username, password, handler, context);
-			}
-		};
-		// run on background thread.
-		return LDAPUtilities.performOnBackgroundThread(runnable);
-	}
-
-	public static List<Contact> fetchContacts(String host, int port, String username, String authtoken, String baseDN, String searchFilter,
-			Bundle mappingBundle, Date mLastUpdated) {
+	public static List<Contact> fetchContacts(LDAPServerInstance ldapServer, String baseDN, String searchFilter, Bundle mappingBundle, Date mLastUpdated) {
 		final ArrayList<Contact> friendList = new ArrayList<Contact>();
 		LDAPConnection connection = null;
 		try {
-			connection = new LDAPConnection(host, port);
-			// connection.connect(host, port);
-			connection.bind(username, authtoken);
+			connection = ldapServer.getConnection();
 			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter, getUsedAttributes(mappingBundle));
 			Log.i(TAG, searchResult.getEntryCount() + " entries returned.");
 			for (SearchResultEntry e : searchResult.getSearchEntries()) {
@@ -208,8 +95,11 @@ public class LDAPUtilities {
 			}
 		} catch (LDAPException e) {
 			Log.v(TAG, "LDAPException on fetching contacts", e);
+			return null;
 		} finally {
-			connection.close();
+			if (connection != null) {
+				connection.close();
+			}
 		}
 
 		return friendList;
@@ -223,5 +113,60 @@ public class LDAPUtilities {
 		}
 		ldapArray = ldapAttributes.toArray(ldapArray);
 		return ldapArray;
+	}
+
+	/**
+	 * Attempts to authenticate the user credentials on the server.
+	 * 
+	 * @param ldapServer
+	 *            The LDAP server data
+	 * @param handler
+	 *            The main UI thread's handler instance.
+	 * @param context
+	 *            The caller Activity's context
+	 * @return Thread The thread on which the network mOperations are executed.
+	 */
+	public static Thread attemptAuth(final LDAPServerInstance ldapServer, final Handler handler, final Context context) {
+		final Runnable runnable = new Runnable() {
+			public void run() {
+				authenticate(ldapServer, handler, context);
+			}
+		};
+		// run on background thread.
+		return LDAPUtilities.performOnBackgroundThread(runnable);
+	}
+
+	/**
+	 * Tries to authenticate against the LDAP server and
+	 * 
+	 * @param ldapServer
+	 *            The LDAP server data
+	 * @param handler
+	 *            The handler instance from the calling UI thread.
+	 * @param context
+	 *            The context of the calling Activity.
+	 * @return {code false} if the authentication fails, {code true} otherwise
+	 */
+	public static boolean authenticate(LDAPServerInstance ldapServer, Handler handler, final Context context) {
+		LDAPConnection connection = null;
+		try {
+			connection = ldapServer.getConnection();
+
+			if (connection != null) {
+				RootDSE s = connection.getRootDSE();
+				String[] baseDNs = s.getNamingContextDNs();
+
+				sendResult(baseDNs, true, handler, context);
+				return true;
+			}
+		} catch (LDAPException e) {
+			Log.e(TAG, "Error authenticating", e);
+		} finally {
+			if (connection != null) {
+				connection.close();
+			}
+		}
+		sendResult(null, false, handler, context);
+		return false;
 	}
 }

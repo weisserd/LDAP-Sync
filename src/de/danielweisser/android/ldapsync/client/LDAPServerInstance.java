@@ -46,11 +46,6 @@ public final class LDAPServerInstance implements Serializable {
 	private final int port;
 
 	/**
-	 * The base DN which will be used when searching the server.
-	 */
-	private final String baseDN;
-
-	/**
 	 * The DN to use to bind to the server.
 	 */
 	private final String bindDN;
@@ -73,17 +68,14 @@ public final class LDAPServerInstance implements Serializable {
 	 *            The DN to use to bind to the server. It may be {@code null} or empty if no authentication should be performed.
 	 * @param bindPW
 	 *            The password to use to bind to the server. It may be {@code null} or empty if no authentication should be performed.
-	 * @param baseDN
-	 *            The base DN to use when searching the server. It may be {@code null} or empty if all searches should be based at the root DSE.
 	 */
-	public LDAPServerInstance(final String host, final int port, final int encryption, final String bindDN, final String bindPW, final String baseDN) {
+	public LDAPServerInstance(final String host, final int port, final int encryption, final String bindDN, final String bindPW) {
 		this.host = host;
 		this.port = port;
 		this.encryption = encryption;
 
 		this.bindDN = (bindDN == null) || (bindDN.length() == 0) ? null : bindDN;
 		this.bindPW = (bindPW == null) || (bindPW.length() == 0) ? null : bindPW;
-		this.baseDN = baseDN == null ? "" : baseDN;
 	}
 
 	/**
@@ -95,9 +87,9 @@ public final class LDAPServerInstance implements Serializable {
 	 *             If a problem occurs while attempting to establish the connection.
 	 */
 	public LDAPConnection getConnection() throws LDAPException {
+		Log.d(TAG, "Trying to connect to: " + toString());
 		SocketFactory socketFactory = null;
 		if (usesSSL()) {
-			// FIXME -- We should use something more secure than blindly trusting any certificate.
 			final SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
 			try {
 				socketFactory = sslUtil.createSSLSocketFactory();
@@ -116,7 +108,6 @@ public final class LDAPServerInstance implements Serializable {
 		final LDAPConnection conn = new LDAPConnection(socketFactory, options, host, port);
 
 		if (usesStartTLS()) {
-			// FIXME -- We should use something more secure than blindly trusting any certificate.
 			final SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
 			try {
 				final ExtendedResult r = conn.processExtendedOperation(new StartTLSExtendedRequest(sslUtil.createSSLContext()));
@@ -158,7 +149,7 @@ public final class LDAPServerInstance implements Serializable {
 		if (bindDN != null) {
 			buffer.append(bindDN);
 		}
-		buffer.append("\", baseDN=\"").append(baseDN).append("\" - ");
+		buffer.append("\" - ");
 		if (usesSSL()) {
 			buffer.append("SSL");
 		} else if (usesStartTLS()) {
