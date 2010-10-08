@@ -1,5 +1,7 @@
 package de.danielweisser.android.ldapsync.authenticator;
 
+import com.nullwire.trace.ExceptionHandler;
+
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -47,6 +49,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public static final String PARAM_MAPPING = "map_";
 
 	private static final String TAG = "LDAPAuthActivity";
+	
+	private String message;
 
 	/** Was the original caller asking for an entirely new account? */
 	protected boolean mRequestNewAccount = true;
@@ -95,6 +99,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
+		ExceptionHandler.register(this, "http://www.danielweisser.de/android/server.php");
+		
 		// TODO Remove debuggable
 //		android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
@@ -280,9 +286,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
 			vf.showNext();
 		} else {
-			Bundle b = new Bundle(1);
-			b.putString("message", message);
-			showDialog(ERROR_DIALOG, b);
+			this.message = message;
+			showDialog(ERROR_DIALOG);
 			Log.e(TAG, "onAuthenticationResult: failed to authenticate");
 		}
 	}
@@ -311,7 +316,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	@Override
-	protected Dialog onCreateDialog(int id, Bundle b) {
+	protected Dialog onCreateDialog(int id) {
 		if (id == PROGRESS_DIALOG) {
 			final ProgressDialog dialog = new ProgressDialog(this);
 			dialog.setMessage(getText(R.string.ui_activity_authenticating));
@@ -329,7 +334,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			return dialog;
 		} else if (id == ERROR_DIALOG) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Connection error").setMessage("Could not connect to the server:\n" + b.getString("message")).setCancelable(false);
+			builder.setTitle("Connection error").setMessage("Could not connect to the server:\n" + message).setCancelable(false);
 			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
@@ -342,9 +347,9 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	@Override
-	protected void onPrepareDialog(int id, Dialog dialog, Bundle b) {
+	protected void onPrepareDialog(int id, Dialog dialog) {
 		if (id == ERROR_DIALOG) {
-			((AlertDialog) dialog).setMessage("Could not connect to the server:\n" + b.getString("message"));
+			((AlertDialog) dialog).setMessage("Could not connect to the server:\n" + message);
 		}
 	}
 }

@@ -17,10 +17,15 @@ Ideas
 * Multiple accounts on one server!
 * Change server settings after save! => Settings
 * I18n (German) => Externalize all strings
+* Check number of contacts on the server
 * Include only relevant LDAP parts of the library => smaller size!
 
 
 Changelog
+1.1.1
+* Bugfix for the Samsung Galaxy
+* Integrated remote stacktraces
+
 1.1
 * SSL/StartTLS support
 * Improved error handling during the sync process with the usage of the Android notification system 
