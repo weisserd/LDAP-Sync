@@ -22,6 +22,13 @@ Ideas
 
 
 Changelog
+1.2
+* Bugfix for the misbehavior in association with Google Contacts
+* Improved performance (better checks on data => less updates)
+* Internal code restructuring => better code ;-)
+* Log file of contact changes on SD card (folder LDAPSync)
+* Allow more than one LDAP server without problems (though not the same LDAP server again)
+
 1.1.1
 * Bugfix for the Samsung Galaxy
 * Integrated remote stacktraces
