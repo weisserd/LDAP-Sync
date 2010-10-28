@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.danielweisser.android.ldapsync" android:versionCode="6"
-	android:versionName="1.1.1">
+	package="de.danielweisser.android.ldapsync" android:versionCode="7"
+	android:versionName="1.2">
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
 	<uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
@@ -14,6 +14,7 @@
 	<uses-permission android:name="android.permission.READ_SYNC_STATS" />
 	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<!-- TODO Set debuggable to false! -->
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="false">
