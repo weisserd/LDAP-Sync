@@ -101,7 +101,7 @@ public class ContactMerger {
 			cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
 			Builder insertOp = createInsert(rawContactId, cv);
 			ops.add(insertOp.build());
-		} else if (!newMail.equals(existingMail)) {
+		} else if (!TextUtils.isEmpty(newMail) && !newMail.equals(existingMail)) {
 			l.d("Update mail data " + mailType + " (" + existingMail + " => " + newMail + ")");
 			Builder updateOp = ContentProviderOperation.newUpdate(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
 					new String[] { rawContactId + "", Email.CONTENT_ITEM_TYPE, mailType + "" }).withValue(Email.DATA, newMail);
@@ -136,7 +136,7 @@ public class ContactMerger {
 			cv.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
 			Builder insertOp = createInsert(rawContactId, cv);
 			ops.add(insertOp.build());
-		} else if (!newPhone.equals(existingPhone)) {
+		} else if (!TextUtils.isEmpty(newPhone) && !newPhone.equals(existingPhone)) {
 			l.d("Update phone data " + phoneType + " (" + existingPhone + " => " + newPhone + ")");
 			Builder updateOp = ContentProviderOperation.newUpdate(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
 					new String[] { rawContactId + "", Phone.CONTENT_ITEM_TYPE, phoneType + "" }).withValue(Phone.DATA, newPhone);
