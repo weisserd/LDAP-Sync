@@ -162,8 +162,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	private void setLDAPMappings() {
 		if (mRequestNewAccount) {
-			mSearchFilter = "(objectClass=person)";
-			// mSearchFilter = "(objectClass=user)";
+			mSearchFilter = "(objectClass=inetOrgPerson)";
+			// mSearchFilter = "(objectClass=organizationalPerson)";
 			mFirstName = "givenName";
 			mLastName = "sn";
 			mOfficePhone = "telephonenumber";
