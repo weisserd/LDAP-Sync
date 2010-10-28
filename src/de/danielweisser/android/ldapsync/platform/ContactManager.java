@@ -58,12 +58,12 @@ public class ContactManager {
 		final ContentResolver resolver = context.getContentResolver();
 
 		// Get all phone contacts for the LDAP account
-		HashMap<String, Integer> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
+		HashMap<String, Long> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
 
 		// Update and create new contacts
 		for (final Contact contact : contacts) {
 			if (contactsOnPhone.containsKey(contact.getDn())) {
-				Integer contactId = contactsOnPhone.get(contact.getDn());
+				Long contactId = contactsOnPhone.get(contact.getDn());
 				Log.d(TAG, "Update contact: " + contact.getDn());
 				l.d("Update contact: " + contact.getDn() + " " + contact.getFirstName() + " " + contact.getLastName() + " (" + contactId + ")");
 				updateContact(resolver, contactId, contact);
@@ -78,7 +78,7 @@ public class ContactManager {
 		}
 
 		// Delete contacts
-		for (Entry<String, Integer> contact : contactsOnPhone.entrySet()) {
+		for (Entry<String, Long> contact : contactsOnPhone.entrySet()) {
 			Log.d(TAG, "Delete contact: " + contact.getKey());
 			deleteContact(resolver, contact.getValue());
 			l.d("Delete contact: " + contact.getKey() + "(" + contact.getValue() + ")");
@@ -137,43 +137,43 @@ public class ContactManager {
 		}
 	}
 	
-	private static void updateWorkEmails(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
-		// Get all e-mail addresses for the contact
-		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Email.TYPE + "=?";
-		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Email.DATA };
-		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection,
-				new String[] { contactId + "", Email.CONTENT_ITEM_TYPE, Email.TYPE_WORK + "" }, null);
-		HashMap<String, Integer> mailsForContact = new HashMap<String, Integer>();
+//	private static void updateWorkEmails(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
+//		// Get all e-mail addresses for the contact
+//		final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Email.TYPE + "=?";
+//		final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Email.DATA };
+//		final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection,
+//				new String[] { contactId + "", Email.CONTENT_ITEM_TYPE, Email.TYPE_WORK + "" }, null);
+//		HashMap<String, Integer> mailsForContact = new HashMap<String, Integer>();
+//
+//		while (c.moveToNext()) {
+//			mailsForContact.put(c.getString(c.getColumnIndex(Email.DATA)), c.getInt(c.getColumnIndex(Data._ID)));
+//		}
+//		c.close();
+//
+//		// Insert mail addresses
+//		if (contact.getEmails() != null) {
+//			for (final String mail : contact.getEmails()) {
+//				if (mailsForContact.containsKey(mail)) {
+//					mailsForContact.remove(mail);
+//				} else {
+//					Log.d(TAG, "Add mail: " + mail);
+//					ContentValues cv = new ContentValues();
+//					cv.put(Email.DATA, mail);
+//					cv.put(Email.TYPE, Email.TYPE_WORK);
+//					cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
+//					ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
+//				}
+//			}
+//		}
+//
+//		// Delete mail addresses
+//		for (Entry<String, Integer> mail : mailsForContact.entrySet()) {
+//			Log.d(TAG, "Delete mail: " + mail.getKey());
+//			ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { mail.getValue() + "" }).build());
+//		}
+//	}
 
-		while (c.moveToNext()) {
-			mailsForContact.put(c.getString(c.getColumnIndex(Email.DATA)), c.getInt(c.getColumnIndex(Data._ID)));
-		}
-		c.close();
-
-		// Insert mail addresses
-		if (contact.getEmails() != null) {
-			for (final String mail : contact.getEmails()) {
-				if (mailsForContact.containsKey(mail)) {
-					mailsForContact.remove(mail);
-				} else {
-					Log.d(TAG, "Add mail: " + mail);
-					ContentValues cv = new ContentValues();
-					cv.put(Email.DATA, mail);
-					cv.put(Email.TYPE, Email.TYPE_WORK);
-					cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
-					ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
-				}
-			}
-		}
-
-		// Delete mail addresses
-		for (Entry<String, Integer> mail : mailsForContact.entrySet()) {
-			Log.d(TAG, "Delete mail: " + mail.getKey());
-			ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { mail.getValue() + "" }).build());
-		}
-	}
-
-	private static void deleteContact(ContentResolver resolver, Integer rawContactId) {
+	private static void deleteContact(ContentResolver resolver, Long rawContactId) {
 		resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
 	}
 
@@ -182,14 +182,14 @@ public class ContactManager {
 	 * 
 	 * @return
 	 */
-	private static HashMap<String, Integer> getAllContactsOnPhone(ContentResolver resolver, String accountName) {
-		final String[] projection = new String[] { RawContacts.CONTACT_ID, RawContacts.SYNC1 };
+	private static HashMap<String, Long> getAllContactsOnPhone(ContentResolver resolver, String accountName) {
+		final String[] projection = new String[] { RawContacts._ID, RawContacts.SYNC1, RawContacts.SOURCE_ID };
 		final String selection = RawContacts.ACCOUNT_NAME + "=?";
 
 		final Cursor c = resolver.query(RawContacts.CONTENT_URI, projection, selection, new String[] { accountName }, null);
-		HashMap<String, Integer> contactsOnPhone = new HashMap<String, Integer>(c.getCount());
+		HashMap<String, Long> contactsOnPhone = new HashMap<String, Long>(c.getCount());
 		while (c.moveToNext()) {
-			contactsOnPhone.put(c.getString(c.getColumnIndex(RawContacts.SYNC1)), c.getInt(c.getColumnIndex(Data.CONTACT_ID)));
+			contactsOnPhone.put(c.getString(c.getColumnIndex(RawContacts.SOURCE_ID)), c.getLong(c.getColumnIndex(Data._ID)));
 		}
 		c.close();
 		return contactsOnPhone;
