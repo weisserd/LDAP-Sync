@@ -24,8 +24,7 @@ import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
- * SyncAdapter implementation for synchronizing LDAP contacts to the platform
- * ContactOperations provider.
+ * SyncAdapter implementation for synchronizing LDAP contacts to the platform ContactOperations provider.
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private static final String TAG = "LDAPSyncAdapter";
@@ -42,15 +41,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	@Override
-	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
-			SyncResult syncResult) {
+	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+		Logger l = new Logger();
+
+		l.startLogging();
+		l.d("Start the sync");
 		Log.d(TAG, "Start the sync.");
 		List<Contact> users = new ArrayList<Contact>();
 		String authtoken = null;
 		try {
 			// use the account manager to request the credentials
-			authtoken = mAccountManager
-					.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true /* notifyAuthFailure */);
+			authtoken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true /* notifyAuthFailure */);
 			final String host = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_HOST);
 			final String username = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_USERNAME);
 			final int port = Integer.parseInt(mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
@@ -60,10 +61,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				encryption = Integer.parseInt(sEnc);
 			}
 			LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, encryption, username, authtoken);
-			
+
 			final String searchFilter = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_SEARCHFILTER);
 			final String baseDN = mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_BASEDN);
-			
+
 			// LDAP name mappings
 			final Bundle mappingBundle = new Bundle();
 			mappingBundle.putString(Contact.FIRSTNAME, mAccountManager.getUserData(account, LDAPAuthenticatorActivity.PARAM_MAPPING + Contact.FIRSTNAME));
@@ -81,7 +82,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			mLastUpdated = new Date();
 			// update platform contacts.
 			Log.d(TAG, "Calling contactManager's sync contacts");
-			ContactManager.syncContacts(mContext, account.name, users, syncResult);
+			l.d("Calling contactManager's sync contacts");
+			ContactManager cm = new ContactManager(l);
+			cm.syncContacts(mContext, account.name, users, syncResult);
+			// ContactManager.syncContacts(mContext, account.name, users, syncResult, l);
+			l.stopLogging();
 		} catch (final AuthenticatorException e) {
 			syncResult.stats.numParseExceptions++;
 			Log.e(TAG, "AuthenticatorException", e);

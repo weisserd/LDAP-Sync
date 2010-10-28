@@ -13,57 +13,75 @@ import com.unboundid.ldap.sdk.ReadOnlyEntry;
  * Represents a LDAPSyncAdapter contact
  */
 public class Contact {
-	public static final String FIRSTNAME = "FIRSTNAME";
-	public static final String LASTNAME = "LASTNAME";
-	public static final String TELEPHONE = "TELEPHONE";
-	public static final String MOBILE = "MOBILE";
-	public static final String MAIL = "MAIL";
-	public static final String PHOTO = "PHOTO";
+	public static String FIRSTNAME = "FIRSTNAME";
+	public static String LASTNAME = "LASTNAME";
+	public static String TELEPHONE = "TELEPHONE";
+	public static String MOBILE = "MOBILE";
+	public static String MAIL = "MAIL";
+	public static String PHOTO = "PHOTO";
 
-	private final String mDN;
-	private final String mFirstName;
-	private final String mLastName;
-	private final String mCellPhone;
-	private final String mOfficePhone;
-	private final String[] mEmails;
-	private final byte[] mImage;
+	private String dn = "";
+	private String firstName = "";
+	private String lastName = "";
+	private String cellWorkPhone = "";
+	private String workPhone = "";
+	private String[] emails = null;
+	private byte[] image = null;
 
-	public String getDN() {
-		return mDN;
+	public String getDn() {
+		return dn;
+	}
+
+	public void setDn(String dn) {
+		this.dn = dn;
 	}
 
 	public String getFirstName() {
-		return mFirstName;
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	public String getLastName() {
-		return mLastName;
+		return lastName;
 	}
 
-	public String getCellPhone() {
-		return mCellPhone;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public String getOfficePhone() {
-		return mOfficePhone;
+	public void setCellWorkPhone(String cellWorkPhone) {
+		this.cellWorkPhone = cellWorkPhone;
+	}
+
+	public String getCellWorkPhone() {
+		return cellWorkPhone;
+	}
+
+	public String getWorkPhone() {
+		return workPhone;
+	}
+
+	public void setWorkPhone(String workPhone) {
+		this.workPhone = workPhone;
 	}
 
 	public String[] getEmails() {
-		return mEmails;
+		return emails;
+	}
+
+	public void setEmails(String[] emails) {
+		this.emails = emails;
 	}
 
 	public byte[] getImage() {
-		return mImage;
+		return image;
 	}
 
-	public Contact(String dn, String firstName, String lastName, String cellPhone, String officePhone, String[] emails, byte[] image) {
-		mDN = dn;
-		mFirstName = firstName;
-		mLastName = lastName;
-		mCellPhone = cellPhone;
-		mOfficePhone = officePhone;
-		mEmails = emails;
-		mImage = image;
+	public void setImage(byte[] image) {
+		this.image = image;
 	}
 
 	/**
@@ -75,21 +93,18 @@ public class Contact {
 	 * @return user The new instance of LDAP user created from the LDAP data.
 	 */
 	public static Contact valueOf(ReadOnlyEntry user, Bundle mB) {
+		Contact c = new Contact();
 		try {
-			final String dn = user.getDN();
-			final String firstName = user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB
-					.getString(FIRSTNAME)) : null;
-			final String lastName = user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB
-					.getString(LASTNAME)) : null;
-			if (firstName == null || lastName == null) {
+			c.setDn(user.getDN());
+			c.setFirstName(user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB.getString(FIRSTNAME)) : null);
+			c.setLastName(user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB.getString(LASTNAME)) : null);
+			if ((user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB.getString(FIRSTNAME)) : null) == null
+					|| (user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB.getString(LASTNAME)) : null) == null) {
 				return null;
 			}
-			final String officePhone = user.hasAttribute(mB.getString(TELEPHONE)) ? user.getAttributeValue(mB
-					.getString(TELEPHONE)) : null;
-			final String cellPhone = user.hasAttribute(mB.getString(MOBILE)) ? user.getAttributeValue(mB
-					.getString(MOBILE)) : null;
-			final String[] emails = user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValues(mB.getString(MAIL))
-					: null;
+			c.setWorkPhone(user.hasAttribute(mB.getString(TELEPHONE)) ? user.getAttributeValue(mB.getString(TELEPHONE)) : null);
+			c.setCellWorkPhone(user.hasAttribute(mB.getString(MOBILE)) ? user.getAttributeValue(mB.getString(MOBILE)) : null);
+			c.setEmails(user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValues(mB.getString(MAIL)) : null);
 			byte[] image = null;
 			if (user.hasAttribute(mB.getString(PHOTO))) {
 				byte[] array = user.getAttributeValueBytes(mB.getString(PHOTO));
@@ -101,10 +116,10 @@ public class Contact {
 					image = baos.toByteArray();
 				}
 			}
-			return new Contact(dn, firstName, lastName, cellPhone, officePhone, emails, image);
+			c.setImage(image);
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}
-		return null;
+		return c;
 	}
 }
