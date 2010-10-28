@@ -49,7 +49,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public static final String PARAM_MAPPING = "map_";
 
 	private static final String TAG = "LDAPAuthActivity";
-	
+
 	private String message;
 
 	/** Was the original caller asking for an entirely new account? */
@@ -100,9 +100,9 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		ExceptionHandler.register(this, "http://www.danielweisser.de/android/server.php");
-		
+
 		// TODO Remove debuggable
-//		android.os.Debug.waitForDebugger();
+		// android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 
 		getDataFromIntent();
@@ -162,8 +162,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	private void setLDAPMappings() {
 		if (mRequestNewAccount) {
-			mSearchFilter = "(objectClass=inetOrgPerson)";
-			// mSearchFilter = "(objectClass=organizationalPerson)";
+			// mSearchFilter = "(objectClass=inetOrgPerson)";
+			mSearchFilter = "(objectClass=organizationalPerson)";
 			mFirstName = "givenName";
 			mLastName = "sn";
 			mOfficePhone = "telephonenumber";
