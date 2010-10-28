@@ -26,8 +26,6 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
-import android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
-import android.provider.ContactsContract.CommonDataKinds.Website;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.client.Contact;
@@ -240,21 +238,12 @@ public class ContactManager {
 	private void prepareFields(long rawContactId, Contact newC, Contact existingC, ArrayList<ContentProviderOperation> ops, boolean isNew) {
 		ContactMerger contactMerger = new ContactMerger(rawContactId, newC, existingC, ops, l);
 		contactMerger.updateName();
-//		contactMerger.updateMail(Email.TYPE_WORK);
-//		contactMerger.updateMail(Email.TYPE_HOME);
+		contactMerger.updateMail(Email.TYPE_WORK);
 
 		contactMerger.updatePhone(Phone.TYPE_WORK_MOBILE);
 		contactMerger.updatePhone(Phone.TYPE_WORK);
 
-//		contactMerger.updateURL(Website.TYPE_HOME);
-//		contactMerger.updateURL(Website.TYPE_WORK);
-//		contactMerger.updateURL(Website.TYPE_PROFILE);
-
 		contactMerger.updatePicture();
-//		contactMerger.updateCompanyInformation();
-
-//		contactMerger.updateAddress(StructuredPostal.TYPE_WORK);
-//		contactMerger.updateAddress(StructuredPostal.TYPE_HOME);
 	}
 
 	public static void makeGroupVisible(String accountName, ContentResolver resolver) {
