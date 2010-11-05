@@ -46,6 +46,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 	public static final String PARAM_SEARCHFILTER = "searchFilter";
 	public static final String PARAM_BASEDN = "baseDN";
+	// TODO Add max number!
 	public static final String PARAM_MAPPING = "map_";
 
 	private static final String TAG = "LDAPAuthActivity";
