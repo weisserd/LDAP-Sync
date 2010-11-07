@@ -1,8 +1,4 @@
-LDAP Sync adapter for Android 
+A LDAP Sync adapter for Android 
 http://www.danielweisser.de/blog
 
 https://github.com/weisserd/LDAP-Sync
-
-
-This fork by Michael Pilgermann
-https://github.com/kichkasch/LDAP-Sync
