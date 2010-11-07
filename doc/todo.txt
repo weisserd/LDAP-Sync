@@ -15,15 +15,17 @@ Ideas
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
 * Additional fields (location) => http://www.zytrax.com/books/ldap/ape/
 * View facets (private contacts, ...) ==> Display options!
+* Limit number of fetched contacts
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
 * Multiple accounts on one server!
 * Change server settings after save! => Settings
 * I18n (German) => Externalize all strings
-* Check number of contacts on the server
 * Include only relevant LDAP parts of the library => smaller size!
 
-
 Changelog
+1.3
+* Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)
+
 1.2
 * Bugfix for the misbehavior in association with Google Contacts
 * Improved performance (better checks on data => less updates)
