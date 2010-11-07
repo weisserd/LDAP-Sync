@@ -114,6 +114,8 @@ public class ContactManager {
 						existingContact.setCellWorkPhone(c.getString(c.getColumnIndex(Data.DATA1)));
 					} else if (type == Phone.TYPE_WORK) {
 						existingContact.setWorkPhone(c.getString(c.getColumnIndex(Data.DATA1)));
+					} else if (type == Phone.TYPE_HOME) {
+						existingContact.setHomePhone(c.getString(c.getColumnIndex(Data.DATA1)));
 					}
 				} else if (mimetype.equals(Photo.CONTENT_ITEM_TYPE)) {
 					existingContact.setImage(c.getBlob(c.getColumnIndex(Photo.PHOTO)));
@@ -239,6 +241,7 @@ public class ContactManager {
 
 		contactMerger.updatePhone(Phone.TYPE_WORK_MOBILE);
 		contactMerger.updatePhone(Phone.TYPE_WORK);
+		contactMerger.updatePhone(Phone.TYPE_HOME);
 
 		contactMerger.updatePicture();
 	}

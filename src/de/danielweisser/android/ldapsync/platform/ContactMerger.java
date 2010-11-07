@@ -118,6 +118,9 @@ public class ContactMerger {
 		} else if (phoneType == Phone.TYPE_WORK) {
 			newPhone = newC.getWorkPhone();
 			existingPhone = existingC.getWorkPhone();
+		} else if (phoneType == Phone.TYPE_HOME) {
+			newPhone = newC.getHomePhone();
+			existingPhone = existingC.getHomePhone();
 		}
 		updatePhone(newPhone, existingPhone, phoneType);
 	}

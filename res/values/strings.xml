@@ -33,4 +33,5 @@
 
 	<!-- Title string for Login activity-->
 	<string name="ui_activity_title">LDAP Server settings</string>
+<string name="login_activity_homephone_label">Home Phone</string>
 </resources>

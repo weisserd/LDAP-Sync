@@ -90,6 +90,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mLastNameEdit;
 	private String mCellPhone;
 	private EditText mCellPhoneEdit;
+	private String mHomePhone;
+	private EditText mHomePhoneEdit;	
 	private String mOfficePhone;
 	private EditText mOfficePhoneEdit;
 	private String mEmail;
@@ -152,6 +154,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mOfficePhoneEdit.setText(mOfficePhone);
 		mCellPhoneEdit = (EditText) findViewById(R.id.cellphone_edit);
 		mCellPhoneEdit.setText(mCellPhone);
+		mHomePhoneEdit = (EditText) findViewById(R.id.homephone_edit);
+		mHomePhoneEdit.setText(mHomePhone);
 		mEmailEdit = (EditText) findViewById(R.id.mail_edit);
 		mEmailEdit.setText(mEmail);
 		mImageEdit = (EditText) findViewById(R.id.image_edit);
@@ -169,6 +173,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			mLastName = "sn";
 			mOfficePhone = "telephonenumber";
 			mCellPhone = "mobile";
+			mHomePhone = "homephone";
 			mEmail = "mail";
 			mImage = "jpegphoto";
 			// mImage = "thumbnailphoto";
@@ -231,6 +236,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			userData.putString(PARAM_MAPPING + Contact.LASTNAME, mLastName);
 			userData.putString(PARAM_MAPPING + Contact.TELEPHONE, mOfficePhone);
 			userData.putString(PARAM_MAPPING + Contact.MOBILE, mCellPhone);
+			userData.putString(PARAM_MAPPING + Contact.HOMEPHONE, mHomePhone);
 			userData.putString(PARAM_MAPPING + Contact.MAIL, mEmail);
 			userData.putString(PARAM_MAPPING + Contact.PHOTO, mImage);
 			mAccountManager.addAccountExplicitly(account, mPassword, userData);
@@ -306,6 +312,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mLastName = mLastNameEdit.getText().toString();
 		mOfficePhone = mOfficePhoneEdit.getText().toString();
 		mCellPhone = mCellPhoneEdit.getText().toString();
+		mHomePhone = mHomePhoneEdit.getText().toString();
 		mEmail = mEmailEdit.getText().toString();
 		mImage = mImageEdit.getText().toString();
 

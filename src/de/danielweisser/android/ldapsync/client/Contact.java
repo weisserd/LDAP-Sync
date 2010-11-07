@@ -17,6 +17,7 @@ public class Contact {
 	public static String LASTNAME = "LASTNAME";
 	public static String TELEPHONE = "TELEPHONE";
 	public static String MOBILE = "MOBILE";
+	public static String HOMEPHONE = "HOMEPHONE";
 	public static String MAIL = "MAIL";
 	public static String PHOTO = "PHOTO";
 
@@ -25,6 +26,7 @@ public class Contact {
 	private String lastName = "";
 	private String cellWorkPhone = "";
 	private String workPhone = "";
+	private String homePhone = "";
 	private String[] emails = null;
 	private byte[] image = null;
 
@@ -68,6 +70,14 @@ public class Contact {
 		this.workPhone = workPhone;
 	}
 
+	public void setHomePhone(String homePhone) {
+		this.homePhone = homePhone;
+	}
+
+	public String getHomePhone() {
+		return homePhone;
+	}
+
 	public String[] getEmails() {
 		return emails;
 	}
@@ -104,6 +114,7 @@ public class Contact {
 			}
 			c.setWorkPhone(user.hasAttribute(mB.getString(TELEPHONE)) ? user.getAttributeValue(mB.getString(TELEPHONE)) : null);
 			c.setCellWorkPhone(user.hasAttribute(mB.getString(MOBILE)) ? user.getAttributeValue(mB.getString(MOBILE)) : null);
+			c.setHomePhone(user.hasAttribute(mB.getString(HOMEPHONE)) ? user.getAttributeValue(mB.getString(HOMEPHONE)) : null);
 			c.setEmails(user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValues(mB.getString(MAIL)) : null);
 			byte[] image = null;
 			if (user.hasAttribute(mB.getString(PHOTO))) {
