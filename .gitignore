@@ -1,5 +1,6 @@
 /assets
 /bin
 /gen
+/gen/*.java
 *.class
 .metadata
