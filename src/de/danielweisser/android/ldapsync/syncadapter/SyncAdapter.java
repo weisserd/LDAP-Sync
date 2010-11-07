@@ -86,7 +86,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			l.d("Calling contactManager's sync contacts");
 			ContactManager cm = new ContactManager(l);
 			cm.syncContacts(mContext, account.name, users, syncResult);
-			// ContactManager.syncContacts(mContext, account.name, users, syncResult, l);
 			l.stopLogging();
 		} catch (final AuthenticatorException e) {
 			syncResult.stats.numParseExceptions++;

@@ -136,42 +136,6 @@ public class ContactManager {
 		}
 	}
 
-	// private static void updateWorkEmails(ContentResolver resolver, Integer contactId, Contact contact, ArrayList<ContentProviderOperation> ops) {
-	// // Get all e-mail addresses for the contact
-	// final String selection = Data.CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + Email.TYPE + "=?";
-	// final String[] projection = new String[] { Data._ID, Data.CONTACT_ID, Email.DATA };
-	// final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection,
-	// new String[] { contactId + "", Email.CONTENT_ITEM_TYPE, Email.TYPE_WORK + "" }, null);
-	// HashMap<String, Integer> mailsForContact = new HashMap<String, Integer>();
-	//
-	// while (c.moveToNext()) {
-	// mailsForContact.put(c.getString(c.getColumnIndex(Email.DATA)), c.getInt(c.getColumnIndex(Data._ID)));
-	// }
-	// c.close();
-	//
-	// // Insert mail addresses
-	// if (contact.getEmails() != null) {
-	// for (final String mail : contact.getEmails()) {
-	// if (mailsForContact.containsKey(mail)) {
-	// mailsForContact.remove(mail);
-	// } else {
-	// Log.d(TAG, "Add mail: " + mail);
-	// ContentValues cv = new ContentValues();
-	// cv.put(Email.DATA, mail);
-	// cv.put(Email.TYPE, Email.TYPE_WORK);
-	// cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
-	// ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI).withValue(Data.RAW_CONTACT_ID, contactId).withValues(cv).build());
-	// }
-	// }
-	// }
-	//
-	// // Delete mail addresses
-	// for (Entry<String, Integer> mail : mailsForContact.entrySet()) {
-	// Log.d(TAG, "Delete mail: " + mail.getKey());
-	// ops.add(ContentProviderOperation.newDelete(Data.CONTENT_URI).withSelection(Data._ID + "=?", new String[] { mail.getValue() + "" }).build());
-	// }
-	// }
-
 	private static void deleteContact(ContentResolver resolver, Long rawContactId) {
 		resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
 	}
