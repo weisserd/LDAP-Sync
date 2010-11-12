@@ -18,6 +18,7 @@
 	<string name="login_activity_lastname_label">Last Name</string>
 	<string name="login_activity_officephone_label">Office Phone</string>
 	<string name="login_activity_cellphone_label">Cell Phone</string>
+	<string name="login_activity_homephone_label">Home Phone</string>
 	<string name="login_activity_mail_label">E-Mail</string>
 	<string name="login_activity_image_label">Image</string>
 	<string name="login_activity_street_label">Street</string>
@@ -38,5 +39,4 @@
 
 	<!-- Title string for Login activity-->
 	<string name="ui_activity_title">LDAP Server settings</string>
-<string name="login_activity_homephone_label">Home Phone</string>
 </resources>

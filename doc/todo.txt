@@ -18,13 +18,13 @@ Ideas
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
 * Multiple accounts on one server!
 * Change server settings after save! => Settings
-* I18n (German) => Externalize all strings
 * Include only relevant LDAP parts of the library => smaller size!
 
 Changelog
 1.3
 * Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)
 * Added mappings for addresses (work address)
+* German localization available
 
 1.2
 * Bugfix for the misbehavior in association with Google Contacts

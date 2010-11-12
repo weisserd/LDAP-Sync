@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="encryption_methods">
+        <item>Keine Verschlüsselung</item>
+        <item>SSL</item>
+        <item>StartTLS</item>
+    </string-array>
+</resources>
