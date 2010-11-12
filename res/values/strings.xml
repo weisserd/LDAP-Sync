@@ -20,6 +20,11 @@
 	<string name="login_activity_cellphone_label">Cell Phone</string>
 	<string name="login_activity_mail_label">E-Mail</string>
 	<string name="login_activity_image_label">Image</string>
+	<string name="login_activity_street_label">Street</string>
+	<string name="login_activity_city_label">City</string>
+	<string name="login_activity_state_label">State</string>
+	<string name="login_activity_zip_label">Zip code</string>
+	<string name="login_activity_country_label">Country</string>
 	<string name="login_activity_next_button">Next</string>
 	<string name="login_activity_done_button">Done</string>
 

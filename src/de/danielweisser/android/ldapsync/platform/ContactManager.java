@@ -26,8 +26,10 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
+import de.danielweisser.android.ldapsync.client.Address;
 import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.syncadapter.Logger;
 
@@ -119,6 +121,17 @@ public class ContactManager {
 					}
 				} else if (mimetype.equals(Photo.CONTENT_ITEM_TYPE)) {
 					existingContact.setImage(c.getBlob(c.getColumnIndex(Photo.PHOTO)));
+				} else if (mimetype.equals(StructuredPostal.CONTENT_ITEM_TYPE)) {
+					int type = c.getInt(c.getColumnIndex(Data.DATA2));
+					Address address = new Address();
+					address.setStreet(c.getString(c.getColumnIndex(Data.DATA4)));
+					address.setCity(c.getString(c.getColumnIndex(Data.DATA7)));
+					address.setCountry(c.getString(c.getColumnIndex(Data.DATA10)));
+					address.setZip(c.getString(c.getColumnIndex(Data.DATA9)));
+					address.setState(c.getString(c.getColumnIndex(Data.DATA8)));
+					if (type == StructuredPostal.TYPE_WORK) {
+						existingContact.setAddress(address);
+					}
 				}
 			}
 		}
@@ -206,6 +219,8 @@ public class ContactManager {
 		contactMerger.updatePhone(Phone.TYPE_WORK_MOBILE);
 		contactMerger.updatePhone(Phone.TYPE_WORK);
 		contactMerger.updatePhone(Phone.TYPE_HOME);
+		
+		contactMerger.updateAddress(StructuredPostal.TYPE_WORK);
 
 		contactMerger.updatePicture();
 	}

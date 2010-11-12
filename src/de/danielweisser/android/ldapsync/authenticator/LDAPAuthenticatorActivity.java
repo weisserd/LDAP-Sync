@@ -46,7 +46,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 	public static final String PARAM_SEARCHFILTER = "searchFilter";
 	public static final String PARAM_BASEDN = "baseDN";
-	// TODO Add max number!
 	public static final String PARAM_MAPPING = "map_";
 
 	private static final String TAG = "LDAPAuthActivity";
@@ -96,6 +95,16 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mOfficePhoneEdit;
 	private String mEmail;
 	private EditText mEmailEdit;
+	private String mStreet;
+	private EditText mStreetEdit;
+	private String mCity;
+	private EditText mCityEdit;
+	private String mState;
+	private EditText mStateEdit;
+	private String mZip;
+	private EditText mZipEdit;
+	private String mCountry;
+	private EditText mCountryEdit;
 	private String mImage;
 	private EditText mImageEdit;
 
@@ -104,8 +113,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		super.onCreate(bundle);
 		ExceptionHandler.register(this, "http://www.danielweisser.de/android/server.php");
 
-		// TODO Remove debuggable
-		// android.os.Debug.waitForDebugger();
 		mAccountManager = AccountManager.get(this);
 
 		getDataFromIntent();
@@ -160,6 +167,16 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mEmailEdit.setText(mEmail);
 		mImageEdit = (EditText) findViewById(R.id.image_edit);
 		mImageEdit.setText(mImage);
+		mStreetEdit = (EditText) findViewById(R.id.street_edit);
+		mStreetEdit.setText(mStreet);
+		mCityEdit = (EditText) findViewById(R.id.city_edit);
+		mCityEdit.setText(mCity);
+		mZipEdit = (EditText) findViewById(R.id.zip_edit);
+		mZipEdit.setText(mZip);
+		mStateEdit = (EditText) findViewById(R.id.state_edit);
+		mStateEdit.setText(mState);
+		mCountryEdit = (EditText) findViewById(R.id.country_edit);
+		mCountryEdit.setText(mCountry);
 	}
 
 	/**
@@ -176,6 +193,11 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			mHomePhone = "homephone";
 			mEmail = "mail";
 			mImage = "jpegphoto";
+			mStreet = "street";
+			mCity = "l";
+			mZip = "postalCode";
+			mState = "st";
+			mCountry = "co";
 			// mImage = "thumbnailphoto";
 		}
 	}
@@ -239,6 +261,11 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			userData.putString(PARAM_MAPPING + Contact.HOMEPHONE, mHomePhone);
 			userData.putString(PARAM_MAPPING + Contact.MAIL, mEmail);
 			userData.putString(PARAM_MAPPING + Contact.PHOTO, mImage);
+			userData.putString(PARAM_MAPPING + Contact.STREET, mStreet);
+			userData.putString(PARAM_MAPPING + Contact.CITY, mCity);
+			userData.putString(PARAM_MAPPING + Contact.ZIP, mZip);
+			userData.putString(PARAM_MAPPING + Contact.STATE, mState);
+			userData.putString(PARAM_MAPPING + Contact.COUNTRY, mCountry);
 			mAccountManager.addAccountExplicitly(account, mPassword, userData);
 
 			// Set contacts sync for this account.
@@ -315,6 +342,11 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mHomePhone = mHomePhoneEdit.getText().toString();
 		mEmail = mEmailEdit.getText().toString();
 		mImage = mImageEdit.getText().toString();
+		mStreet = mStreetEdit.getText().toString();
+		mCity = mCityEdit.getText().toString();
+		mZip = mZipEdit.getText().toString();
+		mState = mStateEdit.getText().toString();
+		mCountry = mCountryEdit.getText().toString();
 
 		if (!mConfirmCredentials) {
 			finishLogin();

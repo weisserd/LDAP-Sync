@@ -152,6 +152,46 @@
 							android:capitalize="none" android:autoText="false"
 							android:minWidth="300dip" android:id="@+id/image_edit"
 							android:inputType="text" />
+						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textStyle="bold" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="@string/login_activity_street_label" />
+						<EditText android:singleLine="true" android:layout_width="fill_parent"
+							android:layout_height="wrap_content" android:scrollHorizontally="true"
+							android:capitalize="none" android:autoText="false"
+							android:minWidth="300dip" android:id="@+id/street_edit"
+							android:inputType="text" />
+						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textStyle="bold" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="@string/login_activity_city_label" />
+						<EditText android:singleLine="true" android:layout_width="fill_parent"
+							android:layout_height="wrap_content" android:scrollHorizontally="true"
+							android:capitalize="none" android:autoText="false"
+							android:minWidth="300dip" android:id="@+id/city_edit"
+							android:inputType="text" />
+						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textStyle="bold" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="@string/login_activity_state_label" />
+						<EditText android:singleLine="true" android:layout_width="fill_parent"
+							android:layout_height="wrap_content" android:scrollHorizontally="true"
+							android:capitalize="none" android:autoText="false"
+							android:minWidth="300dip" android:id="@+id/state_edit"
+							android:inputType="text" />
+						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textStyle="bold" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="@string/login_activity_zip_label" />
+						<EditText android:singleLine="true" android:layout_width="fill_parent"
+							android:layout_height="wrap_content" android:scrollHorizontally="true"
+							android:capitalize="none" android:autoText="false"
+							android:minWidth="300dip" android:id="@+id/zip_edit"
+							android:inputType="text" />
+						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textStyle="bold" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="@string/login_activity_country_label" />
+						<EditText android:singleLine="true" android:layout_width="fill_parent"
+							android:layout_height="wrap_content" android:scrollHorizontally="true"
+							android:capitalize="none" android:autoText="false"
+							android:minWidth="300dip" android:id="@+id/country_edit"
+							android:inputType="text" />
 					</LinearLayout>
 				</ScrollView>
 			</LinearLayout>

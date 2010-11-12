@@ -20,6 +20,11 @@ public class Contact {
 	public static String HOMEPHONE = "HOMEPHONE";
 	public static String MAIL = "MAIL";
 	public static String PHOTO = "PHOTO";
+	public static String STREET = "STREET";
+	public static String CITY = "CITY";
+	public static String STATE = "STATE";
+	public static String ZIP = "ZIP";
+	public static String COUNTRY = "COUNTRY";
 
 	private String dn = "";
 	private String firstName = "";
@@ -29,6 +34,7 @@ public class Contact {
 	private String homePhone = "";
 	private String[] emails = null;
 	private byte[] image = null;
+	private Address address = null;
 
 	public String getDn() {
 		return dn;
@@ -94,6 +100,14 @@ public class Contact {
 		this.image = image;
 	}
 
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
 	/**
 	 * Creates and returns an instance of the user from the provided LDAP data.
 	 * 
@@ -128,6 +142,18 @@ public class Contact {
 				}
 			}
 			c.setImage(image);
+
+			// Get address
+			if (user.hasAttribute(mB.getString(STREET)) || user.hasAttribute(mB.getString(CITY)) || user.hasAttribute(mB.getString(STATE))
+					|| user.hasAttribute(mB.getString(ZIP)) || user.hasAttribute(mB.getString(COUNTRY))) {
+				Address a = new Address();
+				a.setStreet(user.hasAttribute(mB.getString(STREET)) ? user.getAttributeValue(mB.getString(STREET)) : null);
+				a.setCity(user.hasAttribute(mB.getString(CITY)) ? user.getAttributeValue(mB.getString(CITY)) : null);
+				a.setState(user.hasAttribute(mB.getString(STATE)) ? user.getAttributeValue(mB.getString(STATE)) : null);
+				a.setZip(user.hasAttribute(mB.getString(ZIP)) ? user.getAttributeValue(mB.getString(ZIP)) : null);
+				a.setCountry(user.hasAttribute(mB.getString(COUNTRY)) ? user.getAttributeValue(mB.getString(COUNTRY)) : null);
+				c.setAddress(a);
+			}
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}

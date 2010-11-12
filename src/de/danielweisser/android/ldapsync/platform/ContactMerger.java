@@ -13,7 +13,9 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
 import android.text.TextUtils;
+import de.danielweisser.android.ldapsync.client.Address;
 import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.syncadapter.Logger;
 
@@ -164,6 +166,44 @@ public class ContactMerger {
 			l.d("Update image");
 			Builder updateOp = ContentProviderOperation.newUpdate(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
 					new String[] { rawContactId + "", Photo.CONTENT_ITEM_TYPE }).withValue(Photo.PHOTO, newC.getImage());
+			ops.add(updateOp.build());
+		}
+	}
+
+	public void updateAddress(int adressType) {
+		if (adressType == StructuredPostal.TYPE_WORK) {
+			updateAddress(newC.getAddress(), existingC.getAddress(), adressType);
+		}
+	}
+
+	private void updateAddress(de.danielweisser.android.ldapsync.client.Address newAddress, Address existingAddress, int adressType) {
+		final String selection = Data.RAW_CONTACT_ID + "=? AND " + Data.MIMETYPE + "=? AND " + StructuredPostal.TYPE + "=?";
+		if ((newAddress == null || newAddress.isEmpty()) && existingAddress != null) {
+			l.d("Delete address " + adressType + "(" + existingC.getFirstName() + " " + existingC.getLastName() + ")");
+			ops.add(ContentProviderOperation.newDelete(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
+					new String[] { rawContactId + "", StructuredPostal.CONTENT_ITEM_TYPE, adressType + "" }).build());
+		} else if (existingAddress == null && newAddress != null && !newAddress.isEmpty()) {
+			l.d("Add address " + adressType + "(" + existingC.getFirstName() + " " + existingC.getLastName() + ")");
+			ContentValues cv = new ContentValues();
+			cv.put(StructuredPostal.MIMETYPE, StructuredPostal.CONTENT_ITEM_TYPE);
+			cv.put(StructuredPostal.TYPE, adressType);
+			cv.put(StructuredPostal.STREET, newAddress.getStreet());
+			cv.put(StructuredPostal.CITY, newAddress.getCity());
+			cv.put(StructuredPostal.COUNTRY, newAddress.getCountry());
+			cv.put(StructuredPostal.POSTCODE, newAddress.getZip());
+			cv.put(StructuredPostal.REGION, newAddress.getState());
+			Builder insertOp = createInsert(rawContactId, cv);
+			ops.add(insertOp.build());
+		} else if (newAddress != null && !newAddress.isEmpty() && !newAddress.equals(existingAddress)) {
+			l.d("Update address " + adressType + "(" + existingC.getFirstName() + " " + existingC.getLastName() + ")");
+			ContentValues cv = new ContentValues();
+			cv.put(StructuredPostal.STREET, newAddress.getStreet());
+			cv.put(StructuredPostal.CITY, newAddress.getCity());
+			cv.put(StructuredPostal.COUNTRY, newAddress.getCountry());
+			cv.put(StructuredPostal.POSTCODE, newAddress.getZip());
+			cv.put(StructuredPostal.REGION, newAddress.getState());
+			Builder updateOp = ContentProviderOperation.newUpdate(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
+					new String[] { rawContactId + "", StructuredPostal.CONTENT_ITEM_TYPE, adressType + "" }).withValues(cv);
 			ops.add(updateOp.build());
 		}
 	}
