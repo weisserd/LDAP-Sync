@@ -14,7 +14,6 @@ Ideas
   http://developer.android.com/resources/samples/SampleSyncAdapter/src/com/example/android/samplesync/platform/ContactOperations.html
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
 * View facets (private contacts, ...) ==> Display options!
-* Limit number of fetched contacts
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
 * Multiple accounts on one server!
 * Change server settings after save! => Settings

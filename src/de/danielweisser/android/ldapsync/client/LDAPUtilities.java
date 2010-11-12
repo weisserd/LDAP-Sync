@@ -98,9 +98,9 @@ public class LDAPUtilities {
 		LDAPConnection connection = null;
 		try {
 			connection = ldapServer.getConnection();
-			// TODO Add max number of results! => Get documentation
 			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter, getUsedAttributes(mappingBundle));
 			Log.i(TAG, searchResult.getEntryCount() + " entries returned.");
+
 			for (SearchResultEntry e : searchResult.getSearchEntries()) {
 				Contact u = Contact.valueOf(e, mappingBundle);
 				if (u != null) {
