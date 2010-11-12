@@ -13,7 +13,6 @@ Ideas
 * Fix lock: http://developer.android.com/reference/android/provider/ContactsContract.Data.html (withYieldAllowed)
   http://developer.android.com/resources/samples/SampleSyncAdapter/src/com/example/android/samplesync/platform/ContactOperations.html
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
-* Additional fields (location) => http://www.zytrax.com/books/ldap/ape/
 * View facets (private contacts, ...) ==> Display options!
 * Limit number of fetched contacts
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
@@ -25,6 +24,7 @@ Ideas
 Changelog
 1.3
 * Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)
+* Added mappings for addresses (work address)
 
 1.2
 * Bugfix for the misbehavior in association with Google Contacts
