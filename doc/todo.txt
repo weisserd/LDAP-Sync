@@ -17,9 +17,11 @@ Ideas
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
 * Multiple accounts on one server!
 * Change server settings after save! => Settings
-* Include only relevant LDAP parts of the library => smaller size!
 
 Changelog
+1.4
+* Updated LDAP library to version 2.0.0
+
 1.3
 * Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)
 * Added mappings for addresses (work address)
