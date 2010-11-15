@@ -13,8 +13,9 @@ import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
 
 /**
- * This class is an implementation of AbstractAccountAuthenticator for
- * authenticating accounts in the de.danielweisser.android.ldapsync domain.
+ * This class is an implementation of AbstractAccountAuthenticator for authenticating accounts in the de.danielweisser.android.ldapsync domain.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 class LDAPAuthenticator extends AbstractAccountAuthenticator {
 	/** Authentication Service context */
@@ -27,12 +28,8 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		mContext = context;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
-			String[] requiredFeatures, Bundle options) {
+	public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) {
 		Log.i(TAG, "addAccount()");
 		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
 		intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
@@ -42,9 +39,6 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		return bundle;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) {
 		if (options != null && options.containsKey(AccountManager.KEY_PASSWORD)) {
@@ -55,7 +49,7 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 			final int port = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_PORT));
 			final int encryption = Integer.parseInt(am.getUserData(account, LDAPAuthenticatorActivity.PARAM_ENCRYPTION));
 			LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, encryption, username, password);
-			
+
 			final boolean verified = onlineConfirmPassword(ldapServer);
 			final Bundle result = new Bundle();
 			result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, verified);
@@ -63,7 +57,7 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		}
 		// Launch AuthenticatorActivity to confirm credentials
 		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
-		//intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
+		// intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
 		intent.putExtra(LDAPAuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, true);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 		final Bundle bundle = new Bundle();
@@ -71,20 +65,13 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		return bundle;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
-			Bundle loginOptions) {
+	public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle loginOptions) {
 		if (!authTokenType.equals(Constants.AUTHTOKEN_TYPE)) {
 			final Bundle result = new Bundle();
 			result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType");
@@ -118,9 +105,6 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		return bundle;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getAuthTokenLabel(String authTokenType) {
 		Log.i(TAG, "getAuthTokenLabel()");
@@ -128,9 +112,6 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) {
 		final Bundle result = new Bundle();
@@ -138,12 +119,8 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType,
-			Bundle loginOptions) {
+	public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle loginOptions) {
 		final Intent intent = new Intent(mContext, LDAPAuthenticatorActivity.class);
 		intent.putExtra(LDAPAuthenticatorActivity.PARAM_USERNAME, account.name);
 		intent.putExtra(LDAPAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
@@ -155,6 +132,10 @@ class LDAPAuthenticator extends AbstractAccountAuthenticator {
 
 	/**
 	 * Validates user's password on the server
+	 * 
+	 * @param ldapServer
+	 *            Configuration data of the LDAP server.
+	 * @return <code>true</code> if the authentication data is valid, <code>false</code> otherwise.
 	 */
 	private boolean onlineConfirmPassword(LDAPServerInstance ldapServer) {
 		return LDAPUtilities.authenticate(ldapServer, null, null);

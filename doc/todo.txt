@@ -6,7 +6,6 @@ Apart from app
 * Promo badge
 * Tests
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
-* Document code!
 * Check with OpenLDAP server
 
 Ideas
@@ -21,6 +20,7 @@ Ideas
 Changelog
 1.4
 * Updated LDAP library to version 2.0.0
+* Documented more parts of the code
 
 1.3
 * Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)

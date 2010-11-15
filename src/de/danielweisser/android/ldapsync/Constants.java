@@ -1,5 +1,10 @@
 package de.danielweisser.android.ldapsync;
 
+/**
+ * Constants for the LDAP sync adapter.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
+ */
 public class Constants {
 
 	/**
@@ -11,7 +16,7 @@ public class Constants {
 	 * Authtoken type string.
 	 */
 	public static final String AUTHTOKEN_TYPE = "de.danielweisser.android.ldapsync";
-	
+
 	/**
 	 * SD card LDAPSync folder.
 	 */

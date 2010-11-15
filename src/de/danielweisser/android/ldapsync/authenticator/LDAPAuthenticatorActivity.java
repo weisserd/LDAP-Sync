@@ -32,6 +32,8 @@ import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
  * Activity which displays login screen to the user.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -90,7 +92,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private String mCellPhone;
 	private EditText mCellPhoneEdit;
 	private String mHomePhone;
-	private EditText mHomePhoneEdit;	
+	private EditText mHomePhoneEdit;
 	private String mOfficePhone;
 	private EditText mOfficePhoneEdit;
 	private String mEmail;
@@ -237,9 +239,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	/**
 	 * Called when response is received from the server for authentication request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which is
 	 * sent back to the caller. Also sets the authToken in AccountManager for this account.
-	 * 
-	 * @param the
-	 *            confirmCredentials result.
 	 */
 	protected void finishLogin() {
 		Log.i(TAG, "finishLogin()");
@@ -309,6 +308,13 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
 	/**
 	 * Call back for the authentication process. When the authentication attempt is finished this method is called.
+	 * 
+	 * @param baseDNs
+	 *            List of baseDNs from the LDAP server
+	 * @param result
+	 *            result of the authentication process
+	 * @param message
+	 *            Possible error message
 	 */
 	public void onAuthenticationResult(String[] baseDNs, boolean result, String message) {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
@@ -327,7 +333,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Handles onClick event on the Done button. Saves the account with the acount manager.
+	 * Handles onClick event on the Done button. Saves the account with the account manager.
 	 * 
 	 * @param view
 	 *            The Done button for which this method is invoked

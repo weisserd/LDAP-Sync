@@ -21,6 +21,8 @@ import de.danielweisser.android.ldapsync.syncadapter.Logger;
 
 /**
  * A helper class that merges the fields of existing contacts with the fields of new contacts.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class ContactMerger {
 

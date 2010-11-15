@@ -2,6 +2,11 @@ package de.danielweisser.android.ldapsync.client;
 
 import android.text.TextUtils;
 
+/**
+ * Data container for an address.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
+ */
 public class Address {
 
 	private String street = "";
@@ -78,6 +83,11 @@ public class Address {
 		return hash;
 	}
 
+	/**
+	 * Quick check for an empty address.
+	 * 
+	 * @return <code>true</code> if all fields are empty.
+	 */
 	public boolean isEmpty() {
 		if (TextUtils.isEmpty(street) && TextUtils.isEmpty(city) && TextUtils.isEmpty(state) && TextUtils.isEmpty(zip) && TextUtils.isEmpty(country)) {
 			return true;

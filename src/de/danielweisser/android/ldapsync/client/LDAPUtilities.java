@@ -25,9 +25,12 @@ import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity
 import de.danielweisser.android.ldapsync.syncadapter.SyncService;
 
 /**
- * Provides utility methods for communicating with the server.
+ * Provides utility methods for communicating with the LDAP server.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class LDAPUtilities {
+	
 	private static final String TAG = "LDAPUtilities";
 
 	/**

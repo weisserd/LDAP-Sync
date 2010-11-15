@@ -10,7 +10,9 @@ import android.util.Log;
 import com.unboundid.ldap.sdk.ReadOnlyEntry;
 
 /**
- * Represents a LDAPSyncAdapter contact
+ * Represents a LDAPSyncAdapter contact.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class Contact {
 	public static String FIRSTNAME = "FIRSTNAME";
@@ -114,6 +116,7 @@ public class Contact {
 	 * @param user
 	 *            The LDAPObject containing user data
 	 * @param mB
+	 *            Mapping bundle for the LDAP attribute names.
 	 * @return user The new instance of LDAP user created from the LDAP data.
 	 */
 	public static Contact valueOf(ReadOnlyEntry user, Bundle mB) {

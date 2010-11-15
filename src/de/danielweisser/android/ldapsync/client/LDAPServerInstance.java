@@ -16,19 +16,19 @@ import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
 
 /**
- * Encapsulates a LDAP directory server instance and provides methods to access the server.
+ * Encapsulates a LDAP directory server instance and provides methods to access the server. This is based on code from the UnboundID LDAP Client.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public final class LDAPServerInstance implements Serializable {
+
+	private static final String TAG = "LDAPServerInstance";
 
 	/**
 	 * The serial version UID for this serializable class.
 	 */
 	private static final long serialVersionUID = -7633400003887348205L;
 
-	/**
-	 * Logging TAG
-	 */
-	private static final String TAG = "LDAPServerInstance";
 
 	/**
 	 * The encryption method (0 - no encryption, 1 - SSL, 2 - StartTLS)
@@ -138,9 +138,7 @@ public final class LDAPServerInstance implements Serializable {
 		return conn;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("LDAPServer(host=\"");
@@ -168,5 +166,4 @@ public final class LDAPServerInstance implements Serializable {
 	public boolean usesStartTLS() {
 		return encryption == 2;
 	}
-
 }

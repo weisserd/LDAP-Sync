@@ -35,6 +35,8 @@ import de.danielweisser.android.ldapsync.syncadapter.Logger;
 
 /**
  * Class for managing contacts sync related operations
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class ContactManager {
 	private static final String TAG = "ContactManager";

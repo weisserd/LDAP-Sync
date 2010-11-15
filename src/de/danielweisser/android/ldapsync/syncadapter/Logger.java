@@ -12,19 +12,24 @@ import android.os.Environment;
 import android.util.Log;
 import de.danielweisser.android.ldapsync.Constants;
 
+/**
+ * A simple file logger, that logs the details of the synchronization process to SD card.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
+ */
 public class Logger {
 
 	private BufferedWriter f;
 	public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
 	public static final String DATE_FORMAT_NOW_FILE = "yyyy-MM-dd-HH-mm-ss";
 
-	public static String now() {
+	private static String now() {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
 		return sdf.format(cal.getTime());
 	}
 
-	public static String nowFile() {
+	private static String nowFile() {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW_FILE);
 		return sdf.format(cal.getTime());

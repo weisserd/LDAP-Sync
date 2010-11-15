@@ -25,6 +25,8 @@ import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
  * SyncAdapter implementation for synchronizing LDAP contacts to the platform ContactOperations provider.
+ * 
+ * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private static final String TAG = "LDAPSyncAdapter";
