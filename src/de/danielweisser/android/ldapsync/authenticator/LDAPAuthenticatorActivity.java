@@ -320,6 +320,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
 		dismissDialog(PROGRESS_DIALOG);
 		if (result) {
+			// TODO Check for null of baseDNs? Wait for issue 1 response
 			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			mBaseDNSpinner.setAdapter(adapter);
