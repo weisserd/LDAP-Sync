@@ -21,6 +21,7 @@ Changelog
 1.4
 * Updated LDAP library to version 2.0.0
 * Documented more parts of the code
+* Fixed bug with non existant BaseDNs - https://github.com/weisserd/LDAP-Sync/issues#issue/1
 
 1.3
 * Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)
