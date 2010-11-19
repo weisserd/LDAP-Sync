@@ -114,7 +114,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		ExceptionHandler.register(this, "http://www.danielweisser.de/android/server.php");
-
+		
 		mAccountManager = AccountManager.get(this);
 
 		getDataFromIntent();
@@ -320,10 +320,11 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
 		dismissDialog(PROGRESS_DIALOG);
 		if (result) {
-			// TODO Check for null of baseDNs? Wait for issue 1 response
-			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			mBaseDNSpinner.setAdapter(adapter);
+			if (baseDNs != null) {
+				ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
+				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				mBaseDNSpinner.setAdapter(adapter);
+			}
 			ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
 			vf.showNext();
 		} else {
