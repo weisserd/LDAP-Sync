@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
@@ -148,10 +149,14 @@ public class ContactManager {
 			Log.e(TAG, e.getMessage(), e);
 		} catch (OperationApplicationException e) {
 			Log.e(TAG, e.getMessage(), e);
+		} catch (SQLiteException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} catch (IllegalStateException e) {
+			Log.e(TAG, e.getMessage(), e);
 		}
 	}
 
-	private static void deleteContact(ContentResolver resolver, Long rawContactId) {
+	private void deleteContact(ContentResolver resolver, Long rawContactId) {
 		resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
 	}
 
