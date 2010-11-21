@@ -181,7 +181,10 @@ public class LDAPUtilities {
 
 			if (connection != null) {
 				RootDSE s = connection.getRootDSE();
-				String[] baseDNs = s.getNamingContextDNs();
+				String[] baseDNs = null;
+				if (s != null) {
+					s.getNamingContextDNs();
+				}
 
 				sendResult(baseDNs, true, handler, context, null);
 				return true;
