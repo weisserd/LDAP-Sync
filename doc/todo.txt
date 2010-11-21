@@ -6,11 +6,8 @@ Apart from app
 * Promo badge
 * Tests
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
-* Check with OpenLDAP server
 
 Ideas
-* Fix lock: http://developer.android.com/reference/android/provider/ContactsContract.Data.html (withYieldAllowed)
-  http://developer.android.com/resources/samples/SampleSyncAdapter/src/com/example/android/samplesync/platform/ContactOperations.html
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
 * View facets (private contacts, ...) ==> Display options!
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
@@ -18,6 +15,10 @@ Ideas
 * Change server settings after save! => Settings
 
 Changelog
+1.4.1
+* Fix for a possible NullPointer
+* Bugfix for concurrently running sync adapters
+
 1.4
 * Updated LDAP library to version 2.0.0
 * Documented more parts of the code
