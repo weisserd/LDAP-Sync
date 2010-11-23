@@ -157,7 +157,13 @@ public class ContactManager {
 	}
 
 	private void deleteContact(ContentResolver resolver, Long rawContactId) {
-		resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
+		try {
+			resolver.delete(RawContacts.CONTENT_URI, RawContacts.CONTACT_ID + "=?", new String[] { "" + rawContactId });
+		} catch (SQLiteException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} catch (IllegalStateException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
 	}
 
 	/**
@@ -226,7 +232,7 @@ public class ContactManager {
 		contactMerger.updatePhone(Phone.TYPE_WORK_MOBILE);
 		contactMerger.updatePhone(Phone.TYPE_WORK);
 		contactMerger.updatePhone(Phone.TYPE_HOME);
-		
+
 		contactMerger.updateAddress(StructuredPostal.TYPE_WORK);
 
 		contactMerger.updatePicture();
