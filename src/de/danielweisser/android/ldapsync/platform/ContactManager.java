@@ -176,11 +176,13 @@ public class ContactManager {
 		final String selection = RawContacts.ACCOUNT_NAME + "=?";
 
 		final Cursor c = resolver.query(RawContacts.CONTENT_URI, projection, selection, new String[] { accountName }, null);
-		HashMap<String, Long> contactsOnPhone = new HashMap<String, Long>(c.getCount());
-		while (c.moveToNext()) {
-			contactsOnPhone.put(c.getString(c.getColumnIndex(RawContacts.SOURCE_ID)), c.getLong(c.getColumnIndex(Data._ID)));
+		HashMap<String, Long> contactsOnPhone = new HashMap<String, Long>();
+		if (c != null) {
+			while (c.moveToNext()) {
+				contactsOnPhone.put(c.getString(c.getColumnIndex(RawContacts.SOURCE_ID)), c.getLong(c.getColumnIndex(Data._ID)));
+			}
+			c.close();
 		}
-		c.close();
 		return contactsOnPhone;
 	}
 
