@@ -178,12 +178,11 @@ public class LDAPUtilities {
 		LDAPConnection connection = null;
 		try {
 			connection = ldapServer.getConnection();
-
 			if (connection != null) {
 				RootDSE s = connection.getRootDSE();
 				String[] baseDNs = null;
 				if (s != null) {
-					s.getNamingContextDNs();
+					baseDNs = s.getNamingContextDNs();
 				}
 
 				sendResult(baseDNs, true, handler, context, null);
