@@ -137,13 +137,17 @@ public class Contact {
 			if (user.hasAttribute(mB.getString(PHOTO))) {
 				byte[] array = user.getAttributeValueBytes(mB.getString(PHOTO));
 
-				// TODO Check for Memory! java.lang.OutOfMemoryError: bitmap size exceeds VM budget
-				Bitmap myBitmap = BitmapFactory.decodeByteArray(array, 0, array.length);
-				if (myBitmap != null) {
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
-					// TODO Check for Memory! OutOfMemoryError!!!
-					image = baos.toByteArray();
+				try {
+					Bitmap myBitmap = BitmapFactory.decodeByteArray(array, 0, array.length);
+					if (myBitmap != null) {
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+						image = baos.toByteArray();
+					}
+				} catch (OutOfMemoryError e) {
+					// Do not set an image, when an OutOfMemoryError occurs
+					image = null;
+					array = null;
 				}
 			}
 			c.setImage(image);
