@@ -299,7 +299,12 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		}
 		mPassword = mPasswordEdit.getText().toString();
 		mHost = mHostEdit.getText().toString();
-		mPort = Integer.parseInt(mPortEdit.getText().toString());
+		try {
+			mPort = Integer.parseInt(mPortEdit.getText().toString());
+		} catch (NumberFormatException nfe) {
+			Log.i(TAG, "No port given. Set port to 389");
+			mPort = 389;
+		}
 		LDAPServerInstance ldapServer = new LDAPServerInstance(mHost, mPort, mEncryption, mUsername, mPassword);
 
 		showDialog(PROGRESS_DIALOG);
