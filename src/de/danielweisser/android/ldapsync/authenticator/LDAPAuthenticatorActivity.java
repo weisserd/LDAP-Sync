@@ -109,6 +109,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private EditText mCountryEdit;
 	private String mImage;
 	private EditText mImageEdit;
+	private Dialog dialog;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -318,7 +319,9 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	public void onAuthenticationResult(String[] baseDNs, boolean result, String message) {
 		Log.i(TAG, "onAuthenticationResult(" + result + ")");
-		dismissDialog(PROGRESS_DIALOG);
+		if (dialog != null) {
+			dialog.dismiss();
+		}
 		if (result) {
 			if (baseDNs != null) {
 				ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
@@ -379,6 +382,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 					}
 				}
 			});
+			this.dialog = dialog;
 			return dialog;
 		} else if (id == ERROR_DIALOG) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
