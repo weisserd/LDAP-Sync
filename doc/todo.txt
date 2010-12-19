@@ -15,6 +15,9 @@ Ideas
 * Change server settings after save! => Settings
 
 Changelog
+1.4.2
+* Bugfixes
+
 1.4.1
 * Fix for a possible NullPointerException
 * Bugfix for concurrently running sync adapters
