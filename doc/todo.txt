@@ -16,7 +16,8 @@ Ideas
 
 Changelog
 1.4.2
-* Bugfixes
+* Bugfixes (Possible Memory Leaks, AutoCompletion of BaseDNs, Photo handling) 
+
 
 1.4.1
 * Fix for a possible NullPointerException
