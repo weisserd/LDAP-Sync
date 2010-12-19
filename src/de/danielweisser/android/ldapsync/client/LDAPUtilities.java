@@ -115,8 +115,7 @@ public class LDAPUtilities {
 			NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			int icon = R.drawable.icon;
 			CharSequence tickerText = "Error on LDAP Sync";
-			long when = System.currentTimeMillis();
-			Notification notification = new Notification(icon, tickerText, when);
+			Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
 			Intent notificationIntent = new Intent(context, SyncService.class);
 			PendingIntent contentIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			notification.setLatestEventInfo(context, tickerText, e.getMessage().replace("\\n", " "), contentIntent);
