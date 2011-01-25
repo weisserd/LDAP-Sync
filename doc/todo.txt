@@ -4,68 +4,13 @@ TODOs
 
 Apart from app
 * Promo badge
-* Tests
+* More Tests
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
+* Switch to Maven
 
 Ideas
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
 * View facets (private contacts, ...) ==> Display options!
 * Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
 * Multiple accounts on one server!
-* Change server settings after save! => Settings
-
-Changelog
-1.4.2
-* Bugfixes (Possible Memory Leaks, AutoCompletion of BaseDNs, Photo handling) 
-
-
-1.4.1
-* Fix for a possible NullPointerException
-* Bugfix for concurrently running sync adapters
-
-1.4
-* Updated LDAP library to version 2.0.0
-* Documented more parts of the code
-* Fixed bug with non existant BaseDNs - https://github.com/weisserd/LDAP-Sync/issues#issue/1
-
-1.3
-* Added mapping for homePhone (by Michael - https://github.com/kichkasch/LDAP-Sync)
-* Added mappings for addresses (work address)
-* German localization available
-
-1.2
-* Bugfix for the misbehavior in association with Google Contacts
-* Improved performance (better checks on data => less updates)
-* Internal code restructuring => better code ;-)
-* Log file of contact changes on SD card (folder LDAPSync)
-* Allow more than one LDAP server without problems (though not the same LDAP server again)
-
-1.1.1
-* Bugfix for the Samsung Galaxy
-* Integrated remote stacktraces
-
-1.1
-* SSL/StartTLS support
-* Improved error handling during the sync process with the usage of the Android notification system 
-* Better error descriptions for the account creation process
-
-1.0.1
-* Fixed a possible memory leak
-* Correct update (sync) of pictures
-
-1.0
-* Performance improvements
-* Real synchronization (No delete all contacts and re-add them any more)
-* Fix for the sync provider on the Motorola Droid X (Thanks to Andrew) => Linking of profiles works now
-* Smaller UI improvements for the configuration dialog
-* Allow anonymous access to LDAP server
-* Use the server name for the account description
-* Support multiple e-mail addresses
-
-0.9
-* Performance Improvements (Only relevant LDAP attributes are queried)
-* Editable Search Base (BaseDN), supported by AutoCompletion
-* Upated the LDAP library
-
-0.8
-* Initial release
+* Change server settings after save! => Migrate to Preferences/Settings
