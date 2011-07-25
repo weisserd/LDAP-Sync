@@ -1,6 +1,7 @@
-1.4.3 (not released yet)
+1.5 (not released yet)
 * Added correct licensing terms (Apache License 2.0)
 * Removed the trace handler
+* Upgraded LDAP library to version 2.2.0 (smaller memory footprint - by 500kB)
 
 1.4.2
 * Bugfixes (Possible Memory Leaks, AutoCompletion of BaseDNs, Photo handling) 
