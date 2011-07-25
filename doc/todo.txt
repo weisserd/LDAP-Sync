@@ -3,7 +3,6 @@ TODOs
 ==
 
 Apart from app
-* Promo badge
 * More Tests
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
 * Switch to Maven

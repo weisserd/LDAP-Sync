@@ -13,14 +13,14 @@
    version="1.1"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    sodipodi:docname="icon.svg"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.1 r9760"
    sodipodi:version="0.32"
    id="svg1256"
    height="48px"
    width="48px"
-   inkscape:export-filename="/home/daniel/Privat/DocDoors/.workspace/LDAPSync/res/drawable-ldpi/icon.png"
-   inkscape:export-xdpi="67.5"
-   inkscape:export-ydpi="67.5">
+   inkscape:export-filename="/home/daniel/TODO/Syncs/Sources/LDAP-Sync/doc/HighResolutionApplicationIcon.png"
+   inkscape:export-xdpi="960"
+   inkscape:export-ydpi="960">
   <defs
      id="defs3">
     <inkscape:perspective
@@ -231,7 +231,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="5.6568542"
      inkscape:cx="45.668593"
-     inkscape:cy="22.227348"
+     inkscape:cy="24.083503"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
@@ -239,7 +239,7 @@
      inkscape:window-width="872"
      inkscape:window-height="688"
      inkscape:window-x="562"
-     inkscape:window-y="160"
+     inkscape:window-y="150"
      fill="#ef2929"
      stroke="#cc0000"
      inkscape:showpageshadow="false"
