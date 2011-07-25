@@ -146,6 +146,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 				mEncryption = position;
 				if (position == 1) {
 					mPortEdit.setText("636");
+				} else {
+					mPortEdit.setText("389");
 				}
 			}
 
