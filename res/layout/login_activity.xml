@@ -39,18 +39,18 @@
 							android:inputType="textUri" />
 						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
 							android:textStyle="bold" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="@string/login_activity_encryption_label" />
+						<Spinner android:id="@+id/encryption_spinner" android:layout_width="fill_parent"
+							android:layout_height="wrap_content" android:drawSelectorOnTop="true"
+							android:prompt="@string/login_activity_encryption_prompt" />
+						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
+							android:textStyle="bold" android:layout_width="wrap_content"
 							android:layout_height="wrap_content" android:text="@string/login_activity_port_label" />
 						<EditText android:singleLine="true" android:layout_width="fill_parent"
 							android:layout_height="wrap_content" android:scrollHorizontally="true"
 							android:capitalize="none" android:autoText="false"
 							android:minWidth="300dip" android:id="@+id/port_edit"
 							android:inputType="number" />
-						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
-							android:textStyle="bold" android:layout_width="wrap_content"
-							android:layout_height="wrap_content" android:text="@string/login_activity_encryption_label" />
-						<Spinner android:id="@+id/encryption_spinner" android:layout_width="fill_parent"
-							android:layout_height="wrap_content" android:drawSelectorOnTop="true"
-							android:prompt="@string/login_activity_encryption_prompt" />
 						<TextView android:textAppearance="?android:attr/textAppearanceSmall"
 							android:textStyle="bold" android:layout_width="wrap_content"
 							android:layout_height="wrap_content" android:text="@string/login_activity_username_label" />

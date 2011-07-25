@@ -128,7 +128,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		
 		mAccountManager = AccountManager.get(this);
 
 		getDataFromIntent();
@@ -145,6 +144,9 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				mEncryption = position;
+				if (position == 1) {
+					mPortEdit.setText("636");
+				}
 			}
 
 			@Override
