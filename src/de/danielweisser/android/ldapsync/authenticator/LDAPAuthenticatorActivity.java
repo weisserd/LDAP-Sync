@@ -16,8 +16,6 @@
 
 package de.danielweisser.android.ldapsync.authenticator;
 
-import com.nullwire.trace.ExceptionHandler;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -33,12 +31,12 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
-import android.widget.AdapterView.OnItemSelectedListener;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.Contact;
@@ -130,7 +128,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		ExceptionHandler.register(this, "http://www.danielweisser.de/android/server.php");
 		
 		mAccountManager = AccountManager.get(this);
 

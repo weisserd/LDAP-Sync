@@ -1,5 +1,6 @@
 1.4.3 (not released yet)
 * Added correct licensing terms (Apache License 2.0)
+* Removed the trace handler
 
 1.4.2
 * Bugfixes (Possible Memory Leaks, AutoCompletion of BaseDNs, Photo handling) 
