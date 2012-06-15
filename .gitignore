@@ -4,3 +4,4 @@
 /gen/*.java
 *.class
 .metadata
+/target
