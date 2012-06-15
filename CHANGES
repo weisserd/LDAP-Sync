@@ -1,3 +1,8 @@
+2.0 
+* Updated LDAP library (2.3.1)
+* Upgraded minimum Android version to 2.1
+* Changed the build infrastracture to Maven (better management of builds)
+
 1.5
 * Added correct licensing terms (Apache License 2.0)
 * Removed the trace handler

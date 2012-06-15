@@ -1,15 +1,9 @@
-TODOs
-
-==
-
-Apart from app
-* More Tests
-* Create Homepage with help (http://www.danielweisser.de/ldapsync)
-* Switch to Maven
-
-Ideas
+TODOs:
+* Rewrite options with the Preference API (better changes of configuration values)
+* Newer LDAP library (smaller memory footprint) => replace with ME edition
+* more tests (improved quality) => Open Source Tests
+* Bug fixes (fix all remaining bugs, e.g. incoming call when creating account, ...)
+* Imroved Network/Failure handling (from XING-Sync)
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
-* View facets (private contacts, ...) ==> Display options!
-* Set synchronization interval (http://developer.android.com/reference/android/content/PeriodicSync.html, ContentProvider.addPeriodicSync()) => 2.2? See weather settings (set alarm)!
+* Create Homepage with help (http://www.danielweisser.de/ldapsync)
 * Multiple accounts on one server!
-* Change server settings after save! => Migrate to Preferences/Settings
