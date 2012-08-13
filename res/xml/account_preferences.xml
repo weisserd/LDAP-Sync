@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory android:title="Settings" >
-        <PreferenceScreen
-            android:key="tt"
-            android:title="Server Settings" >
-            <EditTextPreference
-                android:key="hostname"
-                android:summary="hostname"
-                android:title="Host" >
-            </EditTextPreference>
-            <CheckBoxPreference
-                android:key="key"
-                android:summary="rrrr"
-                android:title="title" >
-            </CheckBoxPreference>
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="tt"
-            android:title="Attribute Mappings" >
-        </PreferenceScreen>
-    </PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="account_settings"
+    android:summary="Misc account preferences"
+    android:title="Account Preferences" >
+
+    <PreferenceCategory android:title="General Settings" />
+
+    <PreferenceScreen
+        android:key="account_settings"
+        android:summary="Sync frequency, notifications, etc."
+        android:title="Account Settings" >
+        <intent android:action="com.example.android.samplesync.ACCOUNT_SETUP"
+            android:targetPackage="de.danielweisser.android.ldapsync"
+            android:targetClass="de.danielweisser.android.ldapsync.authenticator.AccountSettingsActivity" />
+    </PreferenceScreen>
+
 </PreferenceScreen>
