@@ -25,8 +25,10 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
@@ -132,6 +134,12 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 
 		getDataFromIntent();
 		setLDAPMappings();
+		// TODO Use properties
+		SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		int counter = app_preferences.getInt("counter", 0);
+		SharedPreferences.Editor editor = app_preferences.edit();
+		editor.putInt("counter", ++counter);
+		editor.commit(); // Very important
 
 		setContentView(R.layout.login_activity);
 
@@ -141,7 +149,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		mEncryptionSpinner.setAdapter(adapter);
 		mEncryptionSpinner.setSelection(mEncryption);
 		mEncryptionSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				mEncryption = position;
 				if (position == 1) {
@@ -151,7 +158,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 				}
 			}
 
-			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// Do nothing.
 			}
