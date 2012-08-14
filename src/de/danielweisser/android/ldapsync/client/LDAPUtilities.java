@@ -196,6 +196,7 @@ public class LDAPUtilities {
 			connection = ldapServer.getConnection();
 			if (connection != null) {
 				RootDSE s = connection.getRootDSE();
+//				TODO Check vendor name : s.getVendorName()
 				String[] baseDNs = null;
 				if (s != null) {
 					baseDNs = s.getNamingContextDNs();

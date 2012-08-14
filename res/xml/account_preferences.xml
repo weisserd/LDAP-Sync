@@ -8,12 +8,11 @@
 
     <PreferenceScreen
         android:key="account_settings"
-        android:summary="Sync frequency, notifications, etc."
+        android:summary="Change settings for your accounts"
         android:title="Account Settings" >
-        <!--  TODO Move to other class -->
-        <intent android:action="com.example.android.samplesync.ACCOUNT_SETUP"
+        <intent android:action="de.danielweisser.android.ldapsync.ACCOUNT_SETUP"
             android:targetPackage="de.danielweisser.android.ldapsync"
-            android:targetClass="de.danielweisser.android.ldapsync.authenticator.AccountSettingsActivity" />
+            android:targetClass="de.danielweisser.android.ldapsync.authenticator.AccountsListActivity" />
     </PreferenceScreen>
 
 </PreferenceScreen>

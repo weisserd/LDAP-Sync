@@ -1,5 +1,4 @@
 TODOs:
-* Rewrite options with the Preference API (better changes of configuration values) => per Account!!!
 * Newer LDAP library (smaller memory footprint) => replace with ME edition
 * more tests (improved quality) => Open Source Tests
 * Bug fixes (fix all remaining bugs, e.g. incoming call when creating account, ...)
@@ -11,7 +10,8 @@ TODOs:
 * Do not log forever! => Howto log?
 ----------
 * Check authentication use cases (wrong pw, ...)
-* AutoComplete BaseDNs
+* AutoComplete BaseDNs in PreferenceView
+* Show current preference values
 
 
 

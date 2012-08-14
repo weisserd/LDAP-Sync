@@ -20,6 +20,8 @@ public class AccountSettingsActivity extends PreferenceActivity {
 	private String accountName;
 	private LDAPServerInstance ldapServerInstance;
 
+	// TODO Add title
+	// TODO Remove Done if not in create mode
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

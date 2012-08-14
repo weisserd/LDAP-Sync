@@ -1,9 +1,15 @@
 2.0 
-* Updated LDAP library (2.3.1)
+* Updated LDAP library (2.3.1) -> Fixes and smaller footprint
 * Upgraded minimum Android version to 2.1
 * Use new Android styles (compatible with newer devices - Android 4.1)
 * Multiple accounts are now supported (even against one server)
+* Changes to accounts (mappings, baseDN, searchFilter) are permitted after account creation
 * Changed the build infrastracture to Maven (better management of builds)
+* Fixed open issues:
+  - https://github.com/weisserd/LDAP-Sync/issues/6 - hitting the back key on the second page of account creation boots me out of account creation instead of back to the first page
+  - https://github.com/weisserd/LDAP-Sync/issues/7 - BaseDN field in second page of account setup gives wrong hints to virtual keyboard
+  - https://github.com/weisserd/LDAP-Sync/issues/8 - hitting the back key on the second page of account creation boots me out of account creation instead of back to the first page
+
 
 1.5
 * Added correct licensing terms (Apache License 2.0)
