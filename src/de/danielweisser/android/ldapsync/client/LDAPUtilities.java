@@ -25,7 +25,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
@@ -103,7 +103,7 @@ public class LDAPUtilities {
 	 *            The baseDN that will be used for the search
 	 * @param searchFilter
 	 *            The search filter
-	 * @param mappingBundle
+	 * @param preferences
 	 *            A bundle of all LDAP attributes that are queried
 	 * @param mLastUpdated
 	 *            Date of the last update
@@ -111,17 +111,17 @@ public class LDAPUtilities {
 	 *            The caller Activity's context
 	 * @return List of all LDAP contacts
 	 */
-	public static List<Contact> fetchContacts(final LDAPServerInstance ldapServer, final String baseDN, final String searchFilter, final Bundle mappingBundle,
+	public static List<Contact> fetchContacts(final LDAPServerInstance ldapServer, final String baseDN, final String searchFilter, final SharedPreferences preferences,
 			final Date mLastUpdated, final Context context) {
 		final ArrayList<Contact> friendList = new ArrayList<Contact>();
 		LDAPConnection connection = null;
 		try {
 			connection = ldapServer.getConnection();
-			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter, getUsedAttributes(mappingBundle));
+			SearchResult searchResult = connection.search(baseDN, SearchScope.SUB, searchFilter, getUsedAttributes(preferences));
 			Log.i(TAG, searchResult.getEntryCount() + " entries returned.");
 
 			for (SearchResultEntry e : searchResult.getSearchEntries()) {
-				Contact u = Contact.valueOf(e, mappingBundle);
+				Contact u = Contact.valueOf(e, preferences);
 				if (u != null) {
 					friendList.add(u);
 				}
@@ -147,11 +147,12 @@ public class LDAPUtilities {
 		return friendList;
 	}
 
-	private static String[] getUsedAttributes(Bundle mappingBundle) {
+	private static String[] getUsedAttributes(SharedPreferences preferences) {
 		ArrayList<String> ldapAttributes = new ArrayList<String>();
-		String[] ldapArray = new String[mappingBundle.size()];
-		for (String key : mappingBundle.keySet()) {
-			ldapAttributes.add(mappingBundle.getString(key));
+		String[] ldapArray = new String[preferences.getAll().size()];
+		for (String key : preferences.getAll().keySet()) {
+			if (!(key.equals("baseDN") || key.equals("searchFilter")))
+			ldapAttributes.add(preferences.getString(key, ""));
 		}
 		ldapArray = ldapAttributes.toArray(ldapArray);
 		return ldapArray;

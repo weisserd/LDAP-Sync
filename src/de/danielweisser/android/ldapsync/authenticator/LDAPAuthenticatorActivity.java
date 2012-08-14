@@ -16,8 +16,8 @@
 
 package de.danielweisser.android.ldapsync.authenticator;
 
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -46,16 +46,11 @@ import de.danielweisser.android.ldapsync.client.LDAPUtilities;
  * 
  * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
-public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
+public class LDAPAuthenticatorActivity extends Activity { //AccountAuthenticatorActivity {
 
 	private static final int ERROR_DIALOG = 1;
 	private static final int PROGRESS_DIALOG = 0;
 	public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
-	public static final String PARAM_USERNAME = "username";
-	public static final String PARAM_PASSWORD = "password";
-	public static final String PARAM_HOST = "host";
-	public static final String PARAM_PORT = "port";
-	public static final String PARAM_ENCRYPTION = "encryption";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 	public static final String PARAM_SEARCHFILTER = "searchFilter";
 	public static final String PARAM_BASEDN = "baseDN";
@@ -76,19 +71,18 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	/** for posting authentication attempts back to UI thread */
 	private final Handler mHandler = new Handler();
 
-	private AccountManager mAccountManager;
+	
 	private Thread mAuthThread;
-	private String mAuthtoken;
-	private String mAuthtokenType;
 	private int mEncryption = 0;
 	private Dialog dialog;
 	private EditText username;
 	private EditText host;
+	private String accountName;
+	private LDAPServerInstance ldapServer;
 
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		mAccountManager = AccountManager.get(this);
 
 		// getDataFromIntent();
 		// setLDAPMappings();
@@ -163,29 +157,6 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Sets the default LDAP mapping attributes
-	 */
-	private void setLDAPMappings() {
-		if (mRequestNewAccount) {
-			// mSearchFilter = "(objectClass=inetOrgPerson)";
-			// mSearchFilter = "(objectClass=organizationalPerson)";
-			// mFirstName = "givenName";
-			// mLastName = "sn";
-			// mOfficePhone = "telephonenumber";
-			// mCellPhone = "mobile";
-			// mHomePhone = "homephone";
-			// mEmail = "mail";
-			// mImage = "jpegphoto";
-			// mStreet = "street";
-			// mCity = "l";
-			// mZip = "postalCode";
-			// mState = "st";
-			// mCountry = "co";
-			// mImage = "thumbnailphoto";
-		}
-	}
-
-	/**
 	 * Obtains data from an intent that was provided for the activity. If no intent was provided some default values are set.
 	 */
 	private void getDataFromIntent() {
@@ -194,7 +165,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		// mPassword = intent.getStringExtra(PARAM_PASSWORD);
 		// mHost = intent.getStringExtra(PARAM_HOST);
 		// mPort = intent.getIntExtra(PARAM_PORT, 389);
-		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
+//		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
 		// mRequestNewAccount = (mUsername == null);
 		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
 	}
@@ -212,7 +183,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		// mAccountManager.setPassword(account, mPassword);
 		final Intent intent = new Intent();
 		intent.putExtra(AccountManager.KEY_BOOLEAN_RESULT, result);
-		setAccountAuthenticatorResult(intent.getExtras());
+//		setAccountAuthenticatorResult(intent.getExtras());
 		setResult(RESULT_OK, intent);
 		finish();
 	}
@@ -258,10 +229,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		// mAuthtoken = mPassword;
 		// intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, account.name);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-		if (mAuthtokenType != null && mAuthtokenType.equals(Constants.AUTHTOKEN_TYPE)) {
-			intent.putExtra(AccountManager.KEY_AUTHTOKEN, mAuthtoken);
-		}
-		setAccountAuthenticatorResult(intent.getExtras());
+//		setAccountAuthenticatorResult(intent.getExtras());
 		setResult(RESULT_OK, intent);
 		finish();
 	}
@@ -273,9 +241,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 *            The Next button for which this method is invoked
 	 */
 	public void next(View view) {
-		// TODO Check for existing account with the same name
-		
-		// Get all parameter from the views - encryption is set by the spinner
+		accountName = ((EditText) findViewById(R.id.account_name)).getText().toString();
 
 		// if (mRequestNewAccount) {
 		String username = ((EditText) findViewById(R.id.username)).getText().toString();
@@ -290,7 +256,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			port = 389;
 		}
 		Log.i(TAG, "Now trying to login to server" + host + " for user " + username);
-		LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, mEncryption, username, password);
+		ldapServer = new LDAPServerInstance(host, port, mEncryption, username, password);
 
 		showDialog(PROGRESS_DIALOG);
 		// Start authenticating...
@@ -314,13 +280,14 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 		}
 		if (result) {
 			// Build intent with baseDNs and mappings (auto-detect)
+			Intent intent = new Intent(this, AccountSettingsActivity.class);
+			intent.putExtra("accountname", accountName);
 			if (baseDNs != null) {
-				ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
-				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				// mBaseDNSpinner.setAdapter(adapter);
+				intent.putExtra("baseDNs", baseDNs);
 			}
-			
-			startActivity(new Intent(this, AccountSettingsActivity.class));
+			intent.putExtra("ldapServer", ldapServer);
+			startActivity(intent);
+			finish();
 		} else {
 			this.message = message;
 			showDialog(ERROR_DIALOG);
@@ -395,4 +362,5 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			((AlertDialog) dialog).setMessage("Could not connect to the server:\n" + message);
 		}
 	}
+	
 }

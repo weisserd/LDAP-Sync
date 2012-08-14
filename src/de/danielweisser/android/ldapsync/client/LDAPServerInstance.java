@@ -49,27 +49,27 @@ public final class LDAPServerInstance implements Serializable {
 	/**
 	 * The encryption method (0 - no encryption, 1 - SSL, 2 - StartTLS)
 	 */
-	private final int encryption;
+	public final int encryption;
 
 	/**
 	 * The host address of the LDAP server
 	 */
-	private final String host;
+	public final String host;
 
 	/**
 	 * The port number of the LDAP server
 	 */
-	private final int port;
+	public final int port;
 
 	/**
 	 * The DN to use to bind to the server.
 	 */
-	private final String bindDN;
+	public final String bindDN;
 
 	/**
 	 * The password to use to bind to the server.
 	 */
-	private final String bindPW;
+	public final String bindPW;
 
 	/**
 	 * Creates a new LDAP server instance with the provided information.

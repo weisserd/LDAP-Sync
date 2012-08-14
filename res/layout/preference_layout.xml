@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_weight="1"
-        android:onClick="next"
-        android:text="@string/next" />
+        android:onClick="createAccount"
+        android:text="@string/done" />
 
 </LinearLayout>

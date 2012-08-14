@@ -29,13 +29,14 @@ public class Constants {
 	public static final String ACCOUNT_TYPE = "de.danielweisser.android.ldapsync";
 
 	/**
-	 * Authtoken type string.
-	 */
-	public static final String AUTHTOKEN_TYPE = "de.danielweisser.android.ldapsync";
-
-	/**
 	 * SD card LDAPSync folder.
 	 */
 	public static final String SDCARD_FOLDER = "/LDAPSync";
+	
+	public static final String PARAM_USERNAME = "username";
+	public static final String PARAM_PASSWORD = "password";
+	public static final String PARAM_HOST = "host";
+	public static final String PARAM_PORT = "port";
+	public static final String PARAM_ENCRYPTION = "encryption";
 
 }

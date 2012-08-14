@@ -1,13 +1,17 @@
 TODOs:
-* Rewrite options with the Preference API (better changes of configuration values)
+* Rewrite options with the Preference API (better changes of configuration values) => per Account!!!
 * Newer LDAP library (smaller memory footprint) => replace with ME edition
 * more tests (improved quality) => Open Source Tests
 * Bug fixes (fix all remaining bugs, e.g. incoming call when creating account, ...)
 * Improved Network/Failure handling (from XING-Sync)
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
-* Multiple accounts on one server!
+* Improve syncing performance
+* Support groups for Android 4?
 * Do not log forever!
+----------
+* Map all fields
+* Check authentication use cases (wrong pw, ...)
 
 
 

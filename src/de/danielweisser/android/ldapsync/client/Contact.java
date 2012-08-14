@@ -18,6 +18,7 @@ package de.danielweisser.android.ldapsync.client;
 
 import java.io.ByteArrayOutputStream;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -31,18 +32,18 @@ import com.unboundid.ldap.sdk.ReadOnlyEntry;
  * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class Contact {
-	public static String FIRSTNAME = "FIRSTNAME";
-	public static String LASTNAME = "LASTNAME";
-	public static String TELEPHONE = "TELEPHONE";
-	public static String MOBILE = "MOBILE";
-	public static String HOMEPHONE = "HOMEPHONE";
-	public static String MAIL = "MAIL";
-	public static String PHOTO = "PHOTO";
-	public static String STREET = "STREET";
-	public static String CITY = "CITY";
-	public static String STATE = "STATE";
-	public static String ZIP = "ZIP";
-	public static String COUNTRY = "COUNTRY";
+	// public static String FIRSTNAME = "FIRSTNAME";
+	// public static String LASTNAME = "LASTNAME";
+	// public static String TELEPHONE = "TELEPHONE";
+	// public static String MOBILE = "MOBILE";
+	// public static String HOMEPHONE = "HOMEPHONE";
+	// public static String MAIL = "MAIL";
+	// public static String PHOTO = "PHOTO";
+	// public static String STREET = "STREET";
+	// public static String CITY = "CITY";
+	// public static String STATE = "STATE";
+	// public static String ZIP = "ZIP";
+	// public static String COUNTRY = "COUNTRY";
 
 	private String dn = "";
 	private String firstName = "";
@@ -131,27 +132,26 @@ public class Contact {
 	 * 
 	 * @param user
 	 *            The LDAPObject containing user data
-	 * @param mB
+	 * @param preferences
 	 *            Mapping bundle for the LDAP attribute names.
 	 * @return user The new instance of LDAP user created from the LDAP data.
 	 */
-	public static Contact valueOf(ReadOnlyEntry user, Bundle mB) {
+	public static Contact valueOf(ReadOnlyEntry user, SharedPreferences preferences) {
 		Contact c = new Contact();
 		try {
 			c.setDn(user.getDN());
-			c.setFirstName(user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB.getString(FIRSTNAME)) : null);
-			c.setLastName(user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB.getString(LASTNAME)) : null);
-			if ((user.hasAttribute(mB.getString(FIRSTNAME)) ? user.getAttributeValue(mB.getString(FIRSTNAME)) : null) == null
-					|| (user.hasAttribute(mB.getString(LASTNAME)) ? user.getAttributeValue(mB.getString(LASTNAME)) : null) == null) {
+			c.setFirstName(extracted(user, preferences, "first_name"));
+			c.setLastName(extracted(user, preferences, "last_name"));
+			if (extracted(user, preferences, "last_name") == null || extracted(user, preferences, "first_name") == null) {
 				return null;
 			}
-			c.setWorkPhone(user.hasAttribute(mB.getString(TELEPHONE)) ? user.getAttributeValue(mB.getString(TELEPHONE)) : null);
-			c.setCellWorkPhone(user.hasAttribute(mB.getString(MOBILE)) ? user.getAttributeValue(mB.getString(MOBILE)) : null);
-			c.setHomePhone(user.hasAttribute(mB.getString(HOMEPHONE)) ? user.getAttributeValue(mB.getString(HOMEPHONE)) : null);
-			c.setEmails(user.hasAttribute(mB.getString(MAIL)) ? user.getAttributeValues(mB.getString(MAIL)) : null);
+//			c.setWorkPhone(user.hasAttribute(preferences.getString(TELEPHONE)) ? user.getAttributeValue(preferences.getString(TELEPHONE)) : null);
+//			c.setCellWorkPhone(user.hasAttribute(preferences.getString(MOBILE)) ? user.getAttributeValue(preferences.getString(MOBILE)) : null);
+//			c.setHomePhone(user.hasAttribute(preferences.getString(HOMEPHONE)) ? user.getAttributeValue(preferences.getString(HOMEPHONE)) : null);
+//			c.setEmails(user.hasAttribute(preferences.getString(MAIL)) ? user.getAttributeValues(preferences.getString(MAIL)) : null);
 			byte[] image = null;
-			if (user.hasAttribute(mB.getString(PHOTO))) {
-				byte[] array = user.getAttributeValueBytes(mB.getString(PHOTO));
+			if (user.hasAttribute(preferences.getString("photo", ""))) {
+				byte[] array = user.getAttributeValueBytes(preferences.getString("photo", ""));
 
 				try {
 					Bitmap myBitmap = BitmapFactory.decodeByteArray(array, 0, array.length);
@@ -167,21 +167,26 @@ public class Contact {
 				}
 			}
 			c.setImage(image);
-
-			// Get address
-			if (user.hasAttribute(mB.getString(STREET)) || user.hasAttribute(mB.getString(CITY)) || user.hasAttribute(mB.getString(STATE))
-					|| user.hasAttribute(mB.getString(ZIP)) || user.hasAttribute(mB.getString(COUNTRY))) {
-				Address a = new Address();
-				a.setStreet(user.hasAttribute(mB.getString(STREET)) ? user.getAttributeValue(mB.getString(STREET)) : null);
-				a.setCity(user.hasAttribute(mB.getString(CITY)) ? user.getAttributeValue(mB.getString(CITY)) : null);
-				a.setState(user.hasAttribute(mB.getString(STATE)) ? user.getAttributeValue(mB.getString(STATE)) : null);
-				a.setZip(user.hasAttribute(mB.getString(ZIP)) ? user.getAttributeValue(mB.getString(ZIP)) : null);
-				a.setCountry(user.hasAttribute(mB.getString(COUNTRY)) ? user.getAttributeValue(mB.getString(COUNTRY)) : null);
-				c.setAddress(a);
-			}
+//
+//			// Get address
+//			if (user.hasAttribute(preferences.getString(STREET)) || user.hasAttribute(preferences.getString(CITY))
+//					|| user.hasAttribute(preferences.getString(STATE)) || user.hasAttribute(preferences.getString(ZIP))
+//					|| user.hasAttribute(preferences.getString(COUNTRY))) {
+//				Address a = new Address();
+//				a.setStreet(user.hasAttribute(preferences.getString(STREET)) ? user.getAttributeValue(preferences.getString(STREET)) : null);
+//				a.setCity(user.hasAttribute(preferences.getString(CITY)) ? user.getAttributeValue(preferences.getString(CITY)) : null);
+//				a.setState(user.hasAttribute(preferences.getString(STATE)) ? user.getAttributeValue(preferences.getString(STATE)) : null);
+//				a.setZip(user.hasAttribute(preferences.getString(ZIP)) ? user.getAttributeValue(preferences.getString(ZIP)) : null);
+//				a.setCountry(user.hasAttribute(preferences.getString(COUNTRY)) ? user.getAttributeValue(preferences.getString(COUNTRY)) : null);
+//				c.setAddress(a);
+//			}
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}
 		return c;
+	}
+
+	private static String extracted(ReadOnlyEntry user, SharedPreferences preferences, String field) {
+		return user.hasAttribute(preferences.getString(field, "")) ? user.getAttributeValue(preferences.getString(field, "")) : null;
 	}
 }
