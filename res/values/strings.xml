@@ -13,46 +13,50 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- -->
- 
+-->
+
 <resources>
-	<string name="label">LDAP</string>
-	<string name="app_name">LDAP Sync</string>
 
-	<!-- AuthenticatorActivity -->
-	<skip />
-	<string name="login_activity_host_label">Host</string>
-	<string name="login_activity_port_label">Port</string>
-	<string name="login_activity_encryption_label">Encryption</string>
-	<string name="login_activity_encryption_prompt">Choose your encryption method</string>
-	<string name="login_activity_username_label">Bind DN (Leave empty for anonymous)</string>
-	<string name="login_activity_password_label">Bind Password (Leave empty for anonymous)</string>
-	<string name="login_activity_basedn_label">BaseDN</string>
-	<string name="login_activity_searchfilter_label">Search Filter</string>
-	<string name="login_activity_ldap_mappings_label">LDAP Mappings</string>
-	<string name="login_activity_firstname_label">First Name</string>
-	<string name="login_activity_lastname_label">Last Name</string>
-	<string name="login_activity_officephone_label">Office Phone</string>
-	<string name="login_activity_cellphone_label">Cell Phone</string>
-	<string name="login_activity_homephone_label">Home Phone</string>
-	<string name="login_activity_mail_label">E-Mail</string>
-	<string name="login_activity_image_label">Image</string>
-	<string name="login_activity_street_label">Street</string>
-	<string name="login_activity_city_label">City</string>
-	<string name="login_activity_state_label">State</string>
-	<string name="login_activity_zip_label">Zip code</string>
-	<string name="login_activity_country_label">Country</string>
-	<string name="login_activity_next_button">Next</string>
-	<string name="login_activity_done_button">Done</string>
+    <string name="label">LDAP</string>
+    <string name="app_name">LDAP Sync</string>
 
-	<!-- Message shown in dialog if the username or password is invalid. -->
-	<string name="login_activity_loginfail">The username or password isn\'t valid. A LDAP
+    <!-- AuthenticatorActivity -->
+    <string name="host_label">Hostname</string>
+    <string name="host">IP address or hostname</string>
+    <string name="port_label">Port</string>
+    <string name="port">Port</string>
+    <string name="encryption">Encryption</string>
+    
+    <string name="username_label">Bind DN (Leave empty for anonymous)</string>
+    <string name="password_label">Bind Password (Leave empty for anonymous)</string>
+    <string name="account_name_label">Account name</string>
+    <string name="account_name">e.g. user@host</string>
+    <string name="login_activity_basedn_label">BaseDN</string>
+    <string name="login_activity_searchfilter_label">Search Filter</string>
+    <string name="login_activity_ldap_mappings_label">LDAP Mappings</string>
+    <string name="login_activity_firstname_label">First Name</string>
+    <string name="login_activity_lastname_label">Last Name</string>
+    <string name="login_activity_officephone_label">Office Phone</string>
+    <string name="login_activity_cellphone_label">Cell Phone</string>
+    <string name="login_activity_homephone_label">Home Phone</string>
+    <string name="login_activity_mail_label">E-Mail</string>
+    <string name="login_activity_image_label">Image</string>
+    <string name="login_activity_street_label">Street</string>
+    <string name="login_activity_city_label">City</string>
+    <string name="login_activity_state_label">State</string>
+    <string name="login_activity_zip_label">Zip code</string>
+    <string name="login_activity_country_label">Country</string>
+    <string name="next">Next</string>
+    <string name="login_activity_done_button">Done</string>
+
+    <!-- Message shown in dialog if the username or password is invalid. -->
+    <string name="login_activity_loginfail">The username or password isn\'t valid. A LDAP
 		account is required. Please try again. </string>
-	<!--
-		Message shown in progress dialog while app connects to the server
-	-->
-	<string name="ui_activity_authenticating">Authenticating\u2026</string>
+<!-- 		Message shown in progress dialog while app connects to the server -->
+    <string name="ui_activity_authenticating">Authenticating\u2026</string>
 
-	<!-- Title string for Login activity-->
-	<string name="ui_activity_title">LDAP Server settings</string>
+    <!-- Title string for Login activity -->
+    <string name="ui_activity_title">LDAP Server settings</string>
+    <string name="defaultLdapPort">389</string>
+
 </resources>

@@ -16,35 +16,30 @@
 
 package de.danielweisser.android.ldapsync.authenticator;
 
-import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.ViewFlipper;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
-import de.danielweisser.android.ldapsync.client.Contact;
 import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
-import de.danielweisser.android.ldapsync.platform.ContactManager;
 
 /**
  * Activity which displays login screen to the user.
@@ -85,65 +80,59 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private Thread mAuthThread;
 	private String mAuthtoken;
 	private String mAuthtokenType;
-
-	private String mPassword;
-	private EditText mPasswordEdit;
-	private String mUsername;
-	private EditText mUsernameEdit;
-	private String mHost;
-	private EditText mHostEdit;
-	private int mEncryption;
-	private Spinner mEncryptionSpinner;
-	private String mSearchFilter;
-	private EditText mSearchFilterEdit;
-	private String mBaseDN;
-	private AutoCompleteTextView mBaseDNSpinner;
-	private int mPort;
-	private EditText mPortEdit;
-
-	private String mFirstName;
-	private EditText mFirstNameEdit;
-	private String mLastName;
-	private EditText mLastNameEdit;
-	private String mCellPhone;
-	private EditText mCellPhoneEdit;
-	private String mHomePhone;
-	private EditText mHomePhoneEdit;
-	private String mOfficePhone;
-	private EditText mOfficePhoneEdit;
-	private String mEmail;
-	private EditText mEmailEdit;
-	private String mStreet;
-	private EditText mStreetEdit;
-	private String mCity;
-	private EditText mCityEdit;
-	private String mState;
-	private EditText mStateEdit;
-	private String mZip;
-	private EditText mZipEdit;
-	private String mCountry;
-	private EditText mCountryEdit;
-	private String mImage;
-	private EditText mImageEdit;
+	private int mEncryption = 0;
 	private Dialog dialog;
+	private EditText username;
+	private EditText host;
 
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		mAccountManager = AccountManager.get(this);
 
-		getDataFromIntent();
-		setLDAPMappings();
-		// TODO Use properties
-		SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		int counter = app_preferences.getInt("counter", 0);
-		SharedPreferences.Editor editor = app_preferences.edit();
-		editor.putInt("counter", ++counter);
-		editor.commit(); // Very important
-
+		// getDataFromIntent();
+		// setLDAPMappings();
 		setContentView(R.layout.login_activity);
 
-		mEncryptionSpinner = (Spinner) findViewById(R.id.encryption_spinner);
+		// Enable the next button only if the hostname is set - additionally update account name to username + host
+		final Button next = (Button) findViewById(R.id.next);
+		next.setEnabled(false);
+		username = (EditText) findViewById(R.id.username);
+		host = (EditText) findViewById(R.id.host);
+		host.addTextChangedListener(new TextWatcher() {
+
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.toString().equals("")) {
+					next.setEnabled(false);
+				} else {
+					next.setEnabled(true);
+				}
+				updateAccountName();
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			public void afterTextChanged(Editable s) {
+			}
+		});
+
+		username.addTextChangedListener(new TextWatcher() {
+
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				updateAccountName();
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			public void afterTextChanged(Editable s) {
+			}
+		});
+
+		// Fill the encryption spinner and change port according to selected encryption
+		Spinner mEncryptionSpinner = (Spinner) findViewById(R.id.encryption);
+		final EditText mPortEdit = (EditText) findViewById(R.id.port);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.encryption_methods, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mEncryptionSpinner.setAdapter(adapter);
@@ -162,47 +151,15 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 				// Do nothing.
 			}
 		});
+	}
 
-		// Find controls
-		mUsernameEdit = (EditText) findViewById(R.id.username_edit);
-		mPasswordEdit = (EditText) findViewById(R.id.password_edit);
-		mHostEdit = (EditText) findViewById(R.id.host_edit);
-		mPortEdit = (EditText) findViewById(R.id.port_edit);
-		mSearchFilterEdit = (EditText) findViewById(R.id.searchfilter_edit);
-		mBaseDNSpinner = (AutoCompleteTextView) findViewById(R.id.basedn_spinner);
-
-		// Set values from the intent
-		mUsernameEdit.setText(mUsername);
-		mPasswordEdit.setText(mAuthtokenType);
-		mHostEdit.setText(mHost);
-		mPortEdit.setText(Integer.toString(mPort));
-		mSearchFilterEdit.setText(mSearchFilter);
-
-		// Set values for LDAP mapping
-		mFirstNameEdit = (EditText) findViewById(R.id.firstname_edit);
-		mFirstNameEdit.setText(mFirstName);
-		mLastNameEdit = (EditText) findViewById(R.id.lastname_edit);
-		mLastNameEdit.setText(mLastName);
-		mOfficePhoneEdit = (EditText) findViewById(R.id.officephone_edit);
-		mOfficePhoneEdit.setText(mOfficePhone);
-		mCellPhoneEdit = (EditText) findViewById(R.id.cellphone_edit);
-		mCellPhoneEdit.setText(mCellPhone);
-		mHomePhoneEdit = (EditText) findViewById(R.id.homephone_edit);
-		mHomePhoneEdit.setText(mHomePhone);
-		mEmailEdit = (EditText) findViewById(R.id.mail_edit);
-		mEmailEdit.setText(mEmail);
-		mImageEdit = (EditText) findViewById(R.id.image_edit);
-		mImageEdit.setText(mImage);
-		mStreetEdit = (EditText) findViewById(R.id.street_edit);
-		mStreetEdit.setText(mStreet);
-		mCityEdit = (EditText) findViewById(R.id.city_edit);
-		mCityEdit.setText(mCity);
-		mZipEdit = (EditText) findViewById(R.id.zip_edit);
-		mZipEdit.setText(mZip);
-		mStateEdit = (EditText) findViewById(R.id.state_edit);
-		mStateEdit.setText(mState);
-		mCountryEdit = (EditText) findViewById(R.id.country_edit);
-		mCountryEdit.setText(mCountry);
+	private void updateAccountName() {
+		final EditText accountName = (EditText) findViewById(R.id.account_name);
+		if (TextUtils.isEmpty(username.getText().toString())) {
+			accountName.setText(host.getText().toString());
+		} else {
+			accountName.setText(username.getText().toString() + "@" + host.getText().toString());
+		}
 	}
 
 	/**
@@ -211,19 +168,19 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	private void setLDAPMappings() {
 		if (mRequestNewAccount) {
 			// mSearchFilter = "(objectClass=inetOrgPerson)";
-			mSearchFilter = "(objectClass=organizationalPerson)";
-			mFirstName = "givenName";
-			mLastName = "sn";
-			mOfficePhone = "telephonenumber";
-			mCellPhone = "mobile";
-			mHomePhone = "homephone";
-			mEmail = "mail";
-			mImage = "jpegphoto";
-			mStreet = "street";
-			mCity = "l";
-			mZip = "postalCode";
-			mState = "st";
-			mCountry = "co";
+			// mSearchFilter = "(objectClass=organizationalPerson)";
+			// mFirstName = "givenName";
+			// mLastName = "sn";
+			// mOfficePhone = "telephonenumber";
+			// mCellPhone = "mobile";
+			// mHomePhone = "homephone";
+			// mEmail = "mail";
+			// mImage = "jpegphoto";
+			// mStreet = "street";
+			// mCity = "l";
+			// mZip = "postalCode";
+			// mState = "st";
+			// mCountry = "co";
 			// mImage = "thumbnailphoto";
 		}
 	}
@@ -233,12 +190,12 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	private void getDataFromIntent() {
 		final Intent intent = getIntent();
-		mUsername = intent.getStringExtra(PARAM_USERNAME);
-		mPassword = intent.getStringExtra(PARAM_PASSWORD);
-		mHost = intent.getStringExtra(PARAM_HOST);
-		mPort = intent.getIntExtra(PARAM_PORT, 389);
+		// mUsername = intent.getStringExtra(PARAM_USERNAME);
+		// mPassword = intent.getStringExtra(PARAM_PASSWORD);
+		// mHost = intent.getStringExtra(PARAM_HOST);
+		// mPort = intent.getIntExtra(PARAM_PORT, 389);
 		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
-		mRequestNewAccount = (mUsername == null);
+		// mRequestNewAccount = (mUsername == null);
 		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
 	}
 
@@ -251,8 +208,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	protected void finishConfirmCredentials(boolean result) {
 		Log.i(TAG, "finishConfirmCredentials()");
-		final Account account = new Account(mHost, Constants.ACCOUNT_TYPE);
-		mAccountManager.setPassword(account, mPassword);
+		// final Account account = new Account(mHost + mPort, Constants.ACCOUNT_TYPE);
+		// mAccountManager.setPassword(account, mPassword);
 		final Intent intent = new Intent();
 		intent.putExtra(AccountManager.KEY_BOOLEAN_RESULT, result);
 		setAccountAuthenticatorResult(intent.getExtras());
@@ -266,40 +223,40 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 */
 	protected void finishLogin() {
 		Log.i(TAG, "finishLogin()");
-		final Account account = new Account(mHost, Constants.ACCOUNT_TYPE);
+		// final Account account = new Account(mUsername + mHost + mPort, Constants.ACCOUNT_TYPE);
 
 		if (mRequestNewAccount) {
 			Bundle userData = new Bundle();
-			userData.putString(PARAM_USERNAME, mUsername);
-			userData.putString(PARAM_PORT, mPort + "");
-			userData.putString(PARAM_HOST, mHost);
-			userData.putString(PARAM_ENCRYPTION, mEncryption + "");
-			userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
-			userData.putString(PARAM_BASEDN, mBaseDN);
-			// Mappings for LDAP data
-			userData.putString(PARAM_MAPPING + Contact.FIRSTNAME, mFirstName);
-			userData.putString(PARAM_MAPPING + Contact.LASTNAME, mLastName);
-			userData.putString(PARAM_MAPPING + Contact.TELEPHONE, mOfficePhone);
-			userData.putString(PARAM_MAPPING + Contact.MOBILE, mCellPhone);
-			userData.putString(PARAM_MAPPING + Contact.HOMEPHONE, mHomePhone);
-			userData.putString(PARAM_MAPPING + Contact.MAIL, mEmail);
-			userData.putString(PARAM_MAPPING + Contact.PHOTO, mImage);
-			userData.putString(PARAM_MAPPING + Contact.STREET, mStreet);
-			userData.putString(PARAM_MAPPING + Contact.CITY, mCity);
-			userData.putString(PARAM_MAPPING + Contact.ZIP, mZip);
-			userData.putString(PARAM_MAPPING + Contact.STATE, mState);
-			userData.putString(PARAM_MAPPING + Contact.COUNTRY, mCountry);
-			mAccountManager.addAccountExplicitly(account, mPassword, userData);
-
-			// Set contacts sync for this account.
-			ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
-			ContactManager.makeGroupVisible(account.name, getContentResolver());
-		} else {
-			mAccountManager.setPassword(account, mPassword);
+			// userData.putString(PARAM_USERNAME, mUsername);
+			// userData.putString(PARAM_PORT, mPort + "");
+			// userData.putString(PARAM_HOST, mHost);
+			// userData.putString(PARAM_ENCRYPTION, mEncryption + "");
+			// userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
+			// userData.putString(PARAM_BASEDN, mBaseDN);
+			// // Mappings for LDAP data
+			// userData.putString(PARAM_MAPPING + Contact.FIRSTNAME, mFirstName);
+			// userData.putString(PARAM_MAPPING + Contact.LASTNAME, mLastName);
+			// userData.putString(PARAM_MAPPING + Contact.TELEPHONE, mOfficePhone);
+			// userData.putString(PARAM_MAPPING + Contact.MOBILE, mCellPhone);
+			// userData.putString(PARAM_MAPPING + Contact.HOMEPHONE, mHomePhone);
+			// userData.putString(PARAM_MAPPING + Contact.MAIL, mEmail);
+			// userData.putString(PARAM_MAPPING + Contact.PHOTO, mImage);
+			// userData.putString(PARAM_MAPPING + Contact.STREET, mStreet);
+			// userData.putString(PARAM_MAPPING + Contact.CITY, mCity);
+			// userData.putString(PARAM_MAPPING + Contact.ZIP, mZip);
+			// userData.putString(PARAM_MAPPING + Contact.STATE, mState);
+			// userData.putString(PARAM_MAPPING + Contact.COUNTRY, mCountry);
+			// mAccountManager.addAccountExplicitly(account, mPassword, userData);
+			//
+			// // Set contacts sync for this account.
+			// ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
+			// ContactManager.makeGroupVisible(account.name, getContentResolver());
+			// } else {
+			// mAccountManager.setPassword(account, mPassword);
 		}
 		final Intent intent = new Intent();
-		mAuthtoken = mPassword;
-		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, account.name);
+		// mAuthtoken = mPassword;
+		// intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, account.name);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 		if (mAuthtokenType != null && mAuthtokenType.equals(Constants.AUTHTOKEN_TYPE)) {
 			intent.putExtra(AccountManager.KEY_AUTHTOKEN, mAuthtoken);
@@ -310,25 +267,30 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	}
 
 	/**
-	 * Handles onClick event on the Next button. Sends username/password to the server for authentication.
+	 * Called when the user touches the next button. Sends username/password to the server for authentication.
 	 * 
 	 * @param view
 	 *            The Next button for which this method is invoked
 	 */
-	public void getLDAPServerDetails(View view) {
-		Log.i(TAG, "handleLogin");
-		if (mRequestNewAccount) {
-			mUsername = mUsernameEdit.getText().toString();
-		}
-		mPassword = mPasswordEdit.getText().toString();
-		mHost = mHostEdit.getText().toString();
+	public void next(View view) {
+		// TODO Check for existing account with the same name
+		
+		// Get all parameter from the views - encryption is set by the spinner
+
+		// if (mRequestNewAccount) {
+		String username = ((EditText) findViewById(R.id.username)).getText().toString();
+		// }
+		String password = ((EditText) findViewById(R.id.password)).getText().toString();
+		String host = ((EditText) findViewById(R.id.host)).getText().toString();
+		int port;
 		try {
-			mPort = Integer.parseInt(mPortEdit.getText().toString());
+			port = Integer.parseInt(((EditText) findViewById(R.id.port)).getText().toString());
 		} catch (NumberFormatException nfe) {
 			Log.i(TAG, "No port given. Set port to 389");
-			mPort = 389;
+			port = 389;
 		}
-		LDAPServerInstance ldapServer = new LDAPServerInstance(mHost, mPort, mEncryption, mUsername, mPassword);
+		Log.i(TAG, "Now trying to login to server" + host + " for user " + username);
+		LDAPServerInstance ldapServer = new LDAPServerInstance(host, port, mEncryption, username, password);
 
 		showDialog(PROGRESS_DIALOG);
 		// Start authenticating...
@@ -351,17 +313,18 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			dialog.dismiss();
 		}
 		if (result) {
+			// Build intent with baseDNs and mappings (auto-detect)
 			if (baseDNs != null) {
 				ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
 				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				mBaseDNSpinner.setAdapter(adapter);
+				// mBaseDNSpinner.setAdapter(adapter);
 			}
-			ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
-			vf.showNext();
+			// ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
+			// vf.showNext();
 		} else {
 			this.message = message;
 			showDialog(ERROR_DIALOG);
-			Log.e(TAG, "onAuthenticationResult: failed to authenticate");
+			Log.e(TAG, "Error during authentication: " + message);
 		}
 	}
 
@@ -372,20 +335,20 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 	 *            The Done button for which this method is invoked
 	 */
 	public void saveAccount(View view) {
-		mSearchFilter = mSearchFilterEdit.getText().toString();
-		mBaseDN = mBaseDNSpinner.getText().toString();
-		mFirstName = mFirstNameEdit.getText().toString();
-		mLastName = mLastNameEdit.getText().toString();
-		mOfficePhone = mOfficePhoneEdit.getText().toString();
-		mCellPhone = mCellPhoneEdit.getText().toString();
-		mHomePhone = mHomePhoneEdit.getText().toString();
-		mEmail = mEmailEdit.getText().toString();
-		mImage = mImageEdit.getText().toString();
-		mStreet = mStreetEdit.getText().toString();
-		mCity = mCityEdit.getText().toString();
-		mZip = mZipEdit.getText().toString();
-		mState = mStateEdit.getText().toString();
-		mCountry = mCountryEdit.getText().toString();
+		// mSearchFilter = mSearchFilterEdit.getText().toString();
+		// mBaseDN = mBaseDNSpinner.getText().toString();
+		// mFirstName = mFirstNameEdit.getText().toString();
+		// mLastName = mLastNameEdit.getText().toString();
+		// mOfficePhone = mOfficePhoneEdit.getText().toString();
+		// mCellPhone = mCellPhoneEdit.getText().toString();
+		// mHomePhone = mHomePhoneEdit.getText().toString();
+		// mEmail = mEmailEdit.getText().toString();
+		// mImage = mImageEdit.getText().toString();
+		// mStreet = mStreetEdit.getText().toString();
+		// mCity = mCityEdit.getText().toString();
+		// mZip = mZipEdit.getText().toString();
+		// mState = mStateEdit.getText().toString();
+		// mCountry = mCountryEdit.getText().toString();
 
 		if (!mConfirmCredentials) {
 			finishLogin();
@@ -414,7 +377,7 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 			return dialog;
 		} else if (id == ERROR_DIALOG) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Connection error").setMessage("Could not connect to the server:\n" + message).setCancelable(false);
+			builder.setTitle("Connection error").setMessage(message).setCancelable(false);
 			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
