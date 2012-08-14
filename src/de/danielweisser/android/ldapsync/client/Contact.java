@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.unboundid.ldap.sdk.ReadOnlyEntry;
@@ -140,15 +139,15 @@ public class Contact {
 		Contact c = new Contact();
 		try {
 			c.setDn(user.getDN());
-			c.setFirstName(extracted(user, preferences, "first_name"));
-			c.setLastName(extracted(user, preferences, "last_name"));
-			if (extracted(user, preferences, "last_name") == null || extracted(user, preferences, "first_name") == null) {
+			c.setFirstName(getAttributevalue(user, preferences, "first_name"));
+			c.setLastName(getAttributevalue(user, preferences, "last_name"));
+			if (getAttributevalue(user, preferences, "last_name") == null || getAttributevalue(user, preferences, "first_name") == null) {
 				return null;
 			}
-//			c.setWorkPhone(user.hasAttribute(preferences.getString(TELEPHONE)) ? user.getAttributeValue(preferences.getString(TELEPHONE)) : null);
-//			c.setCellWorkPhone(user.hasAttribute(preferences.getString(MOBILE)) ? user.getAttributeValue(preferences.getString(MOBILE)) : null);
-//			c.setHomePhone(user.hasAttribute(preferences.getString(HOMEPHONE)) ? user.getAttributeValue(preferences.getString(HOMEPHONE)) : null);
-//			c.setEmails(user.hasAttribute(preferences.getString(MAIL)) ? user.getAttributeValues(preferences.getString(MAIL)) : null);
+			c.setWorkPhone(getAttributevalue(user, preferences, "office_phone"));
+			c.setCellWorkPhone(getAttributevalue(user, preferences, "cell_phone"));
+			c.setHomePhone(getAttributevalue(user, preferences, "home_phone"));
+			c.setEmails(user.hasAttribute(preferences.getString("mail", "")) ? user.getAttributeValues(preferences.getString("mail", "")) : null);
 			byte[] image = null;
 			if (user.hasAttribute(preferences.getString("photo", ""))) {
 				byte[] array = user.getAttributeValueBytes(preferences.getString("photo", ""));
@@ -167,26 +166,25 @@ public class Contact {
 				}
 			}
 			c.setImage(image);
-//
-//			// Get address
-//			if (user.hasAttribute(preferences.getString(STREET)) || user.hasAttribute(preferences.getString(CITY))
-//					|| user.hasAttribute(preferences.getString(STATE)) || user.hasAttribute(preferences.getString(ZIP))
-//					|| user.hasAttribute(preferences.getString(COUNTRY))) {
-//				Address a = new Address();
-//				a.setStreet(user.hasAttribute(preferences.getString(STREET)) ? user.getAttributeValue(preferences.getString(STREET)) : null);
-//				a.setCity(user.hasAttribute(preferences.getString(CITY)) ? user.getAttributeValue(preferences.getString(CITY)) : null);
-//				a.setState(user.hasAttribute(preferences.getString(STATE)) ? user.getAttributeValue(preferences.getString(STATE)) : null);
-//				a.setZip(user.hasAttribute(preferences.getString(ZIP)) ? user.getAttributeValue(preferences.getString(ZIP)) : null);
-//				a.setCountry(user.hasAttribute(preferences.getString(COUNTRY)) ? user.getAttributeValue(preferences.getString(COUNTRY)) : null);
-//				c.setAddress(a);
-//			}
+			// Get address
+			if (user.hasAttribute(preferences.getString("street", "")) || user.hasAttribute(preferences.getString("city", ""))
+					|| user.hasAttribute(preferences.getString("state", "")) || user.hasAttribute(preferences.getString("postalCode", ""))
+					|| user.hasAttribute(preferences.getString("country", ""))) {
+				Address a = new Address();
+				a.setStreet(getAttributevalue(user, preferences, "street"));
+				a.setCity(getAttributevalue(user, preferences, "city"));
+				a.setState(getAttributevalue(user, preferences, "state"));
+				a.setZip(getAttributevalue(user, preferences, "postalCode"));
+				a.setCountry(getAttributevalue(user, preferences, "country"));
+				c.setAddress(a);
+			}
 		} catch (final Exception ex) {
 			Log.i("User", "Error parsing LDAP user object" + ex.toString());
 		}
 		return c;
 	}
 
-	private static String extracted(ReadOnlyEntry user, SharedPreferences preferences, String field) {
+	private static String getAttributevalue(ReadOnlyEntry user, SharedPreferences preferences, String field) {
 		return user.hasAttribute(preferences.getString(field, "")) ? user.getAttributeValue(preferences.getString(field, "")) : null;
 	}
 }

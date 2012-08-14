@@ -6,12 +6,12 @@ TODOs:
 * Improved Network/Failure handling (from XING-Sync)
 * Auto detection of attribute names based on server type/used scheme (http://ldapwiki.willeke.com/wiki/Determine%20LDAP%20Server%20Vendor) + http://www.zytrax.com/books/ldap/ape/
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
-* Improve syncing performance
+* Improve syncing memory
 * Support groups for Android 4?
-* Do not log forever!
+* Do not log forever! => Howto log?
 ----------
-* Map all fields
 * Check authentication use cases (wrong pw, ...)
+* AutoComplete BaseDNs
 
 
 
