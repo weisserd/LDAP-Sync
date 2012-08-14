@@ -1,6 +1,7 @@
 2.0 
 * Updated LDAP library (2.3.1)
 * Upgraded minimum Android version to 2.1
+* Use new Android styles (compatible with newer devices - Android 4.1)
 * Changed the build infrastracture to Maven (better management of builds)
 
 1.5

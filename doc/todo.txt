@@ -8,3 +8,10 @@ TODOs:
 * Create Homepage with help (http://www.danielweisser.de/ldapsync)
 * Multiple accounts on one server!
 * Do not log forever!
+
+
+
+Use Cases for changes:
+* Change password => Account manager
+* Change BaseDN
+* Change mappings
