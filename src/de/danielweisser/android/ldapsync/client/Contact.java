@@ -31,18 +31,6 @@ import com.unboundid.ldap.sdk.ReadOnlyEntry;
  * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
 public class Contact {
-	// public static String FIRSTNAME = "FIRSTNAME";
-	// public static String LASTNAME = "LASTNAME";
-	// public static String TELEPHONE = "TELEPHONE";
-	// public static String MOBILE = "MOBILE";
-	// public static String HOMEPHONE = "HOMEPHONE";
-	// public static String MAIL = "MAIL";
-	// public static String PHOTO = "PHOTO";
-	// public static String STREET = "STREET";
-	// public static String CITY = "CITY";
-	// public static String STATE = "STATE";
-	// public static String ZIP = "ZIP";
-	// public static String COUNTRY = "COUNTRY";
 
 	private String dn = "";
 	private String firstName = "";
