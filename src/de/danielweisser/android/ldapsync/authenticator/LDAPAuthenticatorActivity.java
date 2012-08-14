@@ -16,7 +16,6 @@
 
 package de.danielweisser.android.ldapsync.authenticator;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,7 +35,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.client.LDAPUtilities;
@@ -46,15 +44,11 @@ import de.danielweisser.android.ldapsync.client.LDAPUtilities;
  * 
  * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
-public class LDAPAuthenticatorActivity extends Activity { //AccountAuthenticatorActivity {
+public class LDAPAuthenticatorActivity extends Activity {
 
 	private static final int ERROR_DIALOG = 1;
 	private static final int PROGRESS_DIALOG = 0;
 	public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
-	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
-	public static final String PARAM_SEARCHFILTER = "searchFilter";
-	public static final String PARAM_BASEDN = "baseDN";
-	public static final String PARAM_MAPPING = "map_";
 
 	private static final String TAG = "LDAPAuthActivity";
 
@@ -161,77 +155,8 @@ public class LDAPAuthenticatorActivity extends Activity { //AccountAuthenticator
 	 */
 	private void getDataFromIntent() {
 		final Intent intent = getIntent();
-		// mUsername = intent.getStringExtra(PARAM_USERNAME);
-		// mPassword = intent.getStringExtra(PARAM_PASSWORD);
-		// mHost = intent.getStringExtra(PARAM_HOST);
-		// mPort = intent.getIntExtra(PARAM_PORT, 389);
-//		mEncryption = intent.getIntExtra(PARAM_ENCRYPTION, 0);
 		// mRequestNewAccount = (mUsername == null);
 		mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRMCREDENTIALS, false);
-	}
-
-	/**
-	 * Called when response is received from the server for confirm credentials request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which
-	 * is sent back to the caller.
-	 * 
-	 * @param the
-	 *            confirmCredentials result.
-	 */
-	protected void finishConfirmCredentials(boolean result) {
-		Log.i(TAG, "finishConfirmCredentials()");
-		// final Account account = new Account(mHost + mPort, Constants.ACCOUNT_TYPE);
-		// mAccountManager.setPassword(account, mPassword);
-		final Intent intent = new Intent();
-		intent.putExtra(AccountManager.KEY_BOOLEAN_RESULT, result);
-//		setAccountAuthenticatorResult(intent.getExtras());
-		setResult(RESULT_OK, intent);
-		finish();
-	}
-
-	/**
-	 * Called when response is received from the server for authentication request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which is
-	 * sent back to the caller. Also sets the authToken in AccountManager for this account.
-	 */
-	protected void finishLogin() {
-		Log.i(TAG, "finishLogin()");
-		// final Account account = new Account(mUsername + mHost + mPort, Constants.ACCOUNT_TYPE);
-
-		if (mRequestNewAccount) {
-			Bundle userData = new Bundle();
-			// userData.putString(PARAM_USERNAME, mUsername);
-			// userData.putString(PARAM_PORT, mPort + "");
-			// userData.putString(PARAM_HOST, mHost);
-			// userData.putString(PARAM_ENCRYPTION, mEncryption + "");
-			// userData.putString(PARAM_SEARCHFILTER, mSearchFilter);
-			// userData.putString(PARAM_BASEDN, mBaseDN);
-			// // Mappings for LDAP data
-			// userData.putString(PARAM_MAPPING + Contact.FIRSTNAME, mFirstName);
-			// userData.putString(PARAM_MAPPING + Contact.LASTNAME, mLastName);
-			// userData.putString(PARAM_MAPPING + Contact.TELEPHONE, mOfficePhone);
-			// userData.putString(PARAM_MAPPING + Contact.MOBILE, mCellPhone);
-			// userData.putString(PARAM_MAPPING + Contact.HOMEPHONE, mHomePhone);
-			// userData.putString(PARAM_MAPPING + Contact.MAIL, mEmail);
-			// userData.putString(PARAM_MAPPING + Contact.PHOTO, mImage);
-			// userData.putString(PARAM_MAPPING + Contact.STREET, mStreet);
-			// userData.putString(PARAM_MAPPING + Contact.CITY, mCity);
-			// userData.putString(PARAM_MAPPING + Contact.ZIP, mZip);
-			// userData.putString(PARAM_MAPPING + Contact.STATE, mState);
-			// userData.putString(PARAM_MAPPING + Contact.COUNTRY, mCountry);
-			// mAccountManager.addAccountExplicitly(account, mPassword, userData);
-			//
-			// // Set contacts sync for this account.
-			// ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
-			// ContactManager.makeGroupVisible(account.name, getContentResolver());
-			// } else {
-			// mAccountManager.setPassword(account, mPassword);
-		}
-		final Intent intent = new Intent();
-		// mAuthtoken = mPassword;
-		// intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, account.name);
-		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-//		setAccountAuthenticatorResult(intent.getExtras());
-		setResult(RESULT_OK, intent);
-		finish();
 	}
 
 	/**
@@ -292,35 +217,6 @@ public class LDAPAuthenticatorActivity extends Activity { //AccountAuthenticator
 			this.message = message;
 			showDialog(ERROR_DIALOG);
 			Log.e(TAG, "Error during authentication: " + message);
-		}
-	}
-
-	/**
-	 * Handles onClick event on the Done button. Saves the account with the account manager.
-	 * 
-	 * @param view
-	 *            The Done button for which this method is invoked
-	 */
-	public void saveAccount(View view) {
-		// mSearchFilter = mSearchFilterEdit.getText().toString();
-		// mBaseDN = mBaseDNSpinner.getText().toString();
-		// mFirstName = mFirstNameEdit.getText().toString();
-		// mLastName = mLastNameEdit.getText().toString();
-		// mOfficePhone = mOfficePhoneEdit.getText().toString();
-		// mCellPhone = mCellPhoneEdit.getText().toString();
-		// mHomePhone = mHomePhoneEdit.getText().toString();
-		// mEmail = mEmailEdit.getText().toString();
-		// mImage = mImageEdit.getText().toString();
-		// mStreet = mStreetEdit.getText().toString();
-		// mCity = mCityEdit.getText().toString();
-		// mZip = mZipEdit.getText().toString();
-		// mState = mStateEdit.getText().toString();
-		// mCountry = mCountryEdit.getText().toString();
-
-		if (!mConfirmCredentials) {
-			finishLogin();
-		} else {
-			finishConfirmCredentials(true);
 		}
 	}
 
