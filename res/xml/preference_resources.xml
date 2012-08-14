@@ -1,14 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="Privacy preferences" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="baseDN"
+        android:summary="BaseDN for the LDAP query"
+        android:title="BaseDN" />
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="privacy_contacts"
-        android:summary="Keep contacts private"
-        android:title="Contacts" />
-
-    <PreferenceCategory android:title="Outgoing" />
+    <PreferenceCategory android:title="Attribute Mappings" />
 
     <CheckBoxPreference
         android:defaultValue="true"
@@ -18,6 +16,26 @@
     <EditTextPreference
         android:defaultValue="true"
         android:key="allow_mail2"
+        android:summary="Allow email2"
+        android:title="Email1" />
+    <EditTextPreference
+        android:defaultValue="true"
+        android:key="allow_mail0"
+        android:summary="Allow email2"
+        android:title="Email1" />
+    <EditTextPreference
+        android:defaultValue="true"
+        android:key="allow_mail3"
+        android:summary="Allow email2"
+        android:title="Email1" />
+    <EditTextPreference
+        android:defaultValue="true"
+        android:key="allow_mail4"
+        android:summary="Allow email2"
+        android:title="Email1" />
+    <EditTextPreference
+        android:defaultValue="true"
+        android:key="allow_mail5"
         android:summary="Allow email2"
         android:title="Email1" />
 

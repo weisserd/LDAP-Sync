@@ -319,8 +319,8 @@ public class LDAPAuthenticatorActivity extends AccountAuthenticatorActivity {
 				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				// mBaseDNSpinner.setAdapter(adapter);
 			}
-			// ViewFlipper vf = (ViewFlipper) findViewById(R.id.server);
-			// vf.showNext();
+			
+			startActivity(new Intent(this, AccountSettingsActivity.class));
 		} else {
 			this.message = message;
 			showDialog(ERROR_DIALOG);
