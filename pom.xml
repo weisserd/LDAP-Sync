@@ -6,7 +6,9 @@
 	<artifactId>ldapsync</artifactId>
 	<version>2.0-SNAPSHOT</version>
 	<packaging>apk</packaging>
-
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -27,33 +29,19 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.4.1</version>
 					<extensions>true</extensions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>initialize</phase>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 				<configuration>
-					<run>
-						<debug>true</debug>
-					</run>
 					<sdk>
-						<platform>7</platform>
-						<path>/home/daniel/Privat/Entwicklung/android-sdk-linux_x86/</path>
+						<platform>17</platform>
+						<path>/home/daniel/Entwicklung/android-sdk-linux</path>
 					</sdk>
 					<emulator>
 						<avd>16</avd>
