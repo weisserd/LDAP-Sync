@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.unboundid.ldap.sdk.ReadOnlyEntry;
@@ -135,7 +136,11 @@ public class Contact {
 			c.setWorkPhone(getAttributevalue(user, preferences, "office_phone"));
 			c.setCellWorkPhone(getAttributevalue(user, preferences, "cell_phone"));
 			c.setHomePhone(getAttributevalue(user, preferences, "home_phone"));
-			c.setEmails(user.hasAttribute(preferences.getString("mail", "")) ? user.getAttributeValues(preferences.getString("mail", "")) : null);
+			c.setEmails(
+                    user.hasAttribute(preferences.getString("email", ""))
+                            ? user.getAttributeValues(preferences.getString("email", ""))
+                            : null);
+
 			byte[] image = null;
 			if (user.hasAttribute(preferences.getString("photo", ""))) {
 				byte[] array = user.getAttributeValueBytes(preferences.getString("photo", ""));

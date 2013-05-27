@@ -4,7 +4,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -14,7 +16,9 @@ import de.danielweisser.android.ldapsync.R;
 import de.danielweisser.android.ldapsync.client.LDAPServerInstance;
 import de.danielweisser.android.ldapsync.platform.ContactManager;
 
-public class AccountSettingsActivity extends PreferenceActivity {
+import java.util.Map;
+
+public class AccountSettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "AccountSettingsActivity";
 	private String accountName;
@@ -33,10 +37,18 @@ public class AccountSettingsActivity extends PreferenceActivity {
 			ldapServerInstance = (LDAPServerInstance) getIntent().getSerializableExtra("ldapServer");
 		}
 		getPreferenceManager().setSharedPreferencesName(accountName);
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		Log.i(TAG, "Get preferences for " + accountName);
 
 		addPreferencesFromResource(R.xml.preference_resources);
 		setContentView(R.layout.preference_layout);
+
+        // Initialize all summaries to values
+        for (String key: getPreferenceManager().getSharedPreferences().getAll().keySet()) {
+            onSharedPreferenceChanged(getPreferenceManager().getSharedPreferences(), key);
+        }
+
+
 		// this.getIntent().getExtras()) and the key "account
 
 		// ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, baseDNs);
@@ -45,7 +57,7 @@ public class AccountSettingsActivity extends PreferenceActivity {
 		// set the preferences file name
 	}
 
-	/**
+    /**
 	 * Called when the user touches the done button.
 	 * 
 	 * @param view
@@ -69,4 +81,16 @@ public class AccountSettingsActivity extends PreferenceActivity {
 		setResult(RESULT_OK, new Intent());
 		finish();
 	}
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        Log.d(TAG, "onContentChanged for " + s);
+        Preference p = findPreference(s);
+        if (p != null) {
+            Object value = sharedPreferences.getAll().get(s);
+            if (value != null) {
+                p.setSummary(value.toString());
+            }
+        }
+    }
 }

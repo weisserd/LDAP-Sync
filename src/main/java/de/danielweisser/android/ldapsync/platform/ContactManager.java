@@ -155,6 +155,8 @@ public class ContactManager {
 						}
 					}
 				}
+
+                c.close();
 			}
 
 			prepareFields(rawContactId, contact, existingContact, ops, false);

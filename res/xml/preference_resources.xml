@@ -1,79 +1,70 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Search options" />
+    <PreferenceCategory android:title="Search options">
 
-    <EditTextPreference
-        android:defaultValue=""
-        android:key="baseDN"
-        android:summary="BaseDN for the LDAP query"
-        android:title="BaseDN" />
-    <EditTextPreference
-        android:defaultValue="(objectClass=inetOrgPerson)"
-        android:key="searchFilter"
-        android:summary="LDAP query for the search"
-        android:title="Search Filter" />
+        <EditTextPreference
+                android:defaultValue=""
+                android:key="baseDN"
+                android:summary="BaseDN for the LDAP query"
+                android:title="BaseDN"/>
+        <EditTextPreference
+                android:defaultValue="(objectClass=inetOrgPerson)"
+                android:key="searchFilter"
+                android:summary="LDAP query for the search"
+                android:title="Search Filter"/>
 
-    <PreferenceCategory android:title="Attribute Mappings" />
+    </PreferenceCategory>
 
-    <EditTextPreference
-        android:defaultValue="givenName"
-        android:key="first_name"
-        android:summary="first_name"
-        android:title="First Name" />
-    <EditTextPreference
-        android:defaultValue="sn"
-        android:key="last_name"
-        android:summary="last_name"
-        android:title="Last Name" />
-    <EditTextPreference
-        android:defaultValue="telephonenumber"
-        android:key="office_phone"
-        android:summary="office_phone"
-        android:title="Office Phone" />
-    <EditTextPreference
-        android:defaultValue="mobile"
-        android:key="cell_phone"
-        android:summary="cell_phone"
-        android:title="Cell Phone" />
-    <EditTextPreference
-        android:defaultValue="homephone"
-        android:key="home_phone"
-        android:summary="home_phone"
-        android:title="Home Phone" />
-    <EditTextPreference
-        android:defaultValue="mail"
-        android:key="email"
-        android:summary="email"
-        android:title="E-mail" />
-    <EditTextPreference
-        android:defaultValue="jpegphoto"
-        android:key="photo"
-        android:summary="photo"
-        android:title="Photo" />
-    <EditTextPreference
-        android:defaultValue="street"
-        android:key="street"
-        android:summary="street"
-        android:title="Street" />
-    <EditTextPreference
-        android:defaultValue="postalCode"
-        android:key="postalCode"
-        android:summary="postalCode"
-        android:title="Postal Code" />
-    <EditTextPreference
-        android:defaultValue="l"
-        android:key="city"
-        android:summary="city"
-        android:title="City" />
-    <EditTextPreference
-        android:defaultValue="st"
-        android:key="state"
-        android:summary="state"
-        android:title="State" />
-    <EditTextPreference
-        android:defaultValue="co"
-        android:key="country"
-        android:summary="country"
-        android:title="Country" />
+    <PreferenceCategory android:title="Attribute Mappings">
 
+        <EditTextPreference
+                android:defaultValue="givenName"
+                android:key="first_name"
+                android:title="First Name"/>
+        <EditTextPreference
+                android:defaultValue="sn"
+                android:key="last_name"
+                android:title="Last Name"/>
+        <EditTextPreference
+                android:defaultValue="telephonenumber"
+                android:key="office_phone"
+                android:title="Office Phone"/>
+        <EditTextPreference
+                android:defaultValue="mobile"
+                android:key="cell_phone"
+                android:title="Cell Phone"/>
+        <EditTextPreference
+                android:defaultValue="homephone"
+                android:key="home_phone"
+                android:title="Home Phone"/>
+        <EditTextPreference
+                android:defaultValue="mail"
+                android:key="email"
+                android:title="E-mail"/>
+        <EditTextPreference
+                android:defaultValue="jpegphoto"
+                android:key="photo"
+                android:title="Photo"/>
+        <EditTextPreference
+                android:defaultValue="street"
+                android:key="street"
+                android:title="Street"/>
+        <EditTextPreference
+                android:defaultValue="postalCode"
+                android:key="postalCode"
+                android:title="Postal Code"/>
+        <EditTextPreference
+                android:defaultValue="l"
+                android:key="city"
+                android:title="City"/>
+        <EditTextPreference
+                android:defaultValue="st"
+                android:key="state"
+                android:title="State"/>
+        <EditTextPreference
+                android:defaultValue="co"
+                android:key="country"
+                android:title="Country"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

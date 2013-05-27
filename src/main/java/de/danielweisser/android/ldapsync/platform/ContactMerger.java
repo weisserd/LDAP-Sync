@@ -18,6 +18,7 @@ package de.danielweisser.android.ldapsync.platform;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
@@ -94,39 +95,26 @@ public class ContactMerger {
 	}
 
 	public void updateMail(int mailType) {
-		String newMail = null;
-		String existingMail = null;
-		if (mailType == Email.TYPE_WORK) {
-			if (newC.getEmails() != null && newC.getEmails().length > 0) {
-				newMail = newC.getEmails()[0];
-			}
-			if (existingC.getEmails() != null && existingC.getEmails().length > 0) {
-				existingMail = existingC.getEmails()[0];
-			}
-		}
-		updateMail(newMail, existingMail, mailType);
+		updateMail(newC.getEmails(), existingC.getEmails());
 	}
 
-	private void updateMail(String newMail, String existingMail, int mailType) {
-		String selection = Data.RAW_CONTACT_ID + "=? AND " + Email.MIMETYPE + "=? AND " + Email.TYPE + "=?";
-		if (TextUtils.isEmpty(newMail) && !TextUtils.isEmpty(existingMail)) {
-			l.d("Delete mail data " + mailType + " (" + existingMail + ")");
-			ops.add(ContentProviderOperation.newDelete(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
-					new String[] { rawContactId + "", Email.CONTENT_ITEM_TYPE, mailType + "" }).build());
-		} else if (!TextUtils.isEmpty(newMail) && TextUtils.isEmpty(existingMail)) {
-			l.d("Add mail data " + mailType + " (" + newMail + ")");
-			ContentValues cv = new ContentValues();
-			cv.put(Email.DATA, newMail);
-			cv.put(Email.TYPE, mailType);
-			cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
-			Builder insertOp = createInsert(rawContactId, cv);
-			ops.add(insertOp.build());
-		} else if (!TextUtils.isEmpty(newMail) && !newMail.equals(existingMail)) {
-			l.d("Update mail data " + mailType + " (" + existingMail + " => " + newMail + ")");
-			Builder updateOp = ContentProviderOperation.newUpdate(addCallerIsSyncAdapterFlag(Data.CONTENT_URI)).withSelection(selection,
-					new String[] { rawContactId + "", Email.CONTENT_ITEM_TYPE, mailType + "" }).withValue(Email.DATA, newMail);
-			ops.add(updateOp.build());
-		}
+	private void updateMail(String[] newMails, String[] existingMails) {
+        // Always delete then add
+        String selection = Data.RAW_CONTACT_ID + "=? AND " + Email.MIMETYPE + "=?";
+
+        ops.add(ContentProviderOperation
+                .newDelete(addCallerIsSyncAdapterFlag(Data.CONTENT_URI))
+                .withSelection( selection, new String[] { rawContactId + "", }).build());
+
+        for (String address: newMails) {
+            ContentValues cv = new ContentValues();
+            cv.put(Email.DATA, address);
+            cv.put(Email.TYPE, Email.TYPE_OTHER);
+            cv.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
+            Builder insertOp = createInsert(rawContactId, cv);
+            ops.add(insertOp.build());
+        }
+
 	}
 
 	public void updatePhone(int phoneType) {
