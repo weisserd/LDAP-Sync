@@ -2,7 +2,9 @@ package de.danielweisser.android.ldapsync.authenticator;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -40,7 +42,8 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 			ldapServerInstance = (LDAPServerInstance) getIntent().getSerializableExtra("ldapServer");
 		}
 		getPreferenceManager().setSharedPreferencesName(accountName);
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		final SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
+		sharedPrefs.registerOnSharedPreferenceChangeListener(this);
 		Log.i(TAG, "Get preferences for " + accountName);
 
 		addPreferencesFromResource(R.xml.preference_resources);
@@ -52,7 +55,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 			Uri configUri = getIntent().getParcelableExtra("configUri");
 			Log.i(TAG, "config URI found: "+configUri.toString());
 
-			SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
+
 			SharedPreferences.Editor editor = sharedPrefs.edit();
 			for (String key: sharedPrefs.getAll().keySet()) {
 				Log.i(TAG, "config URI: checking param "+key);
@@ -70,11 +73,25 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 				createAccount(null);
 			}
 		}
+		if (getIntent().hasExtra("baseDNs") && sharedPrefs.getString("baseDN","").equals("")) {
+			final String []baseDNs = getIntent().getStringArrayExtra("baseDNs");
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Select Base DN")
+					.setItems(baseDNs, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							SharedPreferences.Editor editor = sharedPrefs.edit();
+							editor.putString("baseDN", baseDNs[which]);
+							editor.commit();
+							onSharedPreferenceChanged(sharedPrefs, "baseDN");
+						}
+					});
+			builder.show();
+		}
 
-        // Initialize all summaries to values
-        for (String key: getPreferenceManager().getSharedPreferences().getAll().keySet()) {
-            onSharedPreferenceChanged(getPreferenceManager().getSharedPreferences(), key);
-        }
+		// Initialize all summaries to values
+		for (String key: sharedPrefs.getAll().keySet()) {
+			onSharedPreferenceChanged(sharedPrefs, key);
+		}
 
 
 
