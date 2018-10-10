@@ -207,11 +207,16 @@ public class LDAPUtilities {
 		try {
 			connection = ldapServer.getConnection();
 			if (connection != null) {
+				Log.d(TAG, "authenticate: connection est. " + connection.isConnected());
+				Log.d(TAG, "authenticate: connection name " + connection.getConnectionName());
+				Log.d(TAG, "authenticate: connection address " + connection.getConnectedAddress());
+
 				RootDSE s = connection.getRootDSE();
 //				TODO Check vendor name : s.getVendorName()
 				String[] baseDNs = null;
 				if (s != null) {
 					baseDNs = s.getNamingContextDNs();
+					Log.d(TAG, "authenticate: base DNs: "+ TextUtils.join("; ", baseDNs));
 				}
 
 				sendResult(baseDNs, true, handler, context, null);

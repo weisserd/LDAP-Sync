@@ -108,6 +108,92 @@ public class ContactManager {
 		}
 	}
 
+	private void mapCursorToContact(final Cursor c, Contact existingContact) {
+		if (c != null) {
+			while (c.moveToNext()) {
+				String mimetype = c.getString(c.getColumnIndex(Data.MIMETYPE));
+				if (mimetype.equals(StructuredName.CONTENT_ITEM_TYPE)) {
+					//TODO add display_name
+					//existingContact.setDisplayName(c.getString(c.getColumnIndex(Data.DATA1)));
+					existingContact.setFirstName(c.getString(c.getColumnIndex(Data.DATA2)));
+					existingContact.setLastName(c.getString(c.getColumnIndex(Data.DATA3)));
+				} else if (mimetype.equals(Email.CONTENT_ITEM_TYPE)) {
+					int type = c.getInt(c.getColumnIndex(Data.DATA2));
+					if (type == Email.TYPE_WORK) {
+						String[] mails = new String[] { c.getString(c.getColumnIndex(Data.DATA1)) };
+						existingContact.setEmails(mails);
+					}
+				} else if (mimetype.equals(Phone.CONTENT_ITEM_TYPE)) {
+					int type = c.getInt(c.getColumnIndex(Data.DATA2));
+					if (type == Phone.TYPE_WORK_MOBILE) {
+						existingContact.setCellWorkPhone(c.getString(c.getColumnIndex(Data.DATA1)));
+					} else if (type == Phone.TYPE_WORK) {
+						existingContact.setWorkPhone(c.getString(c.getColumnIndex(Data.DATA1)));
+					} else if (type == Phone.TYPE_HOME) {
+						existingContact.setHomePhone(c.getString(c.getColumnIndex(Data.DATA1)));
+					}
+				} else if (mimetype.equals(Photo.CONTENT_ITEM_TYPE)) {
+					existingContact.setImage(c.getBlob(c.getColumnIndex(Photo.PHOTO)));
+				} else if (mimetype.equals(StructuredPostal.CONTENT_ITEM_TYPE)) {
+					int type = c.getInt(c.getColumnIndex(Data.DATA2));
+					Address address = new Address();
+					address.setStreet(c.getString(c.getColumnIndex(Data.DATA4)));
+					address.setCity(c.getString(c.getColumnIndex(Data.DATA7)));
+					address.setCountry(c.getString(c.getColumnIndex(Data.DATA10)));
+					address.setZip(c.getString(c.getColumnIndex(Data.DATA9)));
+					address.setState(c.getString(c.getColumnIndex(Data.DATA8)));
+					if (type == StructuredPostal.TYPE_WORK) {
+						//TODO add work address
+						//existingContact.setWorkAddress(address);
+					}
+					//TODO maybe add organization back in?
+				/*} else if (mimetype.equals(Organization.CONTENT_ITEM_TYPE)) { //organization
+					int type = c.getInt(c.getColumnIndex(Data.DATA2));
+					org.mbs3.android.ufpb2.client.Organization org = new org.mbs3.android.ufpb2.client.Organization();
+					org.setTitle(c.getString(c.getColumnIndex(Data.DATA4)));
+					org.setCompany(c.getString(c.getColumnIndex(Data.DATA1)));
+					org.setOfficeLocation(c.getString(c.getColumnIndex(Data.DATA9)));
+					org.setPrimaryAffiliation(c.getString(c.getColumnIndex(Organization.JOB_DESCRIPTION)));
+					if (type == Organization.TYPE_WORK) {
+						existingContact.setWorkOrganization(org);
+					}*/
+				}
+			}
+		}
+	}
+
+	public Contact getContactByDn(Context context, String accountName, String dn) {
+		// TODO maybe directly query by SOURCE_ID ???
+		final String selection = Data.RAW_CONTACT_ID + "=?" + " AND " + RawContacts.ACCOUNT_NAME + "=?";
+		final String[] projection = new String[] { Data.MIMETYPE, Data.DATA1, Data.DATA2, Data.DATA3, Data.DATA4, Data.DATA5, Data.DATA6, Data.DATA7, Data.DATA8, Data.DATA9, Data.DATA10, Data.DATA15 };
+
+		try {
+			final ContentResolver resolver = context.getContentResolver();
+			// Get all phone contacts for the LDAP account
+			HashMap<String, Long> contactsOnPhone = getAllContactsOnPhone(resolver, accountName);
+
+			Long contactId = contactsOnPhone.get(dn);
+			final Cursor c = resolver.query(Data.CONTENT_URI, projection, selection, new String[] { contactId + "", accountName }, null);
+
+			Log.i(TAG, "getContactByDn: Fetching full contact for profile using DN " + dn + ", account "+accountName+", and raw ID " + contactId + " (resulted in "+c.getCount()+" raw contacts)");
+
+			Contact existingContact = null;
+			if(c.getCount() > 0) {
+				existingContact = new Contact();
+				mapCursorToContact(c, existingContact);
+				existingContact.setDn(dn);
+			}
+			c.close();
+			return existingContact;
+		} catch (SQLiteException e) {
+			Log.e(TAG, e.getMessage(), e);
+		} catch (IllegalStateException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+
+		return null;
+	}
+
 	private void updateContact(ContentResolver resolver, long rawContactId, Contact contact) {
 		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
