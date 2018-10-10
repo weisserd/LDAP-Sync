@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  Copyright 2010 Daniel Weisser
+ Copyright 2018 Mira Weller
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -25,12 +26,14 @@
     <string name="host">IP address or hostname</string>
     <string name="port_label">Port</string>
     <string name="port">Port</string>
-    <string name="encryption">Encryption</string>
-    
+    <string name="encryption_label">Encryption</string>
     <string name="username_label">Bind DN (Leave empty for anonymous)</string>
     <string name="password_label">Bind Password (Leave empty for anonymous)</string>
     <string name="account_name_label">Account name</string>
     <string name="account_name">e.g. user@host</string>
+    <string name="next_button">Next</string>
+
+    <!--AccountSettingsActivity-->
     <string name="login_activity_basedn_label">BaseDN</string>
     <string name="login_activity_searchfilter_label">Search Filter</string>
     <string name="login_activity_ldap_mappings_label">LDAP Mappings</string>
@@ -46,8 +49,7 @@
     <string name="login_activity_state_label">State</string>
     <string name="login_activity_zip_label">Zip code</string>
     <string name="login_activity_country_label">Country</string>
-    <string name="next">Next</string>
-    <string name="login_activity_done_button">Done</string>
+    <string name="done">Done</string>
 
     <!-- Message shown in dialog if the username or password is invalid. -->
     <string name="login_activity_loginfail">The username or password isn\'t valid. A LDAP
@@ -57,8 +59,8 @@
 
     <!-- Title string for Login activity -->
     <string name="ui_activity_title">LDAP Server settings</string>
-    <string name="defaultLdapPort">636</string>
-    <string name="done">Done</string>
+    <string name="defaultLdapPort" translatable="false">636</string>
+
     <string name="action_save">Save</string>
     <string name="email_error_report">Send Error Report</string>
     <string name="add_account">Add account</string>

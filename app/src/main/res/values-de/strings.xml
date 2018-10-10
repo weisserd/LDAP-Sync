@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  Copyright 2010 Daniel Weisser
+ Copyright 2018 Mira Weller
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -20,13 +21,18 @@
 	<string name="app_name">LDAP Sync</string>
 
 	<!-- AuthenticatorActivity -->
-	<skip />
-	<string name="login_activity_host_label">Hostname</string>
-	<string name="login_activity_port_label">Port</string>
-	<string name="login_activity_encryption_label">Verschlüsselung</string>
-	<string name="login_activity_encryption_prompt">Wählen Sie die gewünschte Verschlüsselung</string>
-	<string name="login_activity_username_label">Bind DN (Leer für anonymen Zugang)</string>
-	<string name="login_activity_password_label">Bind Passwort (Leer für anonymen Zugang)</string>
+	<string name="host_label">Hostname</string>
+	<string name="host">ldap.example.org</string>
+	<string name="port_label">Port</string>
+	<string name="port">389</string>
+	<string name="encryption_label">Verschlüsselung</string>
+	<string name="username_label">Bind-DN (Leer für anonymen Zugang)</string>
+	<string name="password_label">Bind-Passwort (Leer für anonymen Zugang)</string>
+	<string name="account_name_label">Account-Name</string>
+	<string name="account_name">z.B. user@host</string>
+	<string name="next_button">Weiter</string>
+
+	<!--AccountSettingsActivity-->
 	<string name="login_activity_basedn_label">BaseDN</string>
 	<string name="login_activity_searchfilter_label">Suchfilter</string>
 	<string name="login_activity_ldap_mappings_label">LDAP Zuordnungen</string>
@@ -43,7 +49,7 @@
 	<string name="login_activity_zip_label">Postleitzahl</string>
 	<string name="login_activity_country_label">Land</string>
 	<string name="login_activity_next_button">Weiter</string>
-	<string name="login_activity_done_button">Fertig</string>
+	<string name="done">Fertig</string>
 
 	<!-- Message shown in dialog if the username or password is invalid. -->
 	<string name="login_activity_loginfail">Der Benutzername oder das Passwort ist ungültig.
@@ -56,6 +62,10 @@
 
 	<!-- Title string for Login activity-->
 	<string name="ui_activity_title">LDAP Server Einstellungen</string>
-	<string name="done">Fertig</string>
+
     <string name="action_save">Speichern</string>
+	<string name="email_error_report">Fehlerbericht senden</string>
+	<string name="add_account">Account hinzufügen</string>
+	<string name="add_account_from_qr">QR-Code scannen</string>
+
 </resources>
