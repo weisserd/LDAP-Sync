@@ -62,6 +62,11 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 				}
 			}
 			editor.commit();
+
+			// allow skipping of details config
+			if (configUri.getQueryParameter("skip") != null && configUri.getQueryParameter("skip").equals("1")) {
+				createAccount(null);
+			}
 		}
 
         // Initialize all summaries to values
