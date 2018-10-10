@@ -1,11 +1,12 @@
-package org.mbs3.android.ufpb2.activity;
+package de.danielweisser.android.ldapsync.activity;
 
-import org.mbs3.android.ufpb2.R;
-import org.mbs3.android.ufpb2.Constants;
-import org.mbs3.android.ufpb2.client.Address;
-import org.mbs3.android.ufpb2.client.Contact;
-import org.mbs3.android.ufpb2.client.Organization;
-import org.mbs3.android.ufpb2.platform.ContactManager;
+import de.danielweisser.android.ldapsync.R;
+import de.danielweisser.android.ldapsync.Constants;
+import de.danielweisser.android.ldapsync.client.Address;
+import de.danielweisser.android.ldapsync.client.Contact;
+//import de.danielweisser.android.ldapsync.client.Organization;
+import de.danielweisser.android.ldapsync.platform.ContactManager;
+import de.danielweisser.android.ldapsync.syncadapter.Logger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,7 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-
+/*
 public class ProfileActivity extends Activity implements OnClickListener {
 
 	final String TAG = "Profile";
@@ -39,6 +40,8 @@ public class ProfileActivity extends Activity implements OnClickListener {
 	
 	private Button mButtonWebview;
 	private Button mButtonAddcontact;
+
+	private static final int DIALOG_RESYNC = 1;
 	
 	@Override
 	protected void onStart() {
@@ -54,14 +57,14 @@ public class ProfileActivity extends Activity implements OnClickListener {
 				Log.i(TAG, "DATA2: " + cursor.getString(cursor.getColumnIndex("DATA2")));
 				Log.i(TAG, "DATA3: " + cursor.getString(cursor.getColumnIndex("DATA3")));
 				Log.i(TAG, "DATA4: " + cursor.getString(cursor.getColumnIndex("DATA4")));
-				
+				Logger l = new Logger();
 				ContactManager cm = new ContactManager();
-				String ufid = cursor.getString(cursor.getColumnIndex("DATA4"));
+				//String ufid = cursor.getString(cursor.getColumnIndex("DATA4"));
 				
 				String dn = cursor.getString(cursor.getColumnIndex("DATA1"));
-				currentContact = cm.getContactByDn(getApplicationContext(), Constants.ACCOUNT_NAME, dn);
+				//currentContact = cm.getContactByDn(getApplicationContext(), Constants.ACCOUNT_NAME, dn);
 				currentContact.setDn(dn);
-				currentContact.setUfid(ufid);
+				//currentContact.setUfid(ufid);
 				mButtonAddcontact.setVisibility(View.INVISIBLE);
 			}
 			cursor.close();
@@ -76,10 +79,10 @@ public class ProfileActivity extends Activity implements OnClickListener {
 
 			// these aren't in the regular phone structured data
 
-			Address waddr = currentContact.getWorkAddress();
+			//Address waddr = currentContact.getWorkAddress();
 			
 			//map everything from contact c into textviews
-			mDisplayName.setText(currentContact.getDisplayName());
+			//mDisplayName.setText(currentContact.getDisplayName());
 			
 			String general = "";
 			if(currentContact.getEmails() != null) {
@@ -87,9 +90,9 @@ public class ProfileActivity extends Activity implements OnClickListener {
 					general += "Email: " + email + "\n";
 			}
 
-			Organization org = currentContact.getWorkOrganization();
-			if(org != null && org.getPrimaryAffiliation() != null && !org.getPrimaryAffiliation().equals("")) 
-				general += "Affiliation: " + org.getPrimaryAffiliation() + "\n";
+			//Organization org = currentContact.getWorkOrganization();
+			//if(org != null && org.getPrimaryAffiliation() != null && !org.getPrimaryAffiliation().equals(""))
+			//	general += "Affiliation: " + org.getPrimaryAffiliation() + "\n";
 			
 			
 			mGeneral.setText(general);
@@ -104,23 +107,23 @@ public class ProfileActivity extends Activity implements OnClickListener {
 			Linkify.addLinks(mPhone, Linkify.PHONE_NUMBERS);
 
 			String addr = "";
-			if(waddr != null && !waddr.toFancyString().equals(""))
-				addr += "Preferred address: " + waddr.toFancyString() + "\n";
-			if(org != null && org.getOfficeLocation() != null && !org.getOfficeLocation().equals(""))
-				addr += (!addr.equals("") ? "\n" : "") + "Office Location: " + org.getOfficeLocation() + "\n";
+			//if(waddr != null && !waddr.toFancyString().equals(""))
+			//	addr += "Preferred address: " + waddr.toFancyString() + "\n";
+			//if(org != null && org.getOfficeLocation() != null && !org.getOfficeLocation().equals(""))
+			//	addr += (!addr.equals("") ? "\n" : "") + "Office Location: " + org.getOfficeLocation() + "\n";
 			mAddr.setText(addr);
 			Linkify.addLinks(mAddr, Linkify.MAP_ADDRESSES);
 			
 			String staffInfo = "";
-			if(org != null && org.getCompany() != null && !org.getCompany().equals(""))
-				staffInfo += "Unit: " + org.getCompany() + "\n";
-			if(org != null && org.getTitle() != null && !org.getTitle().equals(""))
-				staffInfo += "Title: " + org.getTitle() + "\n";
+			//if(org != null && org.getCompany() != null && !org.getCompany().equals(""))
+			//	staffInfo += "Unit: " + org.getCompany() + "\n";
+			//if(org != null && org.getTitle() != null && !org.getTitle().equals(""))
+			//	staffInfo += "Title: " + org.getTitle() + "\n";
 			mStaffInfo.setText(staffInfo);
 		}
 		else {
 			Log.w(TAG, "Contact NOT found for profile activity");
-			showDialog(Constants.DIALOG_RESYNC);
+			showDialog(DIALOG_RESYNC);
 		}
 	}
 	
@@ -129,7 +132,7 @@ public class ProfileActivity extends Activity implements OnClickListener {
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
 	    switch(id) {
-	    case Constants.DIALOG_RESYNC:
+	    case DIALOG_RESYNC:
 	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    	builder.setMessage("Profile not found. Please wait for another sync if this is an existing contact.\n\nIf this problem persists, remove and re-add the UF Phonebook Sync account, or remove and re-add the whole application (no data loss).")
 	    	       .setCancelable(true)
@@ -236,3 +239,4 @@ public class ProfileActivity extends Activity implements OnClickListener {
 	}
 	
 }
+*/

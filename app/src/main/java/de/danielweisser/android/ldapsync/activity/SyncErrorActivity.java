@@ -1,7 +1,7 @@
-package org.mbs3.android.ufpb2.activity;
+package de.danielweisser.android.ldapsync.activity;
 
-import org.mbs3.android.ufpb2.R;
-import org.mbs3.android.ufpb2.Util;
+import de.danielweisser.android.ldapsync.R;
+import de.danielweisser.android.ldapsync.Util;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -45,11 +45,11 @@ public class SyncErrorActivity extends Activity implements OnClickListener {
 		} else if (v == buttonSend) {
 			Log.i(TAG, "Send");
 
-			final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+			final Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.setType("message/rfc822");
-			emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "martin@mbs3.org" });
-			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "UF Phonebook Sync Error Report");
-			emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, Util.getStackTrace(throwable));
+			//emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "martin@mbs3.org" });
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "LDAP Sync Error Report");
+			emailIntent.putExtra(Intent.EXTRA_TEXT, Util.getStackTrace(throwable));
 
 			// start the email activity - note you need to start it with a chooser
 			startActivity(Intent.createChooser(emailIntent, "Send error report..."));

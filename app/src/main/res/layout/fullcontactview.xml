@@ -15,7 +15,7 @@
 					<TextView android:layout_column="1" android:text="UF Phonebook"
 						style="@android:style/TextAppearance.Large" android:padding="3dip"
 						android:gravity="fill" android:layout_width="wrap_content" />
-					<ImageView android:src="@drawable/ufdir" android:gravity="right"
+					<ImageView android:src="@drawable/icon" android:gravity="right"
 						android:padding="3dip" />
 				</TableRow>
 			</TableLayout>

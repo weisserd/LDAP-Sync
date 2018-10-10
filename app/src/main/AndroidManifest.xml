@@ -69,7 +69,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="true"
+            android:label="@string/profile_label"
+            android:theme="@android:style/Theme.NoTitleBar"
+            tools:ignore="ExportedActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.org.mbs3.android.ufpb.profile" />
+            </intent-filter>
+        </activity>
+        -->
+        <activity android:name=".activity.SyncErrorActivity"
+            android:label="UF Phonebook Sync Error"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
+        </activity>
     </application>
 
 </manifest>
