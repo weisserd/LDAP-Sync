@@ -145,18 +145,21 @@ public class LDAPUtilities {
 
 	private static void showErrorNotification(Context context, Throwable e) {
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon;
+
 		CharSequence tickerText = "Error on LDAP Sync";
-		Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
 
 		Intent notificationIntent = new Intent(context, SyncErrorActivity.class);
 		notificationIntent.putExtra("throwable", e);
-
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-		notification.setLatestEventInfo(context, tickerText, e.getMessage().replace("\\n", " "), contentIntent);
-		notification.flags = Notification.FLAG_AUTO_CANCEL;
-		mNotificationManager.notify(0, notification);
+		Notification noti = new Notification.Builder(context)
+				.setSmallIcon(R.drawable.icon)
+				.setContentTitle(tickerText)
+				.setContentText(e.getMessage().replace("\\n", " "))
+				.setContentIntent(contentIntent)
+				.setAutoCancel(true)
+				.getNotification();
+		mNotificationManager.notify(0, noti);
 	}
 
 	private static String[] getUsedAttributes(SharedPreferences preferences) {
