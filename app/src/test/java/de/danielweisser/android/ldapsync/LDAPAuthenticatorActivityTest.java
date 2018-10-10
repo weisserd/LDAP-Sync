@@ -1,13 +1,13 @@
-package de.danielweisser.android.ldapsync.authenticator;
+package de.danielweisser.android.ldapsync;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.xtremelabs.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricTestRunner;
 
 import de.danielweisser.android.ldapsync.R;
+import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
 
 @RunWith(RobolectricTestRunner.class)
 public class LDAPAuthenticatorActivityTest {
