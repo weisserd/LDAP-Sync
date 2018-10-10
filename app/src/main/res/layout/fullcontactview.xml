@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<ScrollView android:scrollbars="vertical"
+		android:layout_height="fill_parent" android:layout_width="fill_parent">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical" android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+			<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:stretchColumns="1" android:scrollbars="vertical">
+
+				<TableRow android:layout_margin="2dip">
+					<TextView android:layout_column="1" android:text="UF Phonebook"
+						style="@android:style/TextAppearance.Large" android:padding="3dip"
+						android:gravity="fill" android:layout_width="wrap_content" />
+					<ImageView android:src="@drawable/ufdir" android:gravity="right"
+						android:padding="3dip" />
+				</TableRow>
+			</TableLayout>
+
+			<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:stretchColumns="1" android:scrollbars="vertical">
+				<View android:gravity="fill" android:layout_width="fill_parent"
+					android:layout_height="1dip" android:paddingBottom="15dip"
+					android:paddingTop="15dip" android:background="#777777" />
+			</TableLayout>
+
+			<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:stretchColumns="1" android:scrollbars="vertical">
+
+				<TableRow>
+					<TextView android:layout_column="1" android:gravity="left"
+						android:layout_height="wrap_content" android:layout_width="fill_parent"
+						android:ellipsize="marquee" style="@android:style/TextAppearance.Medium"
+						android:hint="Unknown Name" android:id="@+id/profile_text_name" />
+				</TableRow>
+			</TableLayout>
+
+			<View android:layout_width="fill_parent" android:layout_height="15dip"
+				android:paddingBottom="15dip" android:background="#000000" />
+
+			<TextView android:layout_column="1" android:layout_height="wrap_content"
+				style="@android:style/TextAppearance.Medium" android:ellipsize="marquee"
+				android:gravity="left" android:layout_width="wrap_content"
+				android:padding="3dip" android:text="General Information"
+				android:id="@+id/profile_label_gen" />
+
+			<TextView android:layout_column="1" android:hint="Email: Unknown"
+				android:ellipsize="end" style="@android:style/TextAppearance.Small"
+				android:padding="3dip" android:gravity="left" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/profile_text_general" />
+				
+			<TextView android:layout_column="1" android:layout_height="wrap_content"
+				style="@android:style/TextAppearance.Medium" android:ellipsize="marquee"
+				android:gravity="left" android:layout_width="wrap_content"
+				android:padding="3dip" android:text="Phone Numbers" android:id="@+id/profile_label_phone" />
+				
+			<TextView android:layout_column="1" android:hint="Preferred: Unknown"
+				android:ellipsize="end" style="@android:style/TextAppearance.Small"
+				android:padding="3dip" android:gravity="left" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/profile_text_phone" />
+				
+			<TextView android:layout_column="1" android:layout_height="wrap_content"
+				style="@android:style/TextAppearance.Medium" android:ellipsize="marquee"
+				android:gravity="left" android:layout_width="wrap_content"
+				android:padding="3dip" android:text="Addresses" android:id="@+id/profile_label_addresses" />
+
+			<TextView android:layout_column="1" android:hint="Preferred: Unknown"
+				android:ellipsize="end" style="@android:style/TextAppearance.Small"
+				android:padding="3dip" android:gravity="left" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/profile_text_addresses" />
+				
+			<TextView android:layout_column="1" android:layout_height="wrap_content"
+				style="@android:style/TextAppearance.Medium" android:ellipsize="marquee"
+				android:gravity="left" android:layout_width="wrap_content"
+				android:padding="3dip" android:text="Staff Information" android:id="@+id/profile_label_staff" />
+				
+			<TextView android:layout_column="1" android:hint="Unit: Unknown"
+				android:ellipsize="end" style="@android:style/TextAppearance.Small"
+				android:padding="3dip" android:gravity="left" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/profile_text_staffinfo" />
+
+			<Button android:layout_column="1" android:layout_span="1"
+				android:text="View on phonebook.ufl.edu" style="@android:style/TextAppearance.Medium"
+				android:ellipsize="marquee" android:padding="3dip" android:gravity="center"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:id="@+id/profile_button_webview" android:textColor="#000000"
+				android:clickable="true" />
+				
+			<Button android:layout_column="1" android:layout_span="1"
+				android:text="Add to local contacts" style="@android:style/TextAppearance.Medium"
+				android:ellipsize="marquee" android:padding="3dip" android:gravity="center"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:id="@+id/profile_button_addcontact" android:textColor="#000000"
+				android:clickable="true" />
+				
+		</LinearLayout>
+	</ScrollView>
+
+</LinearLayout>
