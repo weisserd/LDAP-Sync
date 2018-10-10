@@ -50,7 +50,8 @@
         <activity
             android:name=".authenticator.LDAPAuthenticatorActivity"
             android:excludeFromRecents="true"
-            android:label="@string/ui_activity_title" >
+            android:label="@string/ui_activity_title"
+            android:windowSoftInputMode="stateVisible|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
