@@ -1,5 +1,6 @@
 /*
  * Copyright 2010 Daniel Weisser
+ * Copyright 2018 Max Weller
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@
 package de.danielweisser.android.ldapsync.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -37,6 +40,7 @@ import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.SearchScope;
 
 import de.danielweisser.android.ldapsync.R;
+import de.danielweisser.android.ldapsync.activity.SyncErrorActivity;
 import de.danielweisser.android.ldapsync.authenticator.LDAPAuthenticatorActivity;
 import de.danielweisser.android.ldapsync.syncadapter.SyncService;
 
@@ -128,15 +132,7 @@ public class LDAPUtilities {
 			}
 		} catch (LDAPException e) {
 			Log.v(TAG, "LDAPException on fetching contacts", e);
-			NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-			int icon = R.drawable.icon;
-			CharSequence tickerText = "Error on LDAP Sync";
-			Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
-			Intent notificationIntent = new Intent(context, SyncService.class);
-			PendingIntent contentIntent = PendingIntent.getService(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-			notification.setLatestEventInfo(context, tickerText, e.getMessage().replace("\\n", " "), contentIntent);
-			notification.flags = Notification.FLAG_AUTO_CANCEL;
-			mNotificationManager.notify(0, notification);
+			showErrorNotification(context, e);
 			return null;
 		} finally {
 			if (connection != null) {
@@ -145,6 +141,22 @@ public class LDAPUtilities {
 		}
 
 		return friendList;
+	}
+
+	private static void showErrorNotification(Context context, Throwable e) {
+		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		int icon = R.drawable.icon;
+		CharSequence tickerText = "Error on LDAP Sync";
+		Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
+
+		Intent notificationIntent = new Intent(context, SyncErrorActivity.class);
+		notificationIntent.putExtra("throwable", e);
+
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+
+		notification.setLatestEventInfo(context, tickerText, e.getMessage().replace("\\n", " "), contentIntent);
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
+		mNotificationManager.notify(0, notification);
 	}
 
 	private static String[] getUsedAttributes(SharedPreferences preferences) {

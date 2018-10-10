@@ -234,7 +234,7 @@ public class LDAPAuthenticatorActivity extends Activity {
 
 	/**
 	 * Call back for the authentication process. When the authentication attempt is finished this method is called.
-	 * 
+	 * Called by LDAPUtilities.sendResult
 	 * @param baseDNs
 	 *            List of baseDNs from the LDAP server
 	 * @param result
