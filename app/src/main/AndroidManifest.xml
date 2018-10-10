@@ -51,6 +51,12 @@
             android:name=".authenticator.LDAPAuthenticatorActivity"
             android:excludeFromRecents="true"
             android:label="@string/ui_activity_title" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ldaps" />
+            </intent-filter>
         </activity>
         <activity android:name=".authenticator.AccountSettingsActivity" >
         </activity>

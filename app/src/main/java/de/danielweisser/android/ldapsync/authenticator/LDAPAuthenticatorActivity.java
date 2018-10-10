@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -73,6 +74,8 @@ public class LDAPAuthenticatorActivity extends Activity {
 	private EditText host;
 	private String accountName;
 	private LDAPServerInstance ldapServer;
+
+	private Uri configUri = null;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -139,7 +142,48 @@ public class LDAPAuthenticatorActivity extends Activity {
 				// Do nothing.
 			}
 		});
+
+
+		// Handle "ldaps://" URL links, e.g. from barcode scanner or website
+		Intent intent = getIntent();
+		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			Uri uri = intent.getData();
+			configUri = uri;
+			host.setText(uri.getHost());
+
+			if (uri.getScheme().equals("ldaps")) {
+				mEncryption = 1;
+				mEncryptionSpinner.setSelection(mEncryption);
+				mPortEdit.setText("636");
+			}
+
+			if (uri.getPort() > -1) mPortEdit.setText(String.valueOf(uri.getPort()));
+
+			if (uri.getUserInfo() != null) {
+				String userInfo[] = uri.getUserInfo().split(":", 2);
+				if (userInfo.length == 1) {
+					username.setText(userInfo[0]);
+				} else if (userInfo.length == 2) {
+					username.setText(userInfo[0]);
+					((EditText) findViewById(R.id.password)).setText(userInfo[0]);
+				}
+			}
+
+			if (uri.getQueryParameter("user") != null)
+				username.setText(uri.getQueryParameter("user"));
+			if (uri.getQueryParameter("password") != null)
+				((EditText) findViewById(R.id.password)).setText(uri.getQueryParameter("password"));
+
+			next.setEnabled(true);
+			updateAccountName();
+
+			if (uri.getQueryParameter("accountName") != null) {
+				final EditText accountName = (EditText) findViewById(R.id.account_name);
+				accountName.setText(uri.getQueryParameter("accountName"));
+			}
+		}
 	}
+
 
 	private void updateAccountName() {
 		final EditText accountName = (EditText) findViewById(R.id.account_name);
@@ -211,6 +255,11 @@ public class LDAPAuthenticatorActivity extends Activity {
 				intent.putExtra("baseDNs", baseDNs);
 			}
 			intent.putExtra("ldapServer", ldapServer);
+
+			if (configUri != null) {
+				intent.putExtra("configUri", configUri);
+			}
+
 			startActivity(intent);
 			finish();
 		} else {
