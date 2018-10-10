@@ -22,9 +22,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -68,7 +70,7 @@ public class LDAPAuthenticatorActivity extends Activity {
 
 	
 	private Thread mAuthThread;
-	private int mEncryption = 0;
+	private int mEncryption = 1;
 	private Dialog dialog;
 	private EditText username;
 	private EditText host;
@@ -85,11 +87,20 @@ public class LDAPAuthenticatorActivity extends Activity {
 		// setLDAPMappings();
 		setContentView(R.layout.login_activity);
 
-		// Enable the next button only if the hostname is set - additionally update account name to username + host
-		final Button next = (Button) findViewById(R.id.next);
-		next.setEnabled(false);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LDAPAuthenticatorActivity.this);
+
 		username = (EditText) findViewById(R.id.username);
 		host = (EditText) findViewById(R.id.host);
+
+		// fetch last used values
+		username.setText(prefs.getString("lastUsedUsername",""));
+		host.setText(prefs.getString("lastUsedHostname",""));
+
+		// Enable the next button only if the hostname is set - additionally update account name to username + host
+		final Button next = (Button) findViewById(R.id.next);
+		if(host.getText().toString().equals(""))
+			next.setEnabled(false);
+
 		host.addTextChangedListener(new TextWatcher() {
 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -99,6 +110,9 @@ public class LDAPAuthenticatorActivity extends Activity {
 					next.setEnabled(true);
 				}
 				updateAccountName();
+				SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(LDAPAuthenticatorActivity.this).edit();
+				editor.putString("lastUsedHostname", s.toString());
+				editor.commit();
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -112,6 +126,9 @@ public class LDAPAuthenticatorActivity extends Activity {
 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				updateAccountName();
+				SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(LDAPAuthenticatorActivity.this).edit();
+				editor.putString("lastUsedUsername", s.toString());
+				editor.commit();
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -127,7 +144,13 @@ public class LDAPAuthenticatorActivity extends Activity {
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.encryption_methods, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mEncryptionSpinner.setAdapter(adapter);
+		mEncryption = prefs.getInt("lastUsedEncryption", 1);
 		mEncryptionSpinner.setSelection(mEncryption);
+		if (mEncryption == 1) {
+			mPortEdit.setText("636");
+		} else {
+			mPortEdit.setText("389");
+		}
 		mEncryptionSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				mEncryption = position;
@@ -151,10 +174,10 @@ public class LDAPAuthenticatorActivity extends Activity {
 			configUri = uri;
 			host.setText(uri.getHost());
 
-			if (uri.getScheme().equals("ldaps")) {
-				mEncryption = 1;
+			if (uri.getScheme().equals("ldap")) {
+				mEncryption = 0;
 				mEncryptionSpinner.setSelection(mEncryption);
-				mPortEdit.setText("636");
+				mPortEdit.setText("389");
 			}
 
 			if (uri.getPort() > -1) mPortEdit.setText(String.valueOf(uri.getPort()));

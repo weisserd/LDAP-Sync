@@ -57,7 +57,7 @@
 
     <!-- Title string for Login activity -->
     <string name="ui_activity_title">LDAP Server settings</string>
-    <string name="defaultLdapPort">389</string>
+    <string name="defaultLdapPort">636</string>
     <string name="done">Done</string>
     <string name="action_save">Save</string>
     <string name="email_error_report">Send Error Report</string>
