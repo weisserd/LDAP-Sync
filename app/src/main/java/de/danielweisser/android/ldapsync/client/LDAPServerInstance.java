@@ -141,7 +141,7 @@ public final class LDAPServerInstance implements Serializable {
 			}
 		}
 
-		if ((bindDN != null) && (bindPW != null)) {
+		if (bindDN != null) {
 			try {
 				conn.bind(bindDN, bindPW);
 			} catch (LDAPException le) {
