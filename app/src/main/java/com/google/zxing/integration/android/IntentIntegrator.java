@@ -128,6 +128,7 @@ public class IntentIntegrator {
            "ITF", "RSS_14", "RSS_EXPANDED");
   public static final Collection<String> QR_CODE_TYPES = Collections.singleton("QR_CODE");
   public static final Collection<String> DATA_MATRIX_TYPES = Collections.singleton("DATA_MATRIX");
+  public static final Collection<String> QR_CODE_AND_DATA_MATRIX_TYPES = list("QR_CODE", "DATA_MATRIX");
 
   public static final Collection<String> ALL_CODE_TYPES = null;
   

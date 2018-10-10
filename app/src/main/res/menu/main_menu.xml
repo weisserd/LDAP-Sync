@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_add_account"
+        android:icon="@drawable/ic_action_accept"
+        android:title="@string/add_account"
+        android:showAsAction="never"
+        android:onClick="addAccount"
+        />
+
+    <item
+        android:id="@+id/action_scan_qr"
+        android:icon="@drawable/ic_action_accept"
+        android:title="@string/add_account_from_qr"
+        android:showAsAction="never"
+        android:onClick="scanQr"
+        />
+
+
+</menu>

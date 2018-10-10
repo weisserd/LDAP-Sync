@@ -60,5 +60,8 @@
     <string name="defaultLdapPort">389</string>
     <string name="done">Done</string>
     <string name="action_save">Save</string>
+    <string name="email_error_report">Send Error Report</string>
+    <string name="add_account">Add account</string>
+    <string name="add_account_from_qr">Add via QR code</string>
 
 </resources>

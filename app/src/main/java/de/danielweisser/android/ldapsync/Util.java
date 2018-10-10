@@ -1,4 +1,4 @@
-package org.mbs3.android.ufpb2;
+package de.danielweisser.android.ldapsync;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
