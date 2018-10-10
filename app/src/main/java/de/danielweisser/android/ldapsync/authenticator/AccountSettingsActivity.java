@@ -46,6 +46,8 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 		addPreferencesFromResource(R.xml.preference_resources);
 		setContentView(R.layout.preference_layout);
 
+
+
 		if (getIntent().hasExtra("configUri")) {
 			Uri configUri = getIntent().getParcelableExtra("configUri");
 			Log.i(TAG, "config URI found: "+configUri.toString());
@@ -64,7 +66,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 			editor.commit();
 
 			// allow skipping of details config
-			if (configUri.getQueryParameter("skip") != null && configUri.getQueryParameter("skip").equals("1")) {
+			if ("1".equals(configUri.getQueryParameter("skip"))) {
 				createAccount(null);
 			}
 		}
@@ -73,6 +75,7 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
         for (String key: getPreferenceManager().getSharedPreferences().getAll().keySet()) {
             onSharedPreferenceChanged(getPreferenceManager().getSharedPreferences(), key);
         }
+
 
 
 		// this.getIntent().getExtras()) and the key "account
@@ -117,7 +120,6 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 		finish();
 	}
 
-    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         Log.d(TAG, "onContentChanged for " + s);
         Preference p = findPreference(s);
