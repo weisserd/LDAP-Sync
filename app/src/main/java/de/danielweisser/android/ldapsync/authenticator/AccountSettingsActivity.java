@@ -11,6 +11,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import de.danielweisser.android.ldapsync.Constants;
 import de.danielweisser.android.ldapsync.R;
@@ -76,6 +78,15 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 		// set the preferences file name
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.preference_menu, menu);
+
+		MenuItem saveItem = menu.findItem(R.id.action_save);
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
     /**
 	 * Called when the user touches the done button.
 	 * 
@@ -112,4 +123,8 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
             }
         }
     }
+
+	public void createAccount2(MenuItem item) {
+		createAccount(null);
+	}
 }

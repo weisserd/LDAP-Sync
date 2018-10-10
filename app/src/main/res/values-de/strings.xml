@@ -56,4 +56,6 @@
 
 	<!-- Title string for Login activity-->
 	<string name="ui_activity_title">LDAP Server Einstellungen</string>
+	<string name="done">Fertig</string>
+    <string name="action_save">Speichern</string>
 </resources>
