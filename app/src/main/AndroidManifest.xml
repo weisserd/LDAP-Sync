@@ -59,10 +59,17 @@
                 <data android:scheme="ldaps" />
             </intent-filter>
         </activity>
+
         <activity android:name=".authenticator.AccountSettingsActivity" >
         </activity>
+
         <activity android:name=".authenticator.AccountsListActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
