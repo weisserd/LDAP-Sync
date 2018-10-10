@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -42,6 +43,24 @@ public class AccountSettingsActivity extends PreferenceActivity implements Share
 
 		addPreferencesFromResource(R.xml.preference_resources);
 		setContentView(R.layout.preference_layout);
+
+		if (getIntent().hasExtra("configUri")) {
+			Uri configUri = getIntent().getParcelableExtra("configUri");
+			Log.i(TAG, "config URI found: "+configUri.toString());
+
+			SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
+			SharedPreferences.Editor editor = sharedPrefs.edit();
+			for (String key: sharedPrefs.getAll().keySet()) {
+				Log.i(TAG, "config URI: checking param "+key);
+
+				String value = configUri.getQueryParameter("cfg_" + key);
+				if (value != null) {
+					Log.i(TAG, "config URI: OK - param "+key+" has value "+value);
+					editor.putString(key, value);
+				}
+			}
+			editor.commit();
+		}
 
         // Initialize all summaries to values
         for (String key: getPreferenceManager().getSharedPreferences().getAll().keySet()) {
