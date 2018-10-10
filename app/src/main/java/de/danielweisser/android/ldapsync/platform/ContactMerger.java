@@ -106,6 +106,8 @@ public class ContactMerger {
                 .newDelete(addCallerIsSyncAdapterFlag(Data.CONTENT_URI))
                 .withSelection( selection, new String[] { rawContactId + "", }).build());
 
+        if (newMails == null) return;
+
         for (String address: newMails) {
             ContentValues cv = new ContentValues();
             cv.put(Email.DATA, address);
