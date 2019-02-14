@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="account_settings"
-    android:summary="Misc account preferences"
-    android:title="Account Preferences" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="General Settings" />
+    <PreferenceCategory android:title="Advanced">
+    </PreferenceCategory>
 
     <PreferenceScreen
-        android:key="account_settings"
-        android:summary="Change settings for your accounts"
-        android:title="Account Settings" >
-        <intent android:action="de.danielweisser.android.ldapsync.ACCOUNT_SETUP"
-            android:targetPackage="de.danielweisser.android.ldapsync"
-            android:targetClass="de.danielweisser.android.ldapsync.authenticator.AccountsListActivity" />
+        android:key="ldap_account_prefs"
+        android:summary="Change LDAP configuration details"
+        android:title="LDAP details" >
+        <intent android:action="de.wikilab.android.ldapsync.ACCOUNT_SETUP"
+            android:targetPackage="de.wikilab.android.ldapsync"
+            android:targetClass="de.wikilab.android.ldapsync.authenticator.AccountSettingsActivity" />
     </PreferenceScreen>
 
+    <PreferenceCategory android:title="Sync Options">
+    </PreferenceCategory>
 </PreferenceScreen>

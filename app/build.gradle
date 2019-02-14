@@ -5,7 +5,7 @@ android {
     buildToolsVersion "28.0.2"
 
     defaultConfig {
-        applicationId "de.danielweisser.android.ldapsync"
+        applicationId "de.wikilab.android.ldapsync"
         minSdkVersion 11
         targetSdkVersion 22
         compileOptions {
@@ -28,7 +28,8 @@ android {
 }
 
 dependencies {
-    implementation files('libs/unboundid-ldapsdk-me.jar')
+    // https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk
+    implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '3.2.1'
     implementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:3.8"
 }

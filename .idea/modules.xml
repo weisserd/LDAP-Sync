@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/LDAP-Sync.iml" filepath="$PROJECT_DIR$/.idea/LDAP-Sync.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ldap_sync_2.0_as.iml" filepath="$PROJECT_DIR$/ldap_sync_2.0_as.iml" />
     </modules>
   </component>
 </project>
