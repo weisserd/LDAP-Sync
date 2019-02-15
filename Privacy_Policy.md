@@ -6,7 +6,7 @@ The user's LDAP servers will see the IP address from which the connection is mad
 
 No other internet connections are made. The authors of the app do not collect any data about the user, their devices or their behaviour.
 
-
+If you enable "Debug Logging" in the app settings, a log file will be stored on your SD card for every sync process. Before sharing these log files, you might want to remove personal data from them.
 
 ## Note regarding behaviour of other apps
 The synchronized LDAP contacts are placed in the address book of the user's phone. Other apps can retrieve them from there and use them according to their privacy policies. For example, many messenger apps will send all phone numbers in your address book to their server, which will then include the phone numbers which LDAP-Sync has placed on your phone according to your configuration. Please check beforehand if that's what you want and if you're allowed to do that.

@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    //noinspection GradleCompatible
+    compileSdkVersion 24
     buildToolsVersion "28.0.2"
 
     defaultConfig {
@@ -12,6 +13,7 @@ android {
             sourceCompatibility JavaVersion.VERSION_1_6
             targetCompatibility JavaVersion.VERSION_1_6
         }
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -25,11 +27,16 @@ android {
             includeAndroidResources = true
         }
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
     // https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk
     implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '3.2.1'
     implementation 'junit:junit:4.12'
+    implementation 'com.android.support:support-v4:24.2.1'
+    //implementation 'com.android.support:support-vector-drawable:22.0.0'
     testImplementation "org.robolectric:robolectric:3.8"
 }

@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import de.wikilab.android.ldapsync.Constants;
@@ -60,7 +61,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 		Logger l = new Logger();
 
-		l.startLogging();
+		if (PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("enable_debug_logging", false))
+			l.startLogging();
 		l.d("Start the sync");
 		Log.d(TAG, "Start the sync.");
 		List<Contact> users = new ArrayList<Contact>();

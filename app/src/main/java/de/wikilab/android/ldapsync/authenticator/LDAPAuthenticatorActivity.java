@@ -16,17 +16,24 @@
 
 package de.wikilab.android.ldapsync.authenticator;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -47,7 +54,8 @@ import de.wikilab.android.ldapsync.client.LDAPUtilities;
  * 
  * @author <a href="mailto:daniel.weisser@gmx.de">Daniel Weisser</a>
  */
-public class LDAPAuthenticatorActivity extends Activity {
+public class LDAPAuthenticatorActivity extends Activity
+		implements OnRequestPermissionsResultCallback {
 
 	private static final int ERROR_DIALOG = 1;
 	private static final int PROGRESS_DIALOG = 0;
@@ -233,6 +241,13 @@ public class LDAPAuthenticatorActivity extends Activity {
 	 *            The Next button for which this method is invoked
 	 */
 	public void next(View view) {
+		if (checkPermissions(this)) {
+			goNext();
+		}  else {
+			requestPermissions();
+		}
+	}
+	public void goNext() {
 		accountName = ((EditText) findViewById(R.id.account_name)).getText().toString();
 
 		// if (mRequestNewAccount) {
@@ -330,5 +345,45 @@ public class LDAPAuthenticatorActivity extends Activity {
 			((AlertDialog) dialog).setMessage("Could not connect to the server:\n" + message);
 		}
 	}
-	
+
+
+	boolean checkPermissions (Context context) {
+		String[] permissionsToRequest = new String[]{
+				Manifest.permission.READ_CONTACTS,
+				Manifest.permission.WRITE_CONTACTS};
+
+		boolean allPermissionsGranted = true;
+
+		for (String permission : permissionsToRequest) {
+			allPermissionsGranted = allPermissionsGranted
+					&& ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+		}
+		return allPermissionsGranted;
+	}
+
+
+	final int PERMISSION_REQUEST_CODE = 5; // app defined constant used for onRequestPermissionsResult
+
+	void requestPermissions() {
+
+		String[] permissionsToRequest = new String[]{
+				Manifest.permission.READ_CONTACTS,
+				Manifest.permission.WRITE_CONTACTS};
+
+		if (!checkPermissions(this)) {
+			ActivityCompat.requestPermissions(this, permissionsToRequest, PERMISSION_REQUEST_CODE);
+		}
+
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		Log.d(TAG, "onRequestPermissionsResult "+requestCode);
+		if (requestCode == PERMISSION_REQUEST_CODE){
+			if (checkPermissions(this))
+				goNext();
+			else
+				Log.e(TAG,"checkPermissions fail after request");
+		}
+	}
 }

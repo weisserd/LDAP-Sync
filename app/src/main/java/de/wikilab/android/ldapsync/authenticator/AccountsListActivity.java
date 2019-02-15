@@ -19,6 +19,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import de.wikilab.android.ldapsync.Constants;
 import de.wikilab.android.ldapsync.R;
+import de.wikilab.android.ldapsync.activity.SettingsActivity;
 
 public class AccountsListActivity extends ListActivity {
 
@@ -84,5 +85,9 @@ public class AccountsListActivity extends ListActivity {
 				Toast.makeText(this, "Could not handle this code. Please try again.", Toast.LENGTH_LONG).show();
 			}
 		}
+	}
+
+	public void settings(MenuItem item) {
+		startActivity(new Intent(this, SettingsActivity.class));
 	}
 }

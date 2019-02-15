@@ -52,6 +52,7 @@ public class Logger {
 	}
 
 	public void d(String message) {
+		Log.d("SyncLogger", message);
 		try {
 			if (f != null) {
 				f.write(now() + ": " + message + "\n");
@@ -67,7 +68,7 @@ public class Logger {
 		File dir = new File(sdCard.getAbsolutePath() + Constants.SDCARD_FOLDER);
 		dir.mkdirs();
 		File file = new File(dir, nowFile() + "_sync.log");
-
+		Log.d("SyncLogger", "startLogging to file "+file.getAbsolutePath());
 		try {
 			f = new BufferedWriter(new FileWriter(file));
 		} catch (FileNotFoundException e) {
@@ -78,6 +79,7 @@ public class Logger {
 	}
 
 	public void stopLogging() {
+		Log.d("SyncLogger", "stopLogging");
 		try {
 			if (f != null) {
 				f.close();
