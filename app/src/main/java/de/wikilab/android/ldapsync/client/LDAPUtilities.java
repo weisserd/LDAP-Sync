@@ -217,7 +217,8 @@ public class LDAPUtilities {
 				String[] baseDNs = null;
 				if (s != null) {
 					baseDNs = s.getNamingContextDNs();
-					Log.d(TAG, "authenticate: base DNs: "+ TextUtils.join("; ", baseDNs));
+					if (baseDNs != null)
+						Log.d(TAG, "authenticate: base DNs: "+ TextUtils.join("; ", baseDNs));
 				}
 
 				sendResult(baseDNs, true, handler, context, null);
