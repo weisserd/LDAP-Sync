@@ -20,9 +20,9 @@ Open the app and click the camera button. Scan the provided QR code.
 
 
 ## Configuration templates
-If you administrate an LDAP server and want to make the configuration easier for your users, you can provide configuration links and QR codes. The required format is described below. Code in PHP and JS to generate can be found [here](https://github.com/d120/ldap-web/blob/master/ldapsync.php#L52), and a simplified version is provided below.
+If you administrate an LDAP server and want to make the configuration easier for your users, you can provide configuration links and QR codes. The required format is described below. Code to generate are provided [in PHP and JS](https://github.com/d120/ldap-web/blob/master/ldapsync.php#L52), and as a [simplified version in JS only](https://github.com/max-weller/LDAP-Sync/blob/master/docs/config_example.html).
 
-You can also use the provided [generator for config links](generator.html).
+You can also use the [generator for config links](generator.html).
 
 ### Create configuration links and QR codes
 
@@ -34,6 +34,8 @@ Instead of `ldaps://` you can also specify `ldap://` for an insecure connection 
 
 #### Parameters
 
+| Parameter | Description |
+|-
 | user | BindDN for login | 
 | accountName | will be displayed in app and android settings (free form) |
 | cfg_baseDN | BaseDN |
@@ -64,11 +66,6 @@ The following parameters can be added to a configuration link to map non-standar
 * cfg_co 
 
 
-## Build from source
-
-After an initial pull, open the project in Android Studio. To build an APK, use the `Build > Generate Signed APK ...` command.
-
-
 ## Source
 
 The original source is hosted at https://github.com/weisserd/LDAP-Sync. An updated fork is hosted at https://github.com/max-weller/LDAP-Sync
@@ -76,45 +73,3 @@ The original source is hosted at https://github.com/weisserd/LDAP-Sync. An updat
 ## License 
 
 This project is licensed under the Apache License v2.0.
-
-## Configuration link example script
-```html
-<a href="javascript:" id="confUrl">Click here to configure LDAP-Sync</a>
-<span id="confQr"></span>
-
-<!-- QR code library - get it from here: https://raw.githubusercontent.com/davidshimjs/qrcodejs/master/qrcode.min.js -->
-
-<script src="qrcode.min.js"></script>
-<script>
-// Define the parameters - change this according to your requirements
-var host = "ldap.example.org";
-var username = "jondoe";  // this might be read from an input field, from server side, or just ommitted, then the user has to enter it later on
-var baseDN = "cn=example,cn=org";
-var params = {
-	user: "uid=" + username + "," + baseDN,
-	accountName: "My little LDAP",
-	cfg_baseDN: baseDN,
-	cfg_searchFilter: "(objectClass=inetOrgPerson)",
-	skip: "1",
-	/* ... add more parameters here, if required */
-}
-
-// Build the URL
-var url = "ldaps://"+host+"/?";
-for (var k in params) url += k + "=" + encodeURIComponent(params[k]) + "&";
-
-// Set URL in link tag
-document.getElementById("confUrl").href = url;
-
-// Generate QR code
-new QRCode(document.getElementById("confQr"), {
-	text: url,
-	width: 400,
-	height: 400,
-	colorDark : "#000000",
-	colorLight : "#ffffff",
-	correctLevel : QRCode.CorrectLevel.H
-});
-
-</script>
-```
