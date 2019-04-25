@@ -2,7 +2,7 @@
 
 <style>
 	label {display:block;}
-	div {padding:10px;border-top:1px solid #eee;}
+	form div {padding:10px;border-top:1px solid #eee;}
 	div input[type=text], textarea {width:100%}
 </style>
 <form name="x">
