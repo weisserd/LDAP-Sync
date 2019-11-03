@@ -1,3 +1,7 @@
+2.1.4
+* fix app crash on missing baseDNs
+* Added website and docs
+
 2.1.3
 * Compatibility with Play Store (change targetSdkVersion to 26, implement dynamic permission request for access to contacts)
 
