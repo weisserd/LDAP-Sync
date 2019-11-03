@@ -50,18 +50,18 @@ To create a QR code, you need to build a configuration link and generate a QR co
 ## Ldap attribute names
 The following parameters can be added to a configuration link to map non-standard attribute names:
 
-* cfg_givenName 
-* cfg_sn
-* cfg_telephonenumber 
-* cfg_mobile
-* cfg_homephone 
-* cfg_mail
-* cfg_jpegphoto 
+* cfg_first_name
+* cfg_last_name
+* cfg_office_phone
+* cfg_cell_phone
+* cfg_home_phone
+* cfg_email
+* cfg_photo
 * cfg_street
-* cfg_postalCode 
-* cfg_l
-* cfg_st 
-* cfg_co 
+* cfg_city
+* cfg_state
+* cfg_postalCode
+* cfg_country
 
 
 # Source
