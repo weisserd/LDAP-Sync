@@ -1,3 +1,4 @@
+LDAP-Sync can sync entries from a remote LDAP server to your phone's Contacts, making them available offline. They are then accessible to all apps with permission to read your address book. It works read-only and never changes data on the remote server.
 
 # Download
 
