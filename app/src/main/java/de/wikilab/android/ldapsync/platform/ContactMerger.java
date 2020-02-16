@@ -103,7 +103,7 @@ public class ContactMerger {
 
         ops.add(ContentProviderOperation
                 .newDelete(addCallerIsSyncAdapterFlag(Data.CONTENT_URI))
-                .withSelection( selection, new String[] { rawContactId + "", }).build());
+                .withSelection( selection, new String[] { rawContactId + "", Email.CONTENT_ITEM_TYPE}).build());
 
         if (newMails == null) return;
 
