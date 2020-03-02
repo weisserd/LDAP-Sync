@@ -1,10 +1,8 @@
 # A LDAP Sync adapter for Android
 
+<a href="https://f-droid.org/app/de.wikilab.android.ldapsync"><img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="100"></a> <a href='https://play.google.com/store/apps/details?id=de.wikilab.android.ldapsync'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="100"/></a>
+
 LDAP-Sync can sync entries from a remote LDAP server to your phone's Contacts, making them available offline. They are then accessible to all apps with permission to read your address book. It works read-only and never changes data on the remote server. 
-
-## Download
-
-Downloads are available from [F-Droid](https://f-droid.org/de/packages/de.wikilab.android.ldapsync/) and [Play Store](https://play.google.com/store/apps/details?id=de.wikilab.android.ldapsync).
 
 ## Usage
 Find some explanations on how to use the app and how to generate configuration templates on the [documentation page](https://max-weller.github.io/LDAP-Sync/).
