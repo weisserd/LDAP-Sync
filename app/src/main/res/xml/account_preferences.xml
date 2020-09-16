@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Advanced">
+    </PreferenceCategory>
+
+    <PreferenceScreen
+        android:key="ldap_account_prefs"
+        android:summary="Change LDAP configuration details"
+        android:title="LDAP details" >
+        <intent android:action="de.wikilab.android.ldapsync.ACCOUNT_SETUP"
+            android:targetPackage="de.wikilab.android.ldapsync"
+            android:targetClass="de.wikilab.android.ldapsync.authenticator.AccountSettingsActivity" />
+    </PreferenceScreen>
+
+    <PreferenceCategory android:title="Sync Options">
+    </PreferenceCategory>
+</PreferenceScreen>
